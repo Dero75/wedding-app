@@ -1,42 +1,26 @@
 import {
-  DEFAULT_ADMIN_SETTINGS,
-  getAdminSettings,
+  clearLegacyAdminSettingsSnapshot,
   getContent,
   getMyRSVP,
   getRSVPs,
-  saveAdminSettings,
 } from "@/lib/storage";
 
-describe("admin settings persistence", () => {
+describe("storage sanitization", () => {
   beforeEach(() => {
     localStorage.clear();
   });
 
-  it("persists admin settings and reads them back", () => {
-    const next = {
-      ...DEFAULT_ADMIN_SETTINGS,
-      stylePreset: "dark" as const,
-      showCouplePhoto: false,
-      showWelcomeSection: false,
-      showGiftSection: false,
-      showEntrancePass: false,
-    };
-
-    saveAdminSettings(next);
-
-    expect(getAdminSettings()).toEqual(next);
-  });
-
-  it("sanitizes legacy blush preset to ivory", () => {
+  it("removes legacy admin settings snapshot", () => {
     localStorage.setItem(
       "wedding_admin_settings",
       JSON.stringify({
-        ...DEFAULT_ADMIN_SETTINGS,
-        stylePreset: "blush",
+        randomLegacyKey: "legacy",
+        showGiftSection: false,
       }),
     );
 
-    expect(getAdminSettings().stylePreset).toBe("ivory");
+    clearLegacyAdminSettingsSnapshot();
+    expect(localStorage.getItem("wedding_admin_settings")).toBeNull();
   });
 
   it("removes deprecated content fields from localStorage snapshot", () => {
@@ -54,7 +38,7 @@ describe("admin settings persistence", () => {
       unknown
     >;
 
-    expect(content.brideName).toBe("Deborah");
+    expect(content.weddingTime).toBe("16:00");
     expect(saved).not.toHaveProperty("hashtag");
   });
 
@@ -86,9 +70,10 @@ describe("admin settings persistence", () => {
     const rsvps = getRSVPs();
 
     expect(rsvps).toHaveLength(1);
-    expect(rsvps[0]?.fullName).toBe("Mario Rossi");
+    expect(rsvps[0]?.firstName).toBe("Mario");
+    expect(rsvps[0]?.lastName).toBe("Rossi");
     expect((rsvps[0] as Record<string, unknown>).attending).toBeUndefined();
-    expect(rsvps[0]?.dietaryFlags).toEqual(["celiac"]);
+    expect(rsvps[0]?.dietaryCounts).toEqual({ vegetarian: 0, vegan: 0, celiac: 1 });
   });
 
   it("clears legacy my_rsvp with attending=false", () => {

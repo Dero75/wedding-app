@@ -2,13 +2,12 @@ import { Link } from "wouter";
 import { Heart } from "lucide-react";
 import Layout from "@/components/Layout";
 import WeddingButton from "@/components/WeddingButton";
-import { getContent, getAdminSettings } from "@/lib/storage";
-import { FIXED_WEDDING_DATE_CITY_LABEL } from "@/config/event";
+import { getContent } from "@/lib/storage";
+import { FIXED_BRIDE_NAME, FIXED_GROOM_NAME, FIXED_WEDDING_DATE_CITY_LABEL } from "@/config/event";
 import coupleVenueImg from "@assets/Evento_serale_elegante_nel_cortile_storico_1775302758542.png";
 
 export default function Home() {
   const c = getContent();
-  const s = getAdminSettings();
 
   return (
     <Layout>
@@ -23,14 +22,10 @@ export default function Home() {
           className="home-photo relative flex-shrink-0 overflow-hidden"
           style={{ height: "33%" }}
         >
-          {s.showCouplePhoto ? (
-            <div
-              className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-              style={{ backgroundImage: `url(${coupleVenueImg})` }}
-            />
-          ) : (
-            <div className="absolute inset-0 bg-primary/90" />
-          )}
+          <div
+            className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+            style={{ backgroundImage: `url(${coupleVenueImg})` }}
+          />
           <div
             className="absolute inset-0"
             style={{
@@ -52,7 +47,7 @@ export default function Home() {
               className="home-title font-serif text-[1.85rem] leading-tight"
               style={{ color: "hsl(var(--foreground))" }}
             >
-              {c.brideName} & {c.groomName}
+              {FIXED_BRIDE_NAME} & {FIXED_GROOM_NAME}
             </h1>
             <div
               className="home-meta flex items-center justify-center gap-2 mt-1.5"
@@ -63,27 +58,25 @@ export default function Home() {
           </div>
 
           <div className="flex-1 min-h-0 flex flex-col justify-between mt-2.5">
-            {s.showWelcomeSection && (
-              <div className="home-welcome text-center mb-2 overflow-hidden">
-                <div className="flex items-center justify-center gap-3 mb-1.5">
-                  <div className="h-px w-10 bg-border" />
-                  <Heart size={10} style={{ fill: "hsl(var(--accent))", stroke: "none" }} />
-                  <div className="h-px w-10 bg-border" />
-                </div>
-                <h2
-                  className="home-welcome-title font-serif text-[1.05rem] mb-1"
-                  style={{ color: "hsl(var(--foreground))" }}
-                >
-                  {c.welcomeTitle}
-                </h2>
-                <p
-                  className="home-welcome-text text-muted-foreground text-[11px] leading-[1.35] overflow-hidden"
-                  style={{ maxHeight: "5.2rem" }}
-                >
-                  {c.welcomeText}
-                </p>
+            <div className="home-welcome text-center mb-2 overflow-hidden">
+              <div className="flex items-center justify-center gap-3 mb-1.5">
+                <div className="h-px w-10 bg-border" />
+                <Heart size={10} style={{ fill: "hsl(var(--accent))", stroke: "none" }} />
+                <div className="h-px w-10 bg-border" />
               </div>
-            )}
+              <h2
+                className="home-welcome-title font-serif text-[1.05rem] mb-1"
+                style={{ color: "hsl(var(--foreground))" }}
+              >
+                {c.welcomeTitle}
+              </h2>
+              <p
+                className="home-welcome-text text-muted-foreground text-[11px] leading-[1.35] overflow-hidden whitespace-pre-line text-center"
+                style={{ maxHeight: "5.2rem" }}
+              >
+                {c.welcomeText}
+              </p>
+            </div>
 
             <div className="home-actions flex flex-col gap-2.5 flex-shrink-0">
               <Link href="/rsvp">

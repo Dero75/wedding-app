@@ -23,7 +23,7 @@
 ## Runtime/storage state
 
 - Client state and persistence: localStorage/sessionStorage via `artifacts/wedding/src/lib/storage.ts`.
-- RSVP canonical fields: `fullName`, `guestCount`, `childrenCount`, `dietaryFlags`, `submittedAt`.
+- RSVP canonical fields: `firstName`, `lastName`, `guestCount`, `childrenCount`, `dietaryCounts`, `submittedAt`.
 - No Supabase runtime wired.
 - API client package exists but is not currently used by wedding app runtime.
 - Supabase future-sync coordinates are registered in project template:
@@ -48,3 +48,13 @@
 - Build failed on macOS because workspace overrides removed non-Linux Rollup/esbuild binaries.
 - Vite configs required `PORT` and `BASE_PATH` env vars with hard failure if missing.
 - Added deterministic local app lifecycle script (`scripts/wedding-dev-server.sh`) for port `5001` start/stop/restart/status.
+
+## Aggiornamento Allineamento Finale (2026-04-04)
+
+- Verificata coerenza runtime/documentazione con stato codice corrente.
+- Admin: in area `/admin*` hamburger nascosto; su `/admin` resta shortcut impostazioni.
+- Admin home: KPI unico `Confermati`.
+- Admin settings: editor contenuti in box bianchi separati per sezione frontend.
+- RSVP: header ridotto al solo titolo; select `Minorenni` con label `minorenne/minorenni`.
+- Tipografia canonica confermata: titoli serif, UI/testi sans.
+- Nessuna nuova logica business introdotta in questo allineamento documentale.

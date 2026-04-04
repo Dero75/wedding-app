@@ -3,7 +3,7 @@
 ## RSVP flow
 
 1. Guest opens `/rsvp`
-2. Fills form: name, confirmed adults, children under 16, dietary flags (Vegetariano/Vegano/Celiaco)
+2. Fills form: first name, last name, confirmed adults, people under 18, dietary quantities (Vegetariano/Vegano/Celiaco)
 3. On submit: saved to `wedding_rsvps` (all RSVPs) and `wedding_my_rsvp` (their entry)
 4. Confirmation card shown with edit button
 5. Guest can return and edit anytime
@@ -15,10 +15,11 @@
 ```typescript
 interface RSVPEntry {
   id: string; // timestamp-based unique ID
-  fullName: string;
+  firstName: string;
+  lastName: string;
   guestCount: number;
-  childrenCount: number; // under 16
-  dietaryFlags: DietaryFlag[];
+  childrenCount: number; // under 18
+  dietaryCounts: { vegetarian: number; vegan: number; celiac: number };
   submittedAt: string; // ISO 8601
 }
 ```
@@ -29,68 +30,46 @@ interface RSVPEntry {
 | ------------------------ | ------------------------------------------------- |
 | `wedding_rsvps`          | `RSVPEntry[]` — all RSVPs                         |
 | `wedding_my_rsvp`        | `RSVPEntry \| null` — this guest's entry          |
-| `wedding_admin_settings` | `AdminSettings`                                   |
 | `wedding_content`        | `Partial<EditableContent>` — admin-edited content |
+| `wedding_admin_settings` | Legacy key removed automatically at startup        |
 
 ## Admin panel (`/admin`)
 
 Admin is split into:
 
 - `/admin` → RSVP-focused home (stats + RSVP list)
-- `/admin/settings` → style preset + visibility toggles + content editor
+- `/admin/settings` → content editor only
 
-### Style presets
+### Visibility controls
 
-Accordion section "Stile dell'app":
-
-- **Avorio Classico** (ivory) — warm ivory bg, deep brown primary, dusty rose accent
-- **Serale Elegante** (dark) — near-black warm bg, gold primary, dark moody
-
-Selecting a preset: saves to `AdminSettings.stylePreset`, sets `document.documentElement.dataset.preset`, dispatches `preset-changed` event.
-
-### Visibility toggles
-
-Accordion section "Visibilità sezioni":
-
-- Sezione benvenuto (welcome section)
-- Foto coppia (hero photo)
-- Sezione regalo
-- Invito digitale
-
-Runtime effects are fully wired:
-
-- `showWelcomeSection`
-  - controls Home welcome block rendering
-- `showCouplePhoto`
-  - controls Home hero image vs plain background
-- `showGiftSection`
-  - controls `Regalo` link visibility in main navigation
-  - controls `/gift` route accessibility (disabled => NotFound)
-- `showEntrancePass`
-  - controls `Invito` link visibility in main navigation
-  - controls `/pass` route accessibility (disabled => NotFound)
+Removed from Admin and runtime.
+All public sections/routes are always active.
 
 ### Content editor
 
-Accordion section "Testi e contenuti":
+Direct content editor grouped in separate white cards by frontend area:
 
-- All `EditableContent` fields grouped by page (Home, Programma, Regalo, Invito)
+- Home
+- Benvenuto
+- Bottoni Home
+- Programma
+- Regalo
+- Invito / Pass
 - Saves on every keystroke to localStorage
 - Pages read from `getContent()` — changes reflect live
+- `Nome sposa`/`Nome sposo` were removed from editable fields
 
 ### RSVP list
 
 Always-visible scrollable list of RSVP cards:
 
 - Shows only confirmations received
-- Per-entry details: confirmed adults, children under 16 (if > 0), dietary flags (if selected)
+- Per-entry details: confirmed adults, people under 18 (if > 0), dietary quantities (only if > 0)
 - No outer container header/toolbar
 
 Admin home summary cards:
 
-- `Risposte` = total confirmations saved
 - `Confermati` = total confirmed adults (`sum(guestCount)`)
-- `Con diete` = confirmations with at least one dietary flag
 
 ## EditableContent fields
 
@@ -98,8 +77,6 @@ Admin home summary cards:
 interface EditableContent {
   introTagline;
   heroSubtitle;
-  brideName;
-  groomName;
   weddingTime;
   weddingLocation;
   weddingAddress;
@@ -125,4 +102,14 @@ interface EditableContent {
 }
 ```
 
-Note: event date is fixed at app level (`Venerdi 11 Setttembre`) and is not editable from Admin.
+Note: event date and couple names are fixed at app level and not editable from Admin.
+
+## Aggiornamento Allineamento Finale (2026-04-04)
+
+- Verificata coerenza runtime/documentazione con stato codice corrente.
+- Admin: in area `/admin*` hamburger nascosto; su `/admin` resta shortcut impostazioni.
+- Admin home: KPI unico `Confermati`.
+- Admin settings: editor contenuti in box bianchi separati per sezione frontend.
+- RSVP: header ridotto al solo titolo; select `Minorenni` con label `minorenne/minorenni`.
+- Tipografia canonica confermata: titoli serif, UI/testi sans.
+- Nessuna nuova logica business introdotta in questo allineamento documentale.

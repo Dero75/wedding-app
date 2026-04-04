@@ -1,7 +1,12 @@
 import { useEffect, useState } from "react";
 import { useLocation } from "wouter";
 import { getContent } from "@/lib/storage";
-import { FIXED_WEDDING_CITY, FIXED_WEDDING_DATE_LABEL } from "@/config/event";
+import {
+  FIXED_BRIDE_NAME,
+  FIXED_GROOM_NAME,
+  FIXED_WEDDING_CITY,
+  FIXED_WEDDING_DATE_LABEL,
+} from "@/config/event";
 
 export default function Intro() {
   const [, setLocation] = useLocation();
@@ -53,17 +58,14 @@ export default function Intro() {
 
         {/* Names */}
         <div className="text-center">
-          <p
-            className="font-serif text-sm tracking-[0.3em] uppercase mb-3"
-            style={{ color: "rgba(240,230,211,0.75)" }}
-          >
+          <p className="text-sm tracking-[0.3em] uppercase mb-3" style={{ color: "rgba(240,230,211,0.75)" }}>
             {c.introTagline}
           </p>
           <h1
             className="font-serif text-5xl sm:text-6xl leading-tight"
             style={{ color: "hsl(38 50% 97%)" }}
           >
-            {c.brideName}
+            {FIXED_BRIDE_NAME}
           </h1>
           <p className="font-serif text-2xl my-2" style={{ color: "rgba(201,185,154,0.8)" }}>
             &
@@ -72,7 +74,7 @@ export default function Intro() {
             className="font-serif text-5xl sm:text-6xl leading-tight"
             style={{ color: "hsl(38 50% 97%)" }}
           >
-            {c.groomName}
+            {FIXED_GROOM_NAME}
           </h1>
         </div>
 

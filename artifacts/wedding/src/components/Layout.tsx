@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { Link, useLocation } from "wouter";
 import { Menu, Settings, X } from "lucide-react";
 import DevRoleSwitch from "@/components/dev/DevRoleSwitch";
-import { getAdminSettings } from "@/lib/storage";
 
 const NAV_ITEMS = [
   { label: "Home", href: "/home" },
@@ -15,29 +14,19 @@ const NAV_ITEMS = [
 export default function Layout({ children }: { children: React.ReactNode }) {
   const [open, setOpen] = useState(false);
   const [location] = useLocation();
-  const [settings, setSettings] = useState(() => getAdminSettings());
   const showDevRoleSwitch =
     import.meta.env.DEV && (location === "/home" || location.startsWith("/admin"));
+  const isAdminRoute = location.startsWith("/admin");
   const isAdminHome = location === "/admin";
-  const visibleNavItems = NAV_ITEMS.filter((item) => {
-    if (item.href === "/gift") return settings.showGiftSection;
-    if (item.href === "/pass") return settings.showEntrancePass;
-    return true;
-  });
 
   useEffect(() => {
-    const syncSettings = () => setSettings(getAdminSettings());
-
-    window.addEventListener("storage", syncSettings);
-    window.addEventListener("admin-settings-changed", syncSettings);
-    return () => {
-      window.removeEventListener("storage", syncSettings);
-      window.removeEventListener("admin-settings-changed", syncSettings);
-    };
-  }, []);
+    if (isAdminRoute) {
+      setOpen(false);
+    }
+  }, [isAdminRoute]);
 
   return (
-    <div className="min-h-screen bg-background font-serif">
+    <div className="min-h-screen bg-background font-sans">
       {/* Fixed nav */}
       <header className="fixed top-0 left-0 right-0 z-50 bg-background/90 backdrop-blur-md border-b border-border">
         <div className="max-w-lg mx-auto px-5 h-14 flex items-center justify-between">
@@ -46,7 +35,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           ) : (
             <Link
               href="/home"
-              className="font-serif text-foreground text-base tracking-[0.2em] uppercase"
+              className="font-sans text-foreground text-base tracking-[0.2em] uppercase"
             >
               Home
             </Link>
@@ -60,6 +49,8 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             >
               <Settings size={20} />
             </Link>
+          ) : isAdminRoute ? (
+            <div className="w-8 h-8 -mr-2" aria-hidden="true" />
           ) : (
             <button
               data-testid="button-menu-toggle"
@@ -88,7 +79,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         }`}
       >
         <div className="flex items-center justify-between px-6 h-14 border-b border-border">
-          <span className="font-serif text-foreground text-sm tracking-[0.2em] uppercase">
+          <span className="font-sans text-foreground text-sm tracking-[0.2em] uppercase">
             Menu
           </span>
           <button
@@ -100,13 +91,13 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         </div>
 
         <div className="flex flex-col flex-1 px-6 pt-6 pb-8 gap-0.5">
-          {visibleNavItems.map((item) => (
+          {NAV_ITEMS.map((item) => (
             <Link
               key={item.href}
               href={item.href}
               data-testid={`link-nav-${item.label.toLowerCase()}`}
               onClick={() => setOpen(false)}
-              className={`py-3.5 text-base font-serif tracking-wide border-b border-border/50 transition-colors ${
+              className={`py-3.5 text-base font-sans tracking-wide border-b border-border/50 transition-colors ${
                 location === item.href ? "text-accent" : "text-foreground hover:text-accent"
               }`}
             >

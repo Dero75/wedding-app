@@ -5,7 +5,7 @@ import PageContainer from "@/components/PageContainer";
 import SectionTitle from "@/components/SectionTitle";
 import WeddingButton from "@/components/WeddingButton";
 import { getMyRSVP, getContent } from "@/lib/storage";
-import { FIXED_WEDDING_DATE_LABEL } from "@/config/event";
+import { FIXED_BRIDE_NAME, FIXED_GROOM_NAME, FIXED_WEDDING_DATE_LABEL } from "@/config/event";
 
 export default function EntrancePass() {
   const rsvp = getMyRSVP();
@@ -52,7 +52,7 @@ export default function EntrancePass() {
                 }}
               >
                 <p className="font-serif text-2xl" style={{ color: "rgba(240,220,180,0.6)" }}>
-                  {c.brideName} & {c.groomName}
+                  {FIXED_BRIDE_NAME} & {FIXED_GROOM_NAME}
                 </p>
               </div>
             </div>
@@ -105,7 +105,7 @@ export default function EntrancePass() {
                     className="font-serif text-3xl leading-snug"
                     style={{ color: "hsl(38 60% 95%)" }}
                   >
-                    {c.brideName}
+                    {FIXED_BRIDE_NAME}
                   </h2>
                   <p className="font-serif text-lg my-1" style={{ color: "rgba(201,185,154,0.7)" }}>
                     &
@@ -114,7 +114,7 @@ export default function EntrancePass() {
                     className="font-serif text-3xl leading-snug"
                     style={{ color: "hsl(38 60% 95%)" }}
                   >
-                    {c.groomName}
+                    {FIXED_GROOM_NAME}
                   </h2>
                 </div>
 
@@ -149,15 +149,19 @@ export default function EntrancePass() {
                     Ospite
                   </p>
                   <p
-                    className="font-serif text-xl leading-snug"
+                    className="font-sans text-xl leading-snug"
                     style={{ color: "hsl(38 60% 95%)" }}
                   >
-                    {rsvp.fullName}
+                    {`${rsvp.firstName} ${rsvp.lastName}`.trim()}
                   </p>
                   <p className="text-xs mt-0.5" style={{ color: "rgba(201,185,154,0.55)" }}>
                     {rsvp.guestCount} {rsvp.guestCount === 1 ? "adulto" : "adulti"}
                     {rsvp.childrenCount > 0
-                      ? ` · ${rsvp.childrenCount} ${rsvp.childrenCount === 1 ? "bambino" : "bambini"}`
+                      ? ` · ${rsvp.childrenCount} ${
+                          rsvp.childrenCount === 1
+                            ? "persona sotto i 18 anni"
+                            : "persone sotto i 18 anni"
+                        }`
                       : ""}
                   </p>
                 </div>

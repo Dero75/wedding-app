@@ -1,25 +1,4 @@
-import type { AdminSettings, EditableContent } from "@/lib/storage";
-
-export const STYLE_PRESETS = ["ivory", "dark"] as const;
-
-export const PRESET_LABELS: Record<AdminSettings["stylePreset"], string> = {
-  ivory: "Avorio Classico",
-  dark: "Serale Elegante",
-};
-
-export const PRESET_COLORS: Record<AdminSettings["stylePreset"], string> = {
-  ivory: "#FAF5EE",
-  dark: "#1C1410",
-};
-
-export const VISIBILITY_ITEMS = [
-  { key: "showWelcomeSection", label: "Sezione benvenuto" },
-  { key: "showCouplePhoto", label: "Foto coppia (hero)" },
-  { key: "showGiftSection", label: "Sezione regalo" },
-  { key: "showEntrancePass", label: "Invito digitale" },
-] as const;
-
-export type VisibilityKey = (typeof VISIBILITY_ITEMS)[number]["key"];
+import type { EditableContent } from "@/lib/storage";
 
 type ContentField = {
   key: keyof EditableContent;
@@ -36,13 +15,21 @@ export const CONTENT_SECTIONS: ContentSection[] = [
   {
     title: "Home",
     fields: [
-      { key: "brideName", label: "Nome sposa" },
-      { key: "groomName", label: "Nome sposo" },
       { key: "weddingTime", label: "Ora cerimonia" },
       { key: "weddingLocation", label: "Luogo" },
       { key: "weddingAddress", label: "Indirizzo" },
+    ],
+  },
+  {
+    title: "Benvenuto",
+    fields: [
       { key: "welcomeTitle", label: "Titolo benvenuto" },
       { key: "welcomeText", label: "Testo benvenuto", multiline: true },
+    ],
+  },
+  {
+    title: "Bottoni Home",
+    fields: [
       { key: "ctaRSVP", label: "Bottone RSVP" },
       { key: "ctaDetails", label: "Bottone programma" },
     ],
@@ -69,7 +56,7 @@ export const CONTENT_SECTIONS: ContentSection[] = [
     ],
   },
   {
-    title: "Invito digitale",
+    title: "Invito / Pass",
     fields: [
       { key: "passTitle", label: "Titolo pass" },
       { key: "passSubtitle", label: "Sottotitolo pass" },

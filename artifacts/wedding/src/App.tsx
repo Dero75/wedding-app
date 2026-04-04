@@ -12,24 +12,16 @@ import Gift from "@/pages/Gift";
 import EntrancePass from "@/pages/EntrancePass";
 import Admin from "@/pages/Admin";
 import AdminSettings from "@/pages/AdminSettings";
-import { clearAllLocalWeddingRecordsForSupabaseMigration, getAdminSettings } from "@/lib/storage";
+import {
+  clearAllLocalWeddingRecordsForSupabaseMigration,
+  clearLegacyAdminSettingsSnapshot,
+} from "@/lib/storage";
 
 const queryClient = new QueryClient();
 
-function PresetApplier() {
+function LegacyStorageSanitizer() {
   useEffect(() => {
-    const applyPreset = () => {
-      const { stylePreset } = getAdminSettings();
-      document.documentElement.dataset.preset = stylePreset;
-    };
-    applyPreset();
-    const handler = () => applyPreset();
-    window.addEventListener("storage", handler);
-    window.addEventListener("preset-changed", handler);
-    return () => {
-      window.removeEventListener("storage", handler);
-      window.removeEventListener("preset-changed", handler);
-    };
+    clearLegacyAdminSettingsSnapshot();
   }, []);
   return null;
 }
@@ -50,16 +42,14 @@ function DevLocalRecordsResetter() {
 }
 
 function Router() {
-  const settings = getAdminSettings();
-
   return (
     <Switch>
       <Route path="/" component={Intro} />
       <Route path="/home" component={Home} />
       <Route path="/rsvp" component={RSVP} />
       <Route path="/details" component={Details} />
-      <Route path="/gift" component={settings.showGiftSection ? Gift : NotFound} />
-      <Route path="/pass" component={settings.showEntrancePass ? EntrancePass : NotFound} />
+      <Route path="/gift" component={Gift} />
+      <Route path="/pass" component={EntrancePass} />
       <Route path="/admin/settings" component={AdminSettings} />
       <Route path="/admin" component={Admin} />
       <Route component={NotFound} />
@@ -71,7 +61,7 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
-        <PresetApplier />
+        <LegacyStorageSanitizer />
         <DevLocalRecordsResetter />
         <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, "")}>
           <Router />

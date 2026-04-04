@@ -26,7 +26,7 @@ export default function Gift() {
       <PageContainer>
         <SectionTitle title={c.giftTitle} subtitle="Regalo" />
 
-        <p className="text-center text-sm text-muted-foreground leading-relaxed mb-10">
+        <p className="text-center text-sm text-muted-foreground leading-relaxed mb-10 whitespace-pre-line">
           {c.giftText}
         </p>
 
@@ -49,7 +49,7 @@ export default function Gift() {
           <p className="text-xs text-muted-foreground uppercase tracking-widest mb-2">
             Intestatario
           </p>
-          <p className="font-serif text-lg mb-5" style={{ color: "hsl(var(--foreground))" }}>
+          <p className="font-sans text-lg mb-5" style={{ color: "hsl(var(--foreground))" }}>
             {c.giftHolder}
           </p>
 

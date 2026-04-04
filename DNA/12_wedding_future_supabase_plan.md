@@ -7,7 +7,7 @@ The current app uses localStorage only. This is intentional for the first versio
 ## What to keep
 
 - All pages and components stay exactly the same
-- The `RSVPEntry` and `AdminSettings` TypeScript types stay the same
+- The `RSVPEntry` TypeScript type stays the same
 - The routing and UX flow stays the same
 
 ## What to replace
@@ -19,20 +19,12 @@ The only file that needs to change is `src/lib/storage.ts`. Replace the localSto
 ```sql
 CREATE TABLE rsvps (
   id TEXT PRIMARY KEY,
-  full_name TEXT NOT NULL,
+  first_name TEXT NOT NULL,
+  last_name TEXT NOT NULL,
   guest_count INTEGER NOT NULL,
   children_count INTEGER NOT NULL DEFAULT 0,
-  dietary_flags TEXT[] NOT NULL DEFAULT '{}',
+  dietary_counts JSONB NOT NULL DEFAULT '{"vegetarian":0,"vegan":0,"celiac":0}',
   submitted_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
-);
-
-CREATE TABLE admin_settings (
-  id TEXT PRIMARY KEY DEFAULT 'singleton',
-  style_preset TEXT DEFAULT 'ivory',
-  show_couple_photo BOOLEAN DEFAULT TRUE,
-  show_gift_section BOOLEAN DEFAULT TRUE,
-  show_entrance_pass BOOLEAN DEFAULT TRUE,
-  section_titles JSONB
 );
 ```
 
@@ -42,8 +34,6 @@ CREATE TABLE admin_settings (
 // Replace these with Supabase calls:
 getRSVPs(): Promise<RSVPEntry[]>
 saveRSVP(entry: RSVPEntry): Promise<void>
-getAdminSettings(): Promise<AdminSettings>
-saveAdminSettings(settings: AdminSettings): Promise<void>
 ```
 
 ### Steps
@@ -69,3 +59,13 @@ Current status: credentials are stored for future migration planning only. Supab
 - Keep localStorage as a fallback for offline scenarios or use it for caching
 - The admin page should use Supabase Auth/roles to protect sensitive RSVP data
 - The `my_rsvp` identity should remain in localStorage so guests can identify themselves
+
+## Aggiornamento Allineamento Finale (2026-04-04)
+
+- Verificata coerenza runtime/documentazione con stato codice corrente.
+- Admin: in area `/admin*` hamburger nascosto; su `/admin` resta shortcut impostazioni.
+- Admin home: KPI unico `Confermati`.
+- Admin settings: editor contenuti in box bianchi separati per sezione frontend.
+- RSVP: header ridotto al solo titolo; select `Minorenni` con label `minorenne/minorenni`.
+- Tipografia canonica confermata: titoli serif, UI/testi sans.
+- Nessuna nuova logica business introdotta in questo allineamento documentale.

@@ -9,18 +9,13 @@ export default function Admin() {
   const rsvps = getRSVPs();
 
   const confirmedAdults = rsvps.reduce((acc, rsvp) => acc + rsvp.guestCount, 0);
-  const withDietaryFlagsCount = rsvps.filter((rsvp) => rsvp.dietaryFlags.length > 0).length;
 
   return (
     <Layout>
       <PageContainer className="h-[calc(100dvh-3.5rem)] max-h-[calc(100dvh-3.5rem)] overflow-hidden flex flex-col pt-8 pb-4">
         <SectionTitle title="Gestione Invitati" />
 
-        <AdminStats
-          totalResponses={rsvps.length}
-          confirmedAdults={confirmedAdults}
-          withDietaryFlagsCount={withDietaryFlagsCount}
-        />
+        <AdminStats confirmedAdults={confirmedAdults} />
 
         <div className="flex-1 min-h-0">
           <AdminRsvpSection rsvps={rsvps} />

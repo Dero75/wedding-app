@@ -19,22 +19,28 @@ describe("RSVP confirm-only flow and pass gating", () => {
     expect(screen.queryByTestId("radio-attending-yes")).not.toBeInTheDocument();
     expect(screen.queryByTestId("radio-attending-no")).not.toBeInTheDocument();
 
-    fireEvent.change(screen.getByTestId("input-full-name"), {
-      target: { value: "Mario Rossi" },
+    fireEvent.change(screen.getByTestId("input-first-name"), {
+      target: { value: "Mario" },
+    });
+    fireEvent.change(screen.getByTestId("input-last-name"), {
+      target: { value: "Rossi" },
     });
     fireEvent.change(screen.getByTestId("select-guest-count"), {
       target: { value: "2" },
     });
-    fireEvent.click(screen.getByTestId("toggle-dietary-celiac"));
+    fireEvent.change(screen.getByTestId("select-dietary-celiac"), {
+      target: { value: "1" },
+    });
     fireEvent.click(screen.getByTestId("button-submit-rsvp"));
 
     expect(await screen.findByText("Grazie, Mario Rossi!")).toBeInTheDocument();
     expect(screen.getByText("Conferma")).toBeInTheDocument();
     expect(screen.getByText("Registrata ✓")).toBeInTheDocument();
-    expect(screen.getByText("Celiaco")).toBeInTheDocument();
+    expect(screen.getByText(/Celiaco/)).toBeInTheDocument();
 
     fireEvent.click(screen.getByTestId("button-edit-rsvp"));
-    expect(screen.getByTestId("input-full-name")).toBeInTheDocument();
+    expect(screen.getByTestId("input-first-name")).toBeInTheDocument();
+    expect(screen.getByTestId("input-last-name")).toBeInTheDocument();
   });
 
   it("shows pass only when a confirmation exists", () => {
@@ -50,9 +56,11 @@ describe("RSVP confirm-only flow and pass gating", () => {
       "wedding_my_rsvp",
       JSON.stringify({
         id: "ok-1",
-        fullName: "Giulia Verdi",
+        firstName: "Giulia",
+        lastName: "Verdi",
         guestCount: 2,
-        dietaryFlags: ["vegetarian"],
+        childrenCount: 0,
+        dietaryCounts: { vegetarian: 1, vegan: 0, celiac: 0 },
         submittedAt: new Date().toISOString(),
       }),
     );
@@ -61,9 +69,11 @@ describe("RSVP confirm-only flow and pass gating", () => {
       JSON.stringify([
         {
           id: "ok-1",
-          fullName: "Giulia Verdi",
+          firstName: "Giulia",
+          lastName: "Verdi",
           guestCount: 2,
-          dietaryFlags: ["vegetarian"],
+          childrenCount: 0,
+          dietaryCounts: { vegetarian: 1, vegan: 0, celiac: 0 },
           submittedAt: new Date().toISOString(),
         },
       ]),

@@ -12,12 +12,12 @@ Cosa funziona davvero oggi:
 - Flusso RSVP funzionante con persistenza locale e modifica risposta.
 - Pass digitale funzionante con stato bloccato/sbloccato in base a RSVP locale.
 - Admin funzionante con riepilogo RSVP, lista RSVP e pagina separata impostazioni.
-- Preset tema (`ivory`, `dark`) applicati in runtime.
+- Tema visivo unico canonico (`Avorio Classico`) applicato in runtime.
 
 Cosa è incompleto:
 - Nessun backend reale per RSVP/contenuti (tutto in localStorage, per-device).
 - API server esiste ma espone solo healthcheck (`/api/healthz`) e non è integrato nel runtime wedding.
-- Copertura test ancora parziale, ma i flussi critici toccati sono coperti (12 test attivi su RSVP/admin visibility/pass/storage).
+- Copertura test ancora parziale, ma i flussi critici toccati sono coperti (13 test attivi su RSVP/admin runtime/pass/storage).
 
 Cosa è temporaneo:
 - Switch `USER/ADMIN` in header visibile solo in DEV (`DevRoleSwitch`).
@@ -68,14 +68,12 @@ Configurazioni principali:
 
 Home Admin (`/admin`) oggi contiene:
 - Titolo pagina.
-- `AdminStats` (risposte, adulti confermati, conferme con flag alimentari).
+- `AdminStats` con KPI unico: adulti confermati.
 - Lista RSVP card-based sempre visibile in area scrollabile interna (senza container/header dedicato).
 
 Sezioni esistenti e separazione:
 - Configurazioni app sono state separate in `/admin/settings`:
-  - stile app,
-  - visibilità sezioni,
-  - testi e contenuti.
+  - testi e contenuti (campi raggruppati in box separati per sezioni reali frontend).
 
 Cosa è già separato:
 - La home admin è focalizzata su RSVP/adesioni.
@@ -89,17 +87,16 @@ Problemi UX/strutturali rilevati:
 
 ## 4. Gestione contenuti
 
-Dove sono salvati testi/toggle/config:
+Dove sono salvati testi/config:
 - `wedding_content` in localStorage (contenuti editabili).
-- `wedding_admin_settings` in localStorage (preset + toggle).
+- `wedding_admin_settings` rimosso a runtime come chiave legacy.
 - Logica in `artifacts/wedding/src/lib/storage.ts`.
 
 Contenuti modificabili oggi:
-- Nomi sposi, testi home, CTA, dettagli programma, testi regalo, testi pass.
-- Preset stile e toggle visibilità definiti in admin.
+- Testi home, CTA, dettagli programma, testi regalo, testi pass.
 
 Contenuti non modificabili oggi:
-- Data/città evento fisse in `src/config/event.ts` (`Venerdi 11 Setttembre - Bologna.`).
+- Data/città evento e nomi sposi fissi in `src/config/event.ts`.
 
 Criticità architetturali:
 - Salvataggio admin on-change a ogni input (semplice e reattivo, ma senza debounce/versioning).
@@ -108,9 +105,9 @@ Criticità architetturali:
 ## 5. RSVP e logica utente
 
 Stato reale del flusso RSVP:
-- Form conferma-only con validazione zod (`fullName`, `guestCount`, `childrenCount`, `dietaryFlags`).
+- Form conferma-only con validazione zod (`firstName`, `lastName`, `guestCount`, `childrenCount`, `dietaryCounts`).
 - Conferma post-invio con possibilità di modifica.
-- Testo corrente: "Le adesioni sono sempre aperte."
+- Header RSVP semplificato: solo titolo "Conferma la tua presenza" (kicker/testo extra rimossi).
 - Nessuna opzione di rifiuto esplicito nel runtime.
 
 Cosa viene salvato:
@@ -144,6 +141,7 @@ Limiti/simplificazioni attuali:
 
 File troppo lunghi:
 - Nessun file funzionale oltre 350 righe.
+- `artifacts/wedding/src/lib/storage.ts` è stato ridotto a 349 righe.
 - File più grande: `artifacts/wedding/src/index.css` (~498 righe), coerente con ruolo style-system.
 
 Moduli troppo accoppiati:
@@ -201,7 +199,7 @@ Scorciatoie locali/hack:
   - È il contenitore canonico delle impostazioni app.
 
 - `artifacts/wedding/src/pages/admin/constants.ts`
-  - Contiene mapping dei campi/toggle admin; qui si crea facilmente mismatch con il runtime.
+  - Contiene mapping campi contenuto admin; va mantenuto coerente col runtime.
 
 - `artifacts/wedding/src/components/Layout.tsx`
   - Gestisce nav globale + switch DEV; punto sensibile per UX mobile e accessibilità.
@@ -220,3 +218,13 @@ Scorciatoie locali/hack:
 
 - `artifacts/mockup-sandbox/package.json`
   - Principale concentratore attuale di dipendenze/file non usati.
+
+## Aggiornamento Allineamento Finale (2026-04-04)
+
+- Verificata coerenza runtime/documentazione con stato codice corrente.
+- Admin: in area `/admin*` hamburger nascosto; su `/admin` resta shortcut impostazioni.
+- Admin home: KPI unico `Confermati`.
+- Admin settings: editor contenuti in box bianchi separati per sezione frontend.
+- RSVP: header ridotto al solo titolo; select `Minorenni` con label `minorenne/minorenni`.
+- Tipografia canonica confermata: titoli serif, UI/testi sans.
+- Nessuna nuova logica business introdotta in questo allineamento documentale.

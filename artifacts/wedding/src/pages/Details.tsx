@@ -32,7 +32,9 @@ export default function Details() {
           <p className="text-sm text-muted-foreground mb-1">{c.ceremonyPlace}</p>
           <p className="text-xs text-muted-foreground mb-6">{c.ceremonyAddress}</p>
           {c.ceremonyNote && (
-            <p className="text-xs italic text-muted-foreground mb-6">{c.ceremonyNote}</p>
+            <p className="text-xs italic text-muted-foreground mb-6 whitespace-pre-line text-center">
+              {c.ceremonyNote}
+            </p>
           )}
           <a
             href={ceremonyMapsUrl}
@@ -65,7 +67,9 @@ export default function Details() {
           <p className="text-sm text-muted-foreground mb-1">{c.receptionPlace}</p>
           <p className="text-xs text-muted-foreground mb-6">{c.receptionAddress}</p>
           {c.receptionNote && (
-            <p className="text-xs italic text-muted-foreground mb-6">{c.receptionNote}</p>
+            <p className="text-xs italic text-muted-foreground mb-6 whitespace-pre-line text-center">
+              {c.receptionNote}
+            </p>
           )}
           <a
             href={receptionMapsUrl}

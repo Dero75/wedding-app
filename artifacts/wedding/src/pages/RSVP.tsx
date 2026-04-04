@@ -4,6 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import Layout from "@/components/Layout";
 import PageContainer from "@/components/PageContainer";
 import SectionTitle from "@/components/SectionTitle";
+import { createDefaultDietaryCounts } from "@/config/rsvp";
 import { generateId, getMyRSVP, saveMyRSVP, type RSVPEntry } from "@/lib/storage";
 import RsvpConfirmationView from "@/pages/rsvp/components/RsvpConfirmationView";
 import RsvpForm from "@/pages/rsvp/components/RsvpForm";
@@ -16,30 +17,33 @@ export default function RSVP() {
   const form = useForm<RSVPFormData>({
     resolver: zodResolver(rsvpSchema),
     defaultValues: {
-      fullName: submitted?.fullName ?? "",
+      firstName: submitted?.firstName ?? "",
+      lastName: submitted?.lastName ?? "",
       guestCount: submitted?.guestCount ?? 1,
       childrenCount: submitted?.childrenCount ?? 0,
-      dietaryFlags: submitted?.dietaryFlags ?? [],
+      dietaryCounts: submitted?.dietaryCounts ?? createDefaultDietaryCounts(),
     },
   });
 
   useEffect(() => {
     if (!editing || !submitted) return;
     form.reset({
-      fullName: submitted.fullName,
+      firstName: submitted.firstName,
+      lastName: submitted.lastName,
       guestCount: submitted.guestCount,
       childrenCount: submitted.childrenCount,
-      dietaryFlags: submitted.dietaryFlags,
+      dietaryCounts: submitted.dietaryCounts,
     });
   }, [editing, submitted, form]);
 
   const onSubmit = (data: RSVPFormData) => {
     const entry: RSVPEntry = {
       id: submitted?.id ?? generateId(),
-      fullName: data.fullName,
+      firstName: data.firstName,
+      lastName: data.lastName,
       guestCount: data.guestCount,
       childrenCount: data.childrenCount,
-      dietaryFlags: data.dietaryFlags,
+      dietaryCounts: data.dietaryCounts,
       submittedAt: new Date().toISOString(),
     };
 
@@ -58,11 +62,7 @@ export default function RSVP() {
   return (
     <Layout>
       <PageContainer>
-        <SectionTitle title="Conferma la tua presenza" subtitle="RSVP" />
-
-        <p className="text-center text-sm text-muted-foreground mb-8">
-          Le adesioni sono sempre aperte.
-        </p>
+        <SectionTitle title="Conferma la tua presenza" />
 
         {!showForm && submitted && (
           <RsvpConfirmationView submitted={submitted} onEdit={() => setEditing(true)} />

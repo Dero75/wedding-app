@@ -52,10 +52,9 @@
 }
 
 /* ═══════════════════════════════════════════════════════════
-   PRESET: IVORY (default) — warm ivory, deep brown, dusty rose
+   CANONICAL THEME: Avorio Classico
    ═══════════════════════════════════════════════════════════ */
-:root,
-[data-preset="ivory"] {
+:root {
   --button-outline: rgba(74, 55, 40, 0.12);
   --badge-outline: rgba(74, 55, 40, 0.06);
   --opaque-button-border-intensity: -8;
@@ -154,101 +153,6 @@
 }
 
 /* ═══════════════════════════════════════════════════════════
-   PRESET: DARK — moody evening, near-black warm, gold accents
-   ═══════════════════════════════════════════════════════════ */
-[data-preset="dark"] {
-  --button-outline: rgba(240, 220, 180, 0.12);
-  --badge-outline: rgba(240, 220, 180, 0.06);
-  --opaque-button-border-intensity: 9;
-  --elevate-1: rgba(240, 220, 180, 0.05);
-  --elevate-2: rgba(240, 220, 180, 0.1);
-
-  --background: 22 22% 9%;
-  --foreground: 38 40% 90%;
-  --border: 22 18% 22%;
-  --card: 22 22% 13%;
-  --card-foreground: 38 40% 90%;
-  --card-border: 22 18% 22%;
-  --sidebar: 22 22% 11%;
-  --sidebar-foreground: 38 40% 90%;
-  --sidebar-border: 22 18% 22%;
-  --sidebar-primary: 38 55% 62%;
-  --sidebar-primary-foreground: 22 22% 9%;
-  --sidebar-accent: 22 22% 20%;
-  --sidebar-accent-foreground: 38 40% 90%;
-  --sidebar-ring: 38 55% 62%;
-  --popover: 22 22% 13%;
-  --popover-foreground: 38 40% 90%;
-  --popover-border: 22 18% 22%;
-  --primary: 38 55% 62%;
-  --primary-foreground: 22 22% 9%;
-  --secondary: 22 22% 20%;
-  --secondary-foreground: 38 40% 90%;
-  --muted: 22 18% 18%;
-  --muted-foreground: 33 25% 62%;
-  --accent: 38 65% 52%;
-  --accent-foreground: 22 22% 9%;
-  --destructive: 0 65% 45%;
-  --destructive-foreground: 38 40% 90%;
-  --input: 22 18% 25%;
-  --ring: 38 55% 62%;
-
-  --p-hero-from: rgba(15, 10, 7, 0.85);
-  --p-hero-mid: rgba(15, 10, 7, 0.4);
-  --p-intro-bg: #0f0a07;
-  --p-intro-radial: #2c1e12;
-  --p-pass-bg-from: #1c1410;
-  --p-pass-bg-to: #2e2018;
-  --p-accent-hex: #c9a15a;
-  --p-taupe-hex: #8a7055;
-  --p-sage-hex: #6b8a70;
-  --p-muted-hex: #9a8570;
-  --p-deep-hex: #f0deb8;
-  --p-bg-hex: #17110c;
-  --p-beige-hex: #1e1710;
-  --p-border-hex: #2c2318;
-  --p-card-border-hex: #352a1e;
-
-  --shadow-2xs: 0 1px 2px rgba(0, 0, 0, 0.4);
-  --shadow-xs: 0 2px 4px rgba(0, 0, 0, 0.45);
-  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.45), 0 1px 2px rgba(0, 0, 0, 0.35);
-  --shadow: 0 4px 8px rgba(0, 0, 0, 0.5), 0 2px 4px rgba(0, 0, 0, 0.35);
-  --shadow-md: 0 6px 12px rgba(0, 0, 0, 0.55);
-  --shadow-lg: 0 10px 20px rgba(0, 0, 0, 0.6);
-  --shadow-xl: 0 16px 32px rgba(0, 0, 0, 0.65);
-  --shadow-2xl: 0 24px 48px rgba(0, 0, 0, 0.7);
-
-  --sidebar-primary-border: hsl(var(--sidebar-primary));
-  --sidebar-primary-border: hsl(
-    from hsl(var(--sidebar-primary)) h s calc(l + var(--opaque-button-border-intensity)) / alpha
-  );
-  --sidebar-accent-border: hsl(var(--sidebar-accent));
-  --sidebar-accent-border: hsl(
-    from hsl(var(--sidebar-accent)) h s calc(l + var(--opaque-button-border-intensity)) / alpha
-  );
-  --primary-border: hsl(var(--primary));
-  --primary-border: hsl(
-    from hsl(var(--primary)) h s calc(l + var(--opaque-button-border-intensity)) / alpha
-  );
-  --secondary-border: hsl(var(--secondary));
-  --secondary-border: hsl(
-    from hsl(var(--secondary)) h s calc(l + var(--opaque-button-border-intensity)) / alpha
-  );
-  --muted-border: hsl(var(--muted));
-  --muted-border: hsl(
-    from hsl(var(--muted)) h s calc(l + var(--opaque-button-border-intensity)) / alpha
-  );
-  --accent-border: hsl(var(--accent));
-  --accent-border: hsl(
-    from hsl(var(--accent)) h s calc(l + var(--opaque-button-border-intensity)) / alpha
-  );
-  --destructive-border: hsl(var(--destructive));
-  --destructive-border: hsl(
-    from hsl(var(--destructive)) h s calc(l + var(--opaque-button-border-intensity)) / alpha
-  );
-}
-
-/* ═══════════════════════════════════════════════════════════
    BASE STYLES
    ═══════════════════════════════════════════════════════════ */
 @layer base {
@@ -262,6 +166,15 @@
 
   body {
     @apply font-sans antialiased bg-background text-foreground;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-serif;
   }
 }
 

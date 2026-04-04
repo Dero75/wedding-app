@@ -1,12 +1,17 @@
-import { DIETARY_FLAG_VALUES, type DietaryFlag } from "@/config/rsvp";
+import {
+  DIETARY_FLAG_VALUES,
+  createDefaultDietaryCounts,
+  type DietaryCounts,
+  type DietaryFlag,
+} from "@/config/rsvp";
 
 const PREFIX = "wedding_";
 const STORAGE_KEYS = {
   content: "content",
-  adminSettings: "admin_settings",
   rsvps: "rsvps",
   myRsvp: "my_rsvp",
 } as const;
+const LEGACY_ADMIN_SETTINGS_KEY = "admin_settings";
 
 function storageGet<T>(key: string, fallback: T): T {
   try {
@@ -33,16 +38,11 @@ function storageRemove(key: string): void {
     // ignore
   }
 }
-
-// ─── EDITABLE CONTENT ───────────────────────────────────────────────────────
-
 export interface EditableContent {
   // Intro
   introTagline: string;
   // Home hero
   heroSubtitle: string;
-  brideName: string;
-  groomName: string;
   weddingTime: string;
   weddingLocation: string;
   weddingAddress: string;
@@ -74,8 +74,6 @@ export interface EditableContent {
 const DEFAULT_CONTENT: EditableContent = {
   introTagline: "il matrimonio di",
   heroSubtitle: "il matrimonio di",
-  brideName: "Deborah",
-  groomName: "Davide",
   weddingTime: "16:00",
   weddingLocation: "Villa Borgonuovo",
   weddingAddress: "Via Borgonuovo 12, 40125 Bologna",
@@ -125,53 +123,16 @@ export function saveContent(content: EditableContent): void {
   storageSet(STORAGE_KEYS.content, content);
 }
 
-// ─── ADMIN SETTINGS ─────────────────────────────────────────────────────────
-
-export interface AdminSettings {
-  stylePreset: "ivory" | "dark";
-  showCouplePhoto: boolean;
-  showWelcomeSection: boolean;
-  showGiftSection: boolean;
-  showEntrancePass: boolean;
+export function clearLegacyAdminSettingsSnapshot(): void {
+  storageRemove(LEGACY_ADMIN_SETTINGS_KEY);
 }
-
-export const DEFAULT_ADMIN_SETTINGS: AdminSettings = {
-  stylePreset: "ivory",
-  showCouplePhoto: true,
-  showWelcomeSection: true,
-  showGiftSection: true,
-  showEntrancePass: true,
-};
-
-function sanitizeStylePreset(value: unknown): AdminSettings["stylePreset"] {
-  if (value === "dark") return "dark";
-  return "ivory";
-}
-
-export function getAdminSettings(): AdminSettings {
-  const saved = storageGet<Partial<AdminSettings>>(STORAGE_KEYS.adminSettings, {});
-  return {
-    ...DEFAULT_ADMIN_SETTINGS,
-    ...saved,
-    stylePreset: sanitizeStylePreset(saved.stylePreset),
-  };
-}
-
-export function saveAdminSettings(settings: AdminSettings): void {
-  storageSet(STORAGE_KEYS.adminSettings, settings);
-  if (typeof window !== "undefined") {
-    window.dispatchEvent(new Event("admin-settings-changed"));
-  }
-}
-
-// ─── RSVP ───────────────────────────────────────────────────────────────────
-
 export interface RSVPEntry {
   id: string;
-  fullName: string;
+  firstName: string;
+  lastName: string;
   guestCount: number;
   childrenCount: number;
-  dietaryFlags: DietaryFlag[];
+  dietaryCounts: DietaryCounts;
   submittedAt: string;
 }
 
@@ -206,65 +167,135 @@ function sanitizeDietaryFlags(value: unknown, legacyDietaryNotes?: unknown): Die
   return uniqueDietaryFlags(sanitized);
 }
 
+function splitLegacyFullName(fullName: string): { firstName: string; lastName: string } | null {
+  const parts = fullName
+    .split(/\s+/)
+    .map((part) => part.trim())
+    .filter(Boolean);
+  if (parts.length === 0) return null;
+
+  return {
+    firstName: parts[0],
+    lastName: parts.slice(1).join(" "),
+  };
+}
+
+function sanitizeNameFields(item: Record<string, unknown>): {
+  firstName: string;
+  lastName: string;
+  mutated: boolean;
+} | null {
+  const firstName = typeof item.firstName === "string" ? item.firstName.trim() : "";
+  const lastName = typeof item.lastName === "string" ? item.lastName.trim() : "";
+
+  if (firstName) {
+    return { firstName, lastName, mutated: typeof item.fullName === "string" };
+  }
+
+  const fullName = typeof item.fullName === "string" ? item.fullName.trim() : "";
+  if (!fullName) return null;
+
+  const split = splitLegacyFullName(fullName);
+  if (!split) return null;
+
+  return { ...split, mutated: true };
+}
+
+function createDietaryCountsFromFlags(flags: DietaryFlag[]): DietaryCounts {
+  const counts = createDefaultDietaryCounts();
+  for (const flag of flags) {
+    counts[flag] = 1;
+  }
+  return counts;
+}
+
+function sanitizeDietaryCounts(
+  value: unknown,
+  legacyFlags: unknown,
+  legacyDietaryNotes: unknown,
+): DietaryCounts {
+  if (!value || typeof value !== "object" || Array.isArray(value)) {
+    return createDietaryCountsFromFlags(sanitizeDietaryFlags(legacyFlags, legacyDietaryNotes));
+  }
+
+  const counts = createDefaultDietaryCounts();
+  const source = value as Record<string, unknown>;
+  for (const flag of DIETARY_FLAG_VALUES) {
+    const raw = source[flag];
+    counts[flag] =
+      typeof raw === "number" && Number.isFinite(raw) ? Math.max(0, Math.min(10, Math.floor(raw))) : 0;
+  }
+  return counts;
+}
+
+function hasExactDietaryCountsSnapshot(value: unknown, counts: DietaryCounts): boolean {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return false;
+  const source = value as Record<string, unknown>;
+  return DIETARY_FLAG_VALUES.every((flag) => source[flag] === counts[flag]);
+}
+
+function sanitizeRsvpEntry(value: unknown): { entry: RSVPEntry | null; mutated: boolean } {
+  if (!value || typeof value !== "object") return { entry: null, mutated: false };
+  const item = value as Record<string, unknown>;
+
+  if (item.attending === false) {
+    return { entry: null, mutated: true };
+  }
+
+  const names = sanitizeNameFields(item);
+  if (!names) {
+    return { entry: null, mutated: true };
+  }
+
+  const guestCountRaw = item.guestCount;
+  const guestCount =
+    typeof guestCountRaw === "number" && Number.isFinite(guestCountRaw)
+      ? Math.max(1, Math.floor(guestCountRaw))
+      : 1;
+
+  const childrenCountRaw = item.childrenCount;
+  const childrenCount =
+    typeof childrenCountRaw === "number" && Number.isFinite(childrenCountRaw)
+      ? Math.max(0, Math.floor(childrenCountRaw))
+      : 0;
+
+  const dietaryCounts = sanitizeDietaryCounts(item.dietaryCounts, item.dietaryFlags, item.dietaryNotes);
+
+  const mutated =
+    names.mutated ||
+    guestCount !== guestCountRaw ||
+    childrenCount !== childrenCountRaw ||
+    !hasExactDietaryCountsSnapshot(item.dietaryCounts, dietaryCounts) ||
+    Array.isArray(item.dietaryFlags) ||
+    typeof item.dietaryNotes === "string" ||
+    typeof item.message === "string" ||
+    typeof item.fullName === "string";
+
+  return {
+    entry: {
+      id: typeof item.id === "string" ? item.id : generateId(),
+      firstName: names.firstName,
+      lastName: names.lastName,
+      guestCount,
+      childrenCount,
+      dietaryCounts,
+      submittedAt: typeof item.submittedAt === "string" ? item.submittedAt : new Date().toISOString(),
+    },
+    mutated,
+  };
+}
+
 export function getRSVPs(): RSVPEntry[] {
   const raw = storageGet<unknown[]>(STORAGE_KEYS.rsvps, []);
   let hasLegacyMutation = false;
 
   const sanitized: RSVPEntry[] = raw
     .map((value) => {
-      if (!value || typeof value !== "object") return null;
-      const item = value as Record<string, unknown>;
-
-      // Legacy model had explicit declines (`attending: false`), now removed.
-      if (item.attending === false) {
-        hasLegacyMutation = true;
-        return null;
-      }
-
-      const fullName = typeof item.fullName === "string" ? item.fullName.trim() : "";
-      if (!fullName) {
-        hasLegacyMutation = true;
-        return null;
-      }
-
-      const guestCountRaw = item.guestCount;
-      const guestCount =
-        typeof guestCountRaw === "number" && Number.isFinite(guestCountRaw)
-          ? Math.max(1, Math.floor(guestCountRaw))
-          : 1;
-      if (guestCount !== guestCountRaw) {
+      const result = sanitizeRsvpEntry(value);
+      if (result.mutated) {
         hasLegacyMutation = true;
       }
-
-      const childrenCountRaw = item.childrenCount;
-      const childrenCount =
-        typeof childrenCountRaw === "number" && Number.isFinite(childrenCountRaw)
-          ? Math.max(0, Math.floor(childrenCountRaw))
-          : 0;
-      if (childrenCount !== childrenCountRaw) {
-        hasLegacyMutation = true;
-      }
-
-      const dietaryFlags = sanitizeDietaryFlags(item.dietaryFlags, item.dietaryNotes);
-      if (
-        !Array.isArray(item.dietaryFlags) ||
-        JSON.stringify(item.dietaryFlags) !== JSON.stringify(dietaryFlags)
-      ) {
-        hasLegacyMutation = true;
-      }
-
-      if (typeof item.dietaryNotes === "string" || typeof item.message === "string") {
-        hasLegacyMutation = true;
-      }
-
-      return {
-        id: typeof item.id === "string" ? item.id : generateId(),
-        fullName,
-        guestCount,
-        childrenCount,
-        dietaryFlags,
-        submittedAt: typeof item.submittedAt === "string" ? item.submittedAt : new Date().toISOString(),
-      };
+      return result.entry;
     })
     .filter((entry): entry is RSVPEntry => entry !== null);
 
@@ -288,42 +319,18 @@ function saveRSVP(entry: RSVPEntry): void {
 
 export function getMyRSVP(): RSVPEntry | null {
   const raw = storageGet<unknown>(STORAGE_KEYS.myRsvp, null);
-  if (!raw || typeof raw !== "object") return null;
+  if (!raw) return null;
 
-  const item = raw as Record<string, unknown>;
-  if (item.attending === false) {
+  const { entry, mutated } = sanitizeRsvpEntry(raw);
+  if (!entry) {
     storageRemove(STORAGE_KEYS.myRsvp);
     return null;
   }
 
-  const fullName = typeof item.fullName === "string" ? item.fullName.trim() : "";
-  if (!fullName) return null;
-
-  const guestCountRaw = item.guestCount;
-  const guestCount =
-    typeof guestCountRaw === "number" && Number.isFinite(guestCountRaw)
-      ? Math.max(1, Math.floor(guestCountRaw))
-      : 1;
-
-  const childrenCountRaw = item.childrenCount;
-  const childrenCount =
-    typeof childrenCountRaw === "number" && Number.isFinite(childrenCountRaw)
-      ? Math.max(0, Math.floor(childrenCountRaw))
-      : 0;
-
-  const dietaryFlags = sanitizeDietaryFlags(item.dietaryFlags, item.dietaryNotes);
-
-  const sanitized: RSVPEntry = {
-    id: typeof item.id === "string" ? item.id : generateId(),
-    fullName,
-    guestCount,
-    childrenCount,
-    dietaryFlags,
-    submittedAt: typeof item.submittedAt === "string" ? item.submittedAt : new Date().toISOString(),
-  };
-
-  storageSet(STORAGE_KEYS.myRsvp, sanitized);
-  return sanitized;
+  if (mutated) {
+    storageSet(STORAGE_KEYS.myRsvp, entry);
+  }
+  return entry;
 }
 
 export function saveMyRSVP(entry: RSVPEntry): void {
@@ -339,5 +346,5 @@ export function clearAllLocalWeddingRecordsForSupabaseMigration(): void {
   storageRemove(STORAGE_KEYS.rsvps);
   storageRemove(STORAGE_KEYS.myRsvp);
   storageRemove(STORAGE_KEYS.content);
-  storageRemove(STORAGE_KEYS.adminSettings);
+  clearLegacyAdminSettingsSnapshot();
 }

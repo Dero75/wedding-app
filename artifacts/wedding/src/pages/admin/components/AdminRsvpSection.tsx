@@ -1,4 +1,4 @@
-import { DIETARY_FLAG_LABELS } from "@/config/rsvp";
+import { DIETARY_FLAG_LABELS, DIETARY_FLAG_VALUES } from "@/config/rsvp";
 import type { RSVPEntry } from "@/lib/storage";
 
 interface AdminRsvpSectionProps {
@@ -14,30 +14,32 @@ export default function AdminRsvpSection({ rsvps }: AdminRsvpSectionProps) {
         rsvps.map((rsvp) => (
           <div
             key={rsvp.id}
-            className="p-3 rounded-xl border border-border bg-card"
+            className="p-3 rounded-xl border border-border bg-white"
           >
             <div className="min-w-0">
               <p
-                className="font-serif text-[0.98rem] leading-snug"
+                className="font-sans text-[0.98rem] leading-snug"
                 style={{ color: "hsl(var(--foreground))" }}
                 data-testid={`rsvp-name-${rsvp.id}`}
               >
-                {rsvp.fullName}
+                {`${rsvp.firstName} ${rsvp.lastName}`.trim()}
               </p>
               <p className="font-sans text-xs text-muted-foreground mt-0.5">
                 Confermato · {rsvp.guestCount} {rsvp.guestCount === 1 ? "adulto" : "adulti"}
                 {rsvp.childrenCount > 0
-                  ? ` · ${rsvp.childrenCount} ${rsvp.childrenCount === 1 ? "bambino" : "bambini"}`
+                  ? ` · ${rsvp.childrenCount} ${
+                      rsvp.childrenCount === 1 ? "persona sotto i 18 anni" : "persone sotto i 18 anni"
+                    }`
                   : ""}
               </p>
-              {rsvp.dietaryFlags.length > 0 && (
+              {DIETARY_FLAG_VALUES.some((flag) => rsvp.dietaryCounts[flag] > 0) && (
                 <div className="mt-1.5 flex flex-wrap gap-1.5">
-                  {rsvp.dietaryFlags.map((flag) => (
+                  {DIETARY_FLAG_VALUES.filter((flag) => rsvp.dietaryCounts[flag] > 0).map((flag) => (
                     <span
                       key={flag}
                       className="inline-flex items-center rounded-full border border-border px-2 py-0.5 text-[10px] uppercase tracking-wide text-muted-foreground"
                     >
-                      {DIETARY_FLAG_LABELS[flag]}
+                      {DIETARY_FLAG_LABELS[flag]}: {rsvp.dietaryCounts[flag]}
                     </span>
                   ))}
                 </div>

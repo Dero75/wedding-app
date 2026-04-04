@@ -12,8 +12,8 @@ Runtime RSVP model is now confirm-only:
 
 - Removed `attending` from canonical `RSVPEntry`.
 - Removed free text fields `dietaryNotes` and `message` from canonical `RSVPEntry`.
-- Added structured `dietaryFlags` (`vegetarian`, `vegan`, `celiac`).
-- Added `childrenCount` for guests under 16.
+- Added structured `dietaryCounts` (`vegetarian`, `vegan`, `celiac`) with numeric quantities.
+- Added `childrenCount` for guests under 18.
 - RSVP form no longer asks yes/no attendance.
 - RSVP page now bootstraps `my_rsvp` once at mount and edits via local state (no per-render storage read loop).
 - Pass now depends only on existence of a valid confirmation (`my_rsvp`).
@@ -24,17 +24,15 @@ Runtime RSVP model is now confirm-only:
 Handled centrally in `src/lib/storage.ts`:
 
 - `getRSVPs()` drops legacy entries with `attending: false`.
-- `getRSVPs()` sanitizes legacy RSVP payloads from `dietaryNotes`/`message` to `dietaryFlags`.
+- `getRSVPs()` sanitizes legacy RSVP payloads from `dietaryNotes`/`message` to `dietaryCounts`.
 - `getMyRSVP()` clears legacy `my_rsvp` with `attending: false`.
-- `getMyRSVP()` sanitizes legacy `my_rsvp` payloads to canonical `dietaryFlags`.
+- `getMyRSVP()` sanitizes legacy `my_rsvp` payloads to canonical `dietaryCounts`.
 - sanitized snapshots are persisted back to localStorage.
 
 ## Admin alignment
 
-- Stats now represent:
-  - total responses
+- Admin home now exposes a single summary KPI:
   - confirmed adults
-  - confirmations with dietary notes
 - RSVP list is confirmation-only.
 
 ## Tests
@@ -43,3 +41,13 @@ Handled centrally in `src/lib/storage.ts`:
   - confirm-only RSVP submit/edit flow
   - pass availability based on confirmation existence
 - Extended `storage.admin-settings.test.ts` with legacy RSVP sanitization checks.
+
+## Aggiornamento Allineamento Finale (2026-04-04)
+
+- Verificata coerenza runtime/documentazione con stato codice corrente.
+- Admin: in area `/admin*` hamburger nascosto; su `/admin` resta shortcut impostazioni.
+- Admin home: KPI unico `Confermati`.
+- Admin settings: editor contenuti in box bianchi separati per sezione frontend.
+- RSVP: header ridotto al solo titolo; select `Minorenni` con label `minorenne/minorenni`.
+- Tipografia canonica confermata: titoli serif, UI/testi sans.
+- Nessuna nuova logica business introdotta in questo allineamento documentale.

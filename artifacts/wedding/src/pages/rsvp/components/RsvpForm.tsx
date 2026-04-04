@@ -6,7 +6,10 @@ import type { RSVPFormData } from "@/pages/rsvp/schema";
 import RsvpInputField from "./RsvpInputField";
 
 const inputClass =
-  "w-full border border-border rounded-xl px-4 py-3.5 bg-background text-foreground outline-none focus:ring-2 focus:ring-ring/40 focus:border-accent placeholder:text-muted-foreground transition-all text-sm";
+  "w-full border border-border rounded-xl px-4 py-3.5 bg-white text-foreground outline-none focus:ring-2 focus:ring-ring/40 focus:border-accent placeholder:text-muted-foreground transition-all text-sm";
+
+const dietarySelectClass =
+  "w-[88px] border border-border rounded-lg px-3 py-2 bg-white text-foreground outline-none focus:ring-2 focus:ring-ring/40 focus:border-accent text-sm";
 
 interface RsvpFormProps {
   form: UseFormReturn<RSVPFormData>;
@@ -15,112 +18,102 @@ interface RsvpFormProps {
   onSubmit: (data: RSVPFormData) => void;
 }
 
+const dietaryOptions: { flag: DietaryFlag; Icon: typeof Leaf }[] = [
+  { flag: "vegetarian", Icon: Leaf },
+  { flag: "vegan", Icon: Sprout },
+  { flag: "celiac", Icon: WheatOff },
+];
+
 export default function RsvpForm({ form, editing, onCancelEdit, onSubmit }: RsvpFormProps) {
-  const selectedFlags = form.watch("dietaryFlags") ?? [];
-
-  const dietaryOptions: { flag: DietaryFlag; Icon: typeof Leaf }[] = [
-    { flag: "vegetarian", Icon: Leaf },
-    { flag: "vegan", Icon: Sprout },
-    { flag: "celiac", Icon: WheatOff },
-  ];
-
-  const toggleDietaryFlag = (flag: DietaryFlag) => {
-    if (selectedFlags.includes(flag)) {
-      form.setValue(
-        "dietaryFlags",
-        selectedFlags.filter((item) => item !== flag),
-        { shouldDirty: true, shouldTouch: true },
-      );
-      return;
-    }
-
-    form.setValue("dietaryFlags", [...selectedFlags, flag], {
-      shouldDirty: true,
-      shouldTouch: true,
-    });
-  };
-
   return (
     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
       {editing && (
         <div
-          className="flex items-center gap-2 px-4 py-3 rounded-xl text-sm"
-          style={{ background: "hsl(var(--muted))", color: "hsl(var(--muted-foreground))" }}
+          className="flex items-center gap-2 px-4 py-3 rounded-xl text-sm border border-border bg-white"
+          style={{ color: "hsl(var(--muted-foreground))" }}
         >
           <Edit3 size={13} />
           <span>Stai modificando la tua risposta</span>
         </div>
       )}
 
-      <RsvpInputField label="Nome e cognome *" error={form.formState.errors.fullName?.message}>
-        <input
-          {...form.register("fullName")}
-          data-testid="input-full-name"
-          className={inputClass}
-          placeholder="Il tuo nome e cognome"
-        />
-      </RsvpInputField>
+      <div className="grid grid-cols-2 gap-3">
+        <RsvpInputField label="Nome *" error={form.formState.errors.firstName?.message}>
+          <input
+            {...form.register("firstName")}
+            data-testid="input-first-name"
+            className={inputClass}
+            placeholder="Nome"
+          />
+        </RsvpInputField>
 
-      <RsvpInputField
-        label="Numero adulti confermati (incluso te) *"
-        error={form.formState.errors.guestCount?.message}
-      >
-        <select
-          {...form.register("guestCount", { valueAsNumber: true })}
-          data-testid="select-guest-count"
-          className={inputClass}
-        >
-          {[1, 2, 3, 4, 5, 6].map((count) => (
-            <option key={count} value={count}>
-              {count} {count === 1 ? "adulto" : "adulti"}
-            </option>
-          ))}
-        </select>
-      </RsvpInputField>
+        <RsvpInputField label="Cognome *" error={form.formState.errors.lastName?.message}>
+          <input
+            {...form.register("lastName")}
+            data-testid="input-last-name"
+            className={inputClass}
+            placeholder="Cognome"
+          />
+        </RsvpInputField>
+      </div>
 
-      <RsvpInputField
-        label="Numero bambini sotto i 16 anni"
-        error={form.formState.errors.childrenCount?.message}
-      >
-        <select
-          {...form.register("childrenCount", { valueAsNumber: true })}
-          data-testid="select-children-count"
-          className={inputClass}
-        >
-          {[0, 1, 2, 3, 4, 5, 6].map((count) => (
-            <option key={count} value={count}>
-              {count} {count === 1 ? "bambino" : "bambini"}
-            </option>
-          ))}
-        </select>
-      </RsvpInputField>
+      <div className="grid grid-cols-2 gap-3">
+        <RsvpInputField label="Adulti *" error={form.formState.errors.guestCount?.message}>
+          <select
+            {...form.register("guestCount", { valueAsNumber: true })}
+            data-testid="select-guest-count"
+            className={inputClass}
+          >
+            {[1, 2, 3, 4, 5, 6].map((count) => (
+              <option key={count} value={count}>
+                {count} {count === 1 ? "adulto" : "adulti"}
+              </option>
+            ))}
+          </select>
+        </RsvpInputField>
 
-      <RsvpInputField label="Esigenze alimentari" hint="Facoltativo">
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
-          {dietaryOptions.map(({ flag, Icon }) => {
-            const isSelected = selectedFlags.includes(flag);
-            return (
-              <button
-                key={flag}
-                type="button"
-                onClick={() => toggleDietaryFlag(flag)}
-                data-testid={`toggle-dietary-${flag}`}
-                aria-pressed={isSelected}
-                className={`w-full rounded-xl border px-3 py-3 text-left transition-colors ${
-                  isSelected
-                    ? "border-accent bg-accent/10 text-foreground"
-                    : "border-border bg-background text-muted-foreground hover:text-foreground"
-                }`}
-              >
-                <span className="flex items-center gap-2.5">
-                  <Icon size={16} style={{ color: "hsl(var(--accent))" }} />
-                  <span className="font-sans text-xs tracking-wide uppercase">
-                    {DIETARY_FLAG_LABELS[flag]}
-                  </span>
+        <RsvpInputField label="Minorenni" error={form.formState.errors.childrenCount?.message}>
+          <select
+            {...form.register("childrenCount", { valueAsNumber: true })}
+            data-testid="select-children-count"
+            className={inputClass}
+          >
+            {[0, 1, 2, 3, 4, 5, 6].map((count) => (
+              <option key={count} value={count}>
+                {count} {count === 1 ? "minorenne" : "minorenni"}
+              </option>
+            ))}
+          </select>
+        </RsvpInputField>
+      </div>
+
+      <RsvpInputField label="Esigenze alimentari">
+        <div className="space-y-2.5">
+          {dietaryOptions.map(({ flag, Icon }) => (
+            <div
+              key={flag}
+              className="w-full rounded-xl border border-border bg-white px-3 py-2.5 flex items-center justify-between gap-3"
+            >
+              <span className="flex items-center gap-2.5 min-w-0">
+                <Icon size={16} style={{ color: "hsl(var(--accent))" }} />
+                <span className="font-sans text-xs tracking-wide uppercase text-foreground">
+                  {DIETARY_FLAG_LABELS[flag]}
                 </span>
-              </button>
-            );
-          })}
+              </span>
+
+              <select
+                {...form.register(`dietaryCounts.${flag}`, { valueAsNumber: true })}
+                data-testid={`select-dietary-${flag}`}
+                className={dietarySelectClass}
+              >
+                {Array.from({ length: 7 }, (_, index) => index).map((count) => (
+                  <option key={`${flag}-${count}`} value={count}>
+                    {count}
+                  </option>
+                ))}
+              </select>
+            </div>
+          ))}
         </div>
       </RsvpInputField>
 

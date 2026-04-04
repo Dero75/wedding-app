@@ -5,23 +5,23 @@
 | Route      | Page         | Description                                                                                                       |
 | ---------- | ------------ | ----------------------------------------------------------------------------------------------------------------- |
 | `/`        | Intro        | Fullscreen splash. Auto-advances after ~3.8s or on tap. Reads `getContent()` for names/date.                      |
-| `/home`    | Home         | Hero + welcome + CTA. Respects visibility toggles from AdminSettings.                                             |
-| `/rsvp`    | RSVP         | Form confirm-only (name, adulti confermati, bambini <16, flag alimentari). Confirmation card with edit. |
+| `/home`    | Home         | Hero + welcome + CTA. Always visible (no admin visibility toggles).                                             |
+| `/rsvp`    | RSVP         | Form confirm-only (nome, cognome, adulti confermati, persone <18, esigenze alimentari con quantità). Confirmation card with edit. |
 | `/details` | Details      | Day timeline + ceremony/reception cards with venue photos. Reads `getContent()` for place/time/notes.             |
-| `/gift`    | Gift         | IBAN display with copy-to-clipboard. Reads `getContent()` for gift text and IBAN. Route enabled only if `showGiftSection=true`, otherwise NotFound. |
-| `/pass`    | EntrancePass | Premium dark pass card. Available only when a valid RSVP confirmation exists. Route enabled only if `showEntrancePass=true`, otherwise NotFound. |
+| `/gift`    | Gift         | IBAN display with copy-to-clipboard. Reads `getContent()` for gift text and IBAN. Always reachable. |
+| `/pass`    | EntrancePass | Premium dark pass card. Available only when a valid RSVP confirmation exists. Route always reachable. |
 | `/admin`   | Admin        | Admin home focused on RSVP stats/list.                                                                              |
-| `/admin/settings` | AdminSettings | Presets, visibility and content editor.                                                                        |
+| `/admin/settings` | AdminSettings | Editor testi/contenuti.                                                                        |
 
 ## Navigation (Layout.tsx)
 
-- Fixed top header: home label + hamburger icon
+- Fixed top header: home label + hamburger icon on public routes
+- In area admin (`/admin*`) hamburger hidden; on `/admin` top-right button is settings shortcut
 - DEV only: compact `USER/ADMIN` switch can replace the header home label on `/home` and `/admin`
 - Slide-in right drawer (300px, duration-300 ease-in-out)
-- Active link: `text-accent` (adapts to all presets)
+- Active link: `text-accent` (coerente col tema canonico)
 - Overlay backdrop closes drawer on tap
-- `Regalo` link is rendered only when `showGiftSection=true`
-- `Invito` link is rendered only when `showEntrancePass=true`
+- `Regalo` e `Invito` sono sempre presenti nel menu principale
 - Admin link at drawer bottom (small, muted — not prominent)
 
 ## Flow
@@ -41,4 +41,14 @@
 - `-webkit-tap-highlight-color: transparent` on html
 - Forms: `inputMode` hints on form fields
 - RSVP confirm-only form (no explicit decline option in UI)
-- RSVP includes dedicated selector for children under 16 (`childrenCount`)
+- RSVP includes dedicated selector for people under 18 (`childrenCount`)
+
+## Aggiornamento Allineamento Finale (2026-04-04)
+
+- Verificata coerenza runtime/documentazione con stato codice corrente.
+- Admin: in area `/admin*` hamburger nascosto; su `/admin` resta shortcut impostazioni.
+- Admin home: KPI unico `Confermati`.
+- Admin settings: editor contenuti in box bianchi separati per sezione frontend.
+- RSVP: header ridotto al solo titolo; select `Minorenni` con label `minorenne/minorenni`.
+- Tipografia canonica confermata: titoli serif, UI/testi sans.
+- Nessuna nuova logica business introdotta in questo allineamento documentale.

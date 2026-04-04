@@ -8,46 +8,25 @@
 | Body text, labels, UI          | Jost               | 300–500 |
 | IBAN, monospace                | system mono        | —       |
 
-Loaded via Google Fonts in `index.css` (must be first import before Tailwind).
+Loaded via Google Fonts in `index.css` (first import before Tailwind).
 
-## Preset system
+## Canonical theme
 
-Two selectable presets, set via `data-preset` attribute on `<html>`:
+The app now uses one fixed visual theme: **Avorio Classico**.
 
-| Preset            | Background                | Primary                       | Accent               | Mood                 |
-| ----------------- | ------------------------- | ----------------------------- | -------------------- | -------------------- |
-| `ivory` (default) | Warm ivory `#FAF5EE`      | Deep brown `#4A3728`          | Dusty rose `#C2878A` | Boho romantic        |
-| `dark`            | Near-black warm `#1C1410` | Gold `hsl(38,55%,62%)`        | Deep gold `#C9A15A`  | Moody evening luxury |
+- No runtime preset switching
+- No `data-preset` branching on `<html>`
+- No admin UI to change theme
 
-Each preset block in `index.css` overrides all CSS variables AND the `--p-*` decorator tokens:
-
-```css
-[data-preset="dark"] {
-  --background: 22 22% 9%;
-  --primary: 38 55% 62%;
-  --accent: 38 65% 52%;
-  /* ... */
-  --p-pass-bg-from: #1c1410;
-  --p-hero-from: rgba(15, 10, 7, 0.85);
-  /* ... */
-}
-```
-
-**Decorator tokens** (`--p-*`) are used for elements that can't use Tailwind semantic classes — gradients in the hero, pass card background, intro screen. All pages reference them via `style={{ background: 'var(--p-pass-bg-from)' }}`.
+All visual tokens are defined once in `:root` inside `index.css`.
 
 ## Semantic tokens (Tailwind)
 
-All shared components (`WeddingButton`, `WeddingCard`, `Layout`, `SectionTitle`, `Toggle`) use Tailwind semantic classes (`bg-primary`, `text-foreground`, `border-border`, `text-muted-foreground`, `bg-accent`, etc.) — never hardcoded hex. This ensures every component adapts to all available presets without modification.
+Shared components (`WeddingButton`, `WeddingCard`, `Layout`, `SectionTitle`, `Toggle`) use semantic classes (`bg-primary`, `text-foreground`, `border-border`, `text-muted-foreground`, `bg-accent`, etc.) with the canonical token set.
 
-## Preset application
+## Decorator tokens
 
-`App.tsx` mounts a `PresetApplier` effect that:
-
-1. Reads `getAdminSettings().stylePreset`
-2. Sets `document.documentElement.dataset.preset = preset`
-3. Listens for `storage` and `preset-changed` events to keep in sync
-
-Admin's preset selector dispatches `preset-changed` and directly sets `document.documentElement.dataset.preset` for instant visual feedback.
+`--p-*` tokens are retained for visual elements that require inline styles (hero overlays, pass gradients, intro backgrounds), but they belong to the single canonical theme.
 
 ## Spacing and radius
 
@@ -60,5 +39,15 @@ Admin's preset selector dispatches `preset-changed` and directly sets `document.
 
 - `animate-in fade-in slide-in-from-bottom-4 duration-500` — confirmation states
 - CSS opacity/transform — Intro splash
-- `active:scale-[0.97]` — all touch targets
+- `active:scale-[0.97]` — touch targets
 - Toggle knob: `transition-transform duration-200`
+
+## Aggiornamento Allineamento Finale (2026-04-04)
+
+- Verificata coerenza runtime/documentazione con stato codice corrente.
+- Admin: in area `/admin*` hamburger nascosto; su `/admin` resta shortcut impostazioni.
+- Admin home: KPI unico `Confermati`.
+- Admin settings: editor contenuti in box bianchi separati per sezione frontend.
+- RSVP: header ridotto al solo titolo; select `Minorenni` con label `minorenne/minorenni`.
+- Tipografia canonica confermata: titoli serif, UI/testi sans.
+- Nessuna nuova logica business introdotta in questo allineamento documentale.

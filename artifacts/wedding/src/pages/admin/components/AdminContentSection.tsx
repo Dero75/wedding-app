@@ -1,6 +1,4 @@
-import { FileText } from "lucide-react";
 import type { EditableContent } from "@/lib/storage";
-import AdminAccordionSection from "./AdminAccordionSection";
 import AdminTextField from "./AdminTextField";
 import { CONTENT_SECTIONS } from "../constants";
 
@@ -14,30 +12,26 @@ export default function AdminContentSection({
   onContentChange,
 }: AdminContentSectionProps) {
   return (
-    <AdminAccordionSection icon={<FileText size={16} />} title="Testi e contenuti">
-      <div className="mt-2">
-        {CONTENT_SECTIONS.map((section, sectionIndex) => (
-          <div key={section.title}>
-            <p
-              className={`text-xs mb-1 font-sans font-medium uppercase tracking-widest ${
-                sectionIndex === 0 ? "mt-4" : "mt-6"
-              }`}
-              style={{ color: "hsl(var(--foreground))" }}
-            >
-              {section.title}
-            </p>
-            {section.fields.map((field) => (
-              <AdminTextField
-                key={field.key}
-                label={field.label}
-                value={content[field.key]}
-                multiline={field.multiline}
-                onChange={(value) => onContentChange(field.key, value)}
-              />
-            ))}
-          </div>
-        ))}
-      </div>
-    </AdminAccordionSection>
+    <div className="space-y-4">
+      {CONTENT_SECTIONS.map((section) => (
+        <section key={section.title} className="rounded-2xl border border-border bg-white px-4 py-4">
+          <p
+            className="text-xs mb-1 font-sans font-medium uppercase tracking-widest"
+            style={{ color: "hsl(var(--foreground))" }}
+          >
+            {section.title}
+          </p>
+          {section.fields.map((field) => (
+            <AdminTextField
+              key={field.key}
+              label={field.label}
+              value={content[field.key]}
+              multiline={field.multiline}
+              onChange={(value) => onContentChange(field.key, value)}
+            />
+          ))}
+        </section>
+      ))}
+    </div>
   );
 }
