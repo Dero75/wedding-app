@@ -12,8 +12,7 @@ export default function Home() {
 
   return (
     <Layout>
-      {/* Hero — same 60vh as before */}
-      <div className="relative min-h-[60vh] flex items-end justify-center overflow-hidden">
+      <div className="relative min-h-[52vh] flex items-end justify-center overflow-hidden">
         {s.showCouplePhoto ? (
           <div
             className="absolute inset-0 bg-cover bg-center bg-no-repeat"
@@ -25,52 +24,50 @@ export default function Home() {
         <div
           className="absolute inset-0"
           style={{
-            background: `linear-gradient(to top, var(--p-hero-from, rgba(74,55,40,0.85)) 0%, var(--p-hero-mid, rgba(74,55,40,0.30)) 50%, transparent 100%)`,
+            background: `linear-gradient(to top, var(--p-hero-from, rgba(74,55,40,0.85)) 0%, var(--p-hero-mid, rgba(74,55,40,0.30)) 58%, transparent 100%)`,
           }}
         />
-        <div className="relative z-10 text-center pb-12 px-5">
+        <div className="relative z-10 text-center pb-8 px-5 w-full max-w-lg">
           <p
-            className="text-xs tracking-[0.3em] uppercase mb-3"
+            className="text-[10px] sm:text-xs tracking-[0.28em] uppercase mb-2"
             style={{ color: "hsl(var(--card) / 0.75)" }}
           >
             {c.heroSubtitle}
           </p>
           <h1
-            className="font-serif text-4xl sm:text-5xl leading-tight"
+            className="font-serif text-[2.15rem] sm:text-5xl leading-[0.98]"
             style={{ color: "hsl(var(--card))" }}
           >
             {c.brideName} & {c.groomName}
           </h1>
           <div
-            className="flex items-center justify-center gap-3 mt-4"
+            className="flex items-center justify-center gap-2 mt-3"
             style={{ color: "hsl(var(--card) / 0.75)" }}
           >
-            <Calendar size={14} />
-            <span className="text-sm tracking-wider">{c.weddingDate}</span>
+            <Calendar size={12} />
+            <span className="text-[12px] tracking-wider">{c.weddingDate}</span>
             <span className="opacity-60">·</span>
-            <MapPin size={14} />
-            <span className="text-sm tracking-wider">Bologna</span>
+            <MapPin size={12} />
+            <span className="text-[12px] tracking-wider">Bologna</span>
           </div>
         </div>
       </div>
 
-      <PageContainer>
-        {/* Welcome section */}
+      <PageContainer className="pt-6">
         {s.showWelcomeSection && (
-          <div className="text-center mb-10">
-            <div className="flex items-center justify-center gap-3 mb-4">
-              <div className="h-px w-12 bg-border" />
-              <Heart size={12} style={{ fill: "hsl(var(--accent))", stroke: "none" }} />
-              <div className="h-px w-12 bg-border" />
+          <div className="text-center mb-4">
+            <div className="flex items-center justify-center gap-3 mb-2">
+              <div className="h-px w-10 bg-border" />
+              <Heart size={10} style={{ fill: "hsl(var(--accent))", stroke: "none" }} />
+              <div className="h-px w-10 bg-border" />
             </div>
-            <h2 className="font-serif text-xl mb-4" style={{ color: "hsl(var(--foreground))" }}>
+            <h2 className="font-serif text-[1.35rem] mb-2" style={{ color: "hsl(var(--foreground))" }}>
               {c.welcomeTitle}
             </h2>
-            <p className="text-muted-foreground leading-relaxed text-sm">{c.welcomeText}</p>
+            <p className="text-muted-foreground leading-relaxed text-[13px]">{c.welcomeText}</p>
           </div>
         )}
 
-        {/* CTAs */}
         <div className="flex flex-col gap-3">
           <Link href="/rsvp">
             <WeddingButton fullWidth data-testid="button-cta-rsvp">
