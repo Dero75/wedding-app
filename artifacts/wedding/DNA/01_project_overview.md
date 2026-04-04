@@ -2,60 +2,47 @@
 
 ## What this is
 
-A mobile-first digital wedding invitation and RSVP web app for **Deborah & Davide**, designed to run directly in any smartphone browser with no app installation required.
+A mobile-first digital wedding invitation and RSVP web app for **Deborah & Davide** (Italian, 14 September 2025, Villa Borgonuovo, Bologna). Runs in any smartphone browser. No app installation required, no backend.
 
 ## Stack
 
 | Layer | Technology |
 |---|---|
-| Framework | React 18 |
-| Build tool | Vite |
-| Language | TypeScript |
+| Framework | React 18 + Vite + TypeScript |
 | Routing | Wouter |
-| Styling | Tailwind CSS v4 |
+| Styling | Tailwind CSS v4 + tw-animate-css |
 | Forms | react-hook-form + zod |
-| Animation | tw-animate-css + CSS transitions |
-| Persistence | localStorage only |
-| State | React useState (no global store) |
+| Icons | lucide-react |
+| Persistence | localStorage / sessionStorage |
+| Fonts | Cormorant Garamond (serif) + Jost (sans) — Google Fonts |
 
-## Design language
+## Language
 
-- **Color palette**: Warm ivory (#FAF5EE), beige (#F0E6D3), taupe (#C9B99A), dusty rose (#C2878A), warm brown (#8B6F5E), deep brown (#4A3728), sage (#9CAF88)
-- **Typography**: Cormorant Garamond (serif, headings), Jost (sans-serif, body)
-- **Mood**: Boho / rustic-chic, romantic, warm, refined, premium
+All user-facing text is in Italian.
+
+## Architecture principles
+
+1. **Single data layer** — all persistence lives in `src/lib/storage.ts`. No page component ever accesses `localStorage` directly.
+2. **EditableContent** is the authoritative source for user-facing text. All pages call `getContent()`.
+3. **AdminSettings** controls style preset and visibility toggles.
+4. **Preset system** — `document.documentElement.dataset.preset` is set to `"ivory" | "blush" | "dark"` on mount by `PresetApplier` in `App.tsx`. CSS variable overrides in `index.css` drive the full visual theme.
+5. **PIN gate** — `/admin` is protected by a PIN (default `"1234"`) stored in `localStorage`. Session unlock stored in `sessionStorage`; requires re-entry on new browser session.
+6. **Supabase-ready** — swap the implementations in `storage.ts`. Zero page changes needed.
 
 ## Folder structure
 
 ```
 artifacts/wedding/
-├── src/
-│   ├── App.tsx               # Router + providers
-│   ├── index.css             # Global theme, CSS variables, Google Fonts import
-│   ├── main.tsx              # Entry point
-│   ├── config/
-│   │   └── content.ts        # All editable content, dates, IBAN, copy
-│   ├── lib/
-│   │   ├── storage.ts        # localStorage abstraction + RSVP + AdminSettings types
-│   │   └── hooks.ts          # useCountdown, useAdminSettings, useLocalStorage
-│   ├── components/
-│   │   ├── Layout.tsx        # Fixed header + hamburger drawer navigation
-│   │   ├── PageContainer.tsx # Max-width wrapper
-│   │   ├── SectionTitle.tsx  # Decorated heading with divider
-│   │   ├── WeddingButton.tsx # Primary / outline / ghost button variants
-│   │   └── WeddingCard.tsx   # White-cream card with soft border
-│   └── pages/
-│       ├── Intro.tsx         # Fullscreen splash with fade-in
-│       ├── Home.tsx          # Hero + countdown + CTA
-│       ├── RSVP.tsx          # Full form with localStorage persistence
-│       ├── Details.tsx       # Timeline + ceremony/reception cards
-│       ├── Gift.tsx          # IBAN display with copy-to-clipboard
-│       ├── EntrancePass.tsx  # Digital invitation card (requires RSVP)
-│       ├── Admin.tsx         # Local admin panel
-│       └── not-found.tsx     # 404
-├── DNA/                      # Project documentation
-└── attached_assets/          # Wedding venue photos (used via @assets alias)
+  src/
+    App.tsx               # Router + PresetApplier effect
+    index.css             # CSS variables + [data-preset] blocks + Google Fonts import
+    pages/                # 7 page components
+    components/           # Layout, WeddingButton, WeddingCard, AdminPinGate, Toggle, etc.
+    lib/
+      storage.ts          # ALL persistence: PIN, EditableContent, AdminSettings, RSVP
+      hooks.ts            # useCountdown, useAdminSettings, useLocalStorage
+    config/
+      content.ts          # Static fallback constants (do not read from here in pages — use getContent())
+  DNA/                    # This documentation
+  attached_assets/        # 3 venue photos
 ```
-
-## Supabase readiness
-
-All persistence is isolated in `src/lib/storage.ts` using a consistent `PREFIX + key` pattern. To migrate to Supabase, replace the functions in that file without touching any page or component.

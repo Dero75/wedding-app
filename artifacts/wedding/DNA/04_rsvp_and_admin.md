@@ -3,24 +3,22 @@
 ## RSVP flow
 
 1. Guest opens `/rsvp`
-2. Fills form: name, attending (yes/no), guest count, dietary notes, message
-3. On submit:
-   - Entry saved to `wedding_rsvps` (array, all RSVPs)
-   - Entry saved to `wedding_my_rsvp` (their personal entry)
-4. Confirmation screen shown with edit button
-5. Guest can return and update their RSVP at any time
+2. Fills form: name, attending (explicit choice required), guest count (if attending), dietary notes, message
+3. On submit: saved to `wedding_rsvps` (all RSVPs) and `wedding_my_rsvp` (their entry)
+4. Confirmation card shown with edit button
+5. Guest can return and edit anytime
 
 ## RSVPEntry type
 
 ```typescript
 interface RSVPEntry {
-  id: string;              // timestamp-based unique ID
+  id: string;           // timestamp-based unique ID
   fullName: string;
   attending: boolean;
   guestCount: number;
   dietaryNotes: string;
   message: string;
-  submittedAt: string;     // ISO 8601 date string
+  submittedAt: string;  // ISO 8601
 }
 ```
 
@@ -28,33 +26,68 @@ interface RSVPEntry {
 
 | Key | Content |
 |---|---|
-| `wedding_rsvps` | `RSVPEntry[]` — all submitted RSVPs |
-| `wedding_my_rsvp` | `RSVPEntry \| null` — this guest's own RSVP |
-| `wedding_admin_settings` | `AdminSettings` — admin panel preferences |
+| `wedding_rsvps` | `RSVPEntry[]` — all RSVPs |
+| `wedding_my_rsvp` | `RSVPEntry \| null` — this guest's entry |
+| `wedding_admin_settings` | `AdminSettings` |
+| `wedding_admin_pin` | PIN string (default `"1234"`) |
+| `wedding_content` | `Partial<EditableContent>` — admin-edited content |
+
+Session key:
+| Key | Content |
+|---|---|
+| `wedding_admin_unlocked` | `"1"` if session is unlocked |
 
 ## Admin panel (`/admin`)
 
-### Counters displayed
-- Total RSVP responses
-- Guests attending (confirmed)
-- Total guest count (sum of guestCount for attending entries)
+### PIN gate
+- Shown before Admin content until correct PIN entered
+- Default PIN: `"1234"`
+- Wrong PIN: inputs shake and clear
+- Session unlock persists tab-only (cleared on browser close)
+- PIN can be changed from within Admin (4–8 digits, confirmed)
 
 ### Style presets
-- **ivory** — current warm ivory / dusty rose palette (default)
-- **blush** — deeper rose tones (future implementation)
-- **dark** — dark moody palette (future implementation)
-- Preset choice saved to localStorage, read on reload
+Accordion section "Stile dell'app":
+- **Avorio Classico** (ivory) — warm ivory bg, deep brown primary, dusty rose accent
+- **Rosa Romantico** (blush) — blush pink bg, mauve-rose primary, deeper rose accent
+- **Serale Elegante** (dark) — near-black warm bg, gold primary, dark moody
+
+Selecting a preset: saves to `AdminSettings.stylePreset`, sets `document.documentElement.dataset.preset`, dispatches `preset-changed` event.
 
 ### Visibility toggles
-- Show/hide couple photo section
-- Show/hide gift/IBAN section  
-- Show/hide digital entrance pass
+Accordion section "Visibilità sezioni":
+- Conto alla rovescia (countdown)
+- Sezione benvenuto (welcome section)
+- Foto coppia (hero photo)
+- Sezione regalo
+- Invito digitale
+
+### Content editor
+Accordion section "Testi e contenuti":
+- All `EditableContent` fields grouped by page (Home, Programma, Regalo, Invito)
+- Saves on every keystroke to localStorage
+- Pages read from `getContent()` — changes reflect live
 
 ### RSVP list
-- All entries displayed with name, attendance, guest count, dietary notes, message
-- Each entry has a delete button
-- Refresh button re-reads from localStorage
+Accordion section "Lista RSVP (N)":
+- All entries with attendance status, count, dietary, message
+- Delete per entry
+- Refresh button
 
-## Supabase migration plan
+### Logout
+"Esci dal pannello admin" clears session storage and returns to PIN gate.
 
-See `05_future_supabase_plan.md` for the migration path. In short: replace `getRSVPs()`, `saveRSVP()`, `deleteRSVP()` with Supabase client calls in `src/lib/storage.ts`. No page components need to change.
+## EditableContent fields
+
+```typescript
+interface EditableContent {
+  introTagline, heroSubtitle, brideName, groomName,
+  weddingDate, weddingDateISO, weddingTime,
+  weddingLocation, weddingAddress, hashtag,
+  welcomeTitle, welcomeText, ctaRSVP, ctaDetails, rsvpDeadline,
+  ceremonyPlace, ceremonyTime, ceremonyAddress, ceremonyNote,
+  receptionPlace, receptionTime, receptionAddress, receptionNote,
+  giftTitle, giftText, giftIBAN, giftBIC, giftHolder,
+  passTitle, passSubtitle
+}
+```

@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { Switch, Route, Router as WouterRouter } from "wouter";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
@@ -10,8 +11,27 @@ import Details from "@/pages/Details";
 import Gift from "@/pages/Gift";
 import EntrancePass from "@/pages/EntrancePass";
 import Admin from "@/pages/Admin";
+import { getAdminSettings } from "@/lib/storage";
 
 const queryClient = new QueryClient();
+
+function PresetApplier() {
+  useEffect(() => {
+    const applyPreset = () => {
+      const { stylePreset } = getAdminSettings();
+      document.documentElement.dataset.preset = stylePreset;
+    };
+    applyPreset();
+    const handler = () => applyPreset();
+    window.addEventListener("storage", handler);
+    window.addEventListener("preset-changed", handler);
+    return () => {
+      window.removeEventListener("storage", handler);
+      window.removeEventListener("preset-changed", handler);
+    };
+  }, []);
+  return null;
+}
 
 function Router() {
   return (
@@ -32,6 +52,7 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
+        <PresetApplier />
         <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, "")}>
           <Router />
         </WouterRouter>

@@ -1,10 +1,9 @@
 import { useState } from "react";
 import { Link, useLocation } from "wouter";
 import { Menu, X } from "lucide-react";
-import { WEDDING } from "@/config/content";
 
 const NAV_ITEMS = [
-  { label: "Home", href: "/" },
+  { label: "Home", href: "/home" },
   { label: "RSVP", href: "/rsvp" },
   { label: "Programma", href: "/details" },
   { label: "Regalo", href: "/gift" },
@@ -16,64 +15,81 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   const [location] = useLocation();
 
   return (
-    <div className="min-h-screen bg-[#FAF5EE] font-serif">
-      {/* Nav */}
-      <header className="fixed top-0 left-0 right-0 z-50 bg-[#FAF5EE]/90 backdrop-blur-sm border-b border-[#E8D9C5]">
-        <div className="max-w-lg mx-auto px-4 h-14 flex items-center justify-between">
-          <Link href="/" className="font-serif text-[#4A3728] text-lg tracking-widest uppercase">
+    <div className="min-h-screen bg-background font-serif">
+      {/* Fixed nav */}
+      <header className="fixed top-0 left-0 right-0 z-50 bg-background/90 backdrop-blur-md border-b border-border">
+        <div className="max-w-lg mx-auto px-5 h-14 flex items-center justify-between">
+          <Link
+            href="/home"
+            className="font-serif text-foreground text-base tracking-[0.2em] uppercase"
+          >
             D & D
           </Link>
           <button
             data-testid="button-menu-toggle"
             onClick={() => setOpen(!open)}
-            className="p-2 text-[#4A3728] hover:text-[#C2878A] transition-colors"
-            aria-label="Menu"
+            className="p-2 -mr-2 text-foreground hover:text-accent transition-colors"
+            aria-label={open ? "Chiudi menu" : "Apri menu"}
           >
-            {open ? <X size={22} /> : <Menu size={22} />}
+            {open ? <X size={20} /> : <Menu size={20} />}
           </button>
         </div>
       </header>
 
-      {/* Drawer */}
+      {/* Overlay */}
       {open && (
         <div
-          className="fixed inset-0 z-40 bg-black/30 backdrop-blur-sm"
+          className="fixed inset-0 z-40 bg-foreground/20 backdrop-blur-sm"
           onClick={() => setOpen(false)}
-        >
-          <nav
-            className="absolute top-0 right-0 h-full w-72 bg-[#FAF5EE] shadow-2xl flex flex-col pt-20 px-8 gap-1"
-            onClick={(e) => e.stopPropagation()}
+        />
+      )}
+
+      {/* Drawer */}
+      <nav
+        className={`fixed top-0 right-0 h-full z-50 w-72 bg-background shadow-2xl border-l border-border flex flex-col transition-transform duration-300 ease-in-out ${
+          open ? "translate-x-0" : "translate-x-full"
+        }`}
+      >
+        <div className="flex items-center justify-between px-6 h-14 border-b border-border">
+          <span className="font-serif text-foreground text-sm tracking-[0.2em] uppercase">Menu</span>
+          <button
+            onClick={() => setOpen(false)}
+            className="p-1.5 text-muted-foreground hover:text-foreground transition-colors"
           >
-            <p className="text-xs text-[#9CAF88] uppercase tracking-widest mb-4">
-              {WEDDING.date}
-            </p>
-            {NAV_ITEMS.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                data-testid={`link-nav-${item.label.toLowerCase()}`}
-                onClick={() => setOpen(false)}
-                className={`py-3 text-lg font-serif tracking-wide border-b border-[#E8D9C5] transition-colors ${
-                  location === item.href
-                    ? "text-[#C2878A]"
-                    : "text-[#4A3728] hover:text-[#C2878A]"
-                }`}
-              >
-                {item.label}
-              </Link>
-            ))}
+            <X size={18} />
+          </button>
+        </div>
+
+        <div className="flex flex-col flex-1 px-6 pt-6 pb-8 gap-0.5">
+          {NAV_ITEMS.map((item) => (
+            <Link
+              key={item.href}
+              href={item.href}
+              data-testid={`link-nav-${item.label.toLowerCase()}`}
+              onClick={() => setOpen(false)}
+              className={`py-3.5 text-base font-serif tracking-wide border-b border-border/50 transition-colors ${
+                location === item.href
+                  ? "text-accent"
+                  : "text-foreground hover:text-accent"
+              }`}
+            >
+              {item.label}
+            </Link>
+          ))}
+
+          <div className="mt-auto pt-6">
             <Link
               href="/admin"
               onClick={() => setOpen(false)}
-              className="mt-auto mb-8 text-sm text-[#9CAF88] hover:text-[#8B6F5E] transition-colors"
+              className="text-xs text-muted-foreground hover:text-foreground transition-colors tracking-widest uppercase"
             >
-              Admin
+              Pannello Admin
             </Link>
-          </nav>
+          </div>
         </div>
-      )}
+      </nav>
 
-      {/* Content */}
+      {/* Main */}
       <main className="pt-14">{children}</main>
     </div>
   );

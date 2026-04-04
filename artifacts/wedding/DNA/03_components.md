@@ -1,45 +1,51 @@
 # 03 — Components
 
-## Reusable components
+## Shared components (`src/components/`)
 
 ### `Layout`
-**Path**: `src/components/Layout.tsx`
-- Wraps all pages except Intro
-- Contains the fixed top nav bar and hamburger drawer
-- Props: `children: ReactNode`
+- Fixed top nav bar (D & D monogram + hamburger) + slide-in right drawer
+- Drawer lists all 5 main routes + Admin link (bottom, subtle)
+- Active link uses `text-accent` (adapts to all presets)
 
 ### `PageContainer`
-**Path**: `src/components/PageContainer.tsx`
 - `max-w-lg mx-auto px-5 py-10`
-- Props: `children`, `className?`
 
 ### `SectionTitle`
-**Path**: `src/components/SectionTitle.tsx`
-- Shows an optional subtitle (small caps, sage color), a serif title, and a centered decorative divider line
-- Props: `title`, `subtitle?`, `center? (default true)`
+- Optional subtitle (10px caps, `text-muted-foreground`)
+- Serif title heading (`text-foreground`)
+- Centered gradient divider line using CSS variable border color
 
 ### `WeddingButton`
-**Path**: `src/components/WeddingButton.tsx`
-- Three variants: `primary` (deep brown, white text), `outline` (taupe border), `ghost` (text only)
-- Extends native `button` HTMLAttributes
-- Props: `variant?`, `fullWidth?`, plus all standard button props
+- **primary** — `bg-primary text-primary-foreground`, full rounded pill
+- **outline** — `border-border bg-card hover:bg-muted`
+- **ghost** — `text-muted-foreground hover:text-foreground hover:bg-muted`
+- All variants use semantic Tailwind tokens → automatically adapt to all 3 presets
+- `fullWidth` prop stretches to 100%
 
 ### `WeddingCard`
-**Path**: `src/components/WeddingCard.tsx`
-- White/70 background with soft border and rounded corners
-- Props: `children`, `className?`
+- `bg-card border border-border rounded-2xl shadow-sm`
+- All tokens → adapts to all presets
 
-## Page-level components (not reused)
+### `Toggle`
+- Accessible switch (`role="switch"`)
+- `bg-accent` when on, `bg-muted` when off
+- Used in Admin visibility toggles
 
-- **Countdown grid** in `Home.tsx` — 4-column grid showing days/hours/min/sec
-- **RSVP confirmation state** in `RSVP.tsx` — shown after submission with edit button
-- **Day timeline** in `Details.tsx` — vertical timeline with time markers and dot indicators
-- **Entrance pass card** in `EntrancePass.tsx` — dark premium card style with guest details
-- **IBAN copy block** in `Gift.tsx` — monospace display with clipboard copy icon
+### `AdminPinGate`
+- Shown when `isAdminSessionUnlocked()` returns false on `/admin`
+- 4-digit PIN entry with inline inputs (auto-advance, backspace nav)
+- Error shake animation on wrong PIN
+- Stores unlock state in `sessionStorage`
 
-## shadcn/ui usage
+## Page-level internal components (not extracted)
 
-The scaffold includes shadcn/ui components in `src/components/ui/`. Currently used:
-- `@/components/ui/toaster` — toast notifications
-- `@/components/ui/tooltip` — tooltip provider wrapper
-- All other shadcn components are available but not yet wired up
+- **Countdown grid** — `Home.tsx` — 4-column cards showing days/hours/min/sec
+- **RSVP confirmation card** — `RSVP.tsx` — shown after submission
+- **Day timeline** — `Details.tsx` — vertical timeline with CSS border line
+- **Entrance pass card** — `EntrancePass.tsx` — dark premium card with gradient adapting to preset via `--p-pass-bg-from/to` CSS vars
+- **IBAN copy block** — `Gift.tsx` — monospace display + clipboard button
+
+## shadcn/ui
+
+Available in `src/components/ui/`. Currently used:
+- `Toaster` + `TooltipProvider` (wired in App.tsx)

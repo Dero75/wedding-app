@@ -1,18 +1,19 @@
 import { useState } from "react";
-import { Copy, Check } from "lucide-react";
-import { WEDDING } from "@/config/content";
+import { Copy, Check, Heart } from "lucide-react";
 import Layout from "@/components/Layout";
 import PageContainer from "@/components/PageContainer";
 import SectionTitle from "@/components/SectionTitle";
 import WeddingCard from "@/components/WeddingCard";
 import WeddingButton from "@/components/WeddingButton";
+import { getContent } from "@/lib/storage";
 
 export default function Gift() {
   const [copied, setCopied] = useState(false);
+  const c = getContent();
 
   const copyIBAN = async () => {
     try {
-      await navigator.clipboard.writeText(WEDDING.giftIBAN);
+      await navigator.clipboard.writeText(c.giftIBAN);
       setCopied(true);
       setTimeout(() => setCopied(false), 2500);
     } catch {
@@ -23,37 +24,47 @@ export default function Gift() {
   return (
     <Layout>
       <PageContainer>
-        <SectionTitle title="Un Pensiero per Noi" subtitle="Regalo" />
+        <SectionTitle title={c.giftTitle} subtitle="Regalo" />
 
-        <p className="text-center text-sm text-[#8B6F5E] leading-relaxed mb-10">
-          {WEDDING.giftText}
+        <p className="text-center text-sm text-muted-foreground leading-relaxed mb-10">
+          {c.giftText}
         </p>
 
-        {/* Decorative ring */}
+        {/* Ornament */}
         <div className="flex justify-center mb-8">
-          <div className="w-20 h-20 rounded-full border-2 border-[#C9B99A] flex items-center justify-center">
-            <div className="w-14 h-14 rounded-full border border-[#E8D9C5] flex items-center justify-center">
-              <span className="text-2xl">💍</span>
+          <div
+            className="w-20 h-20 rounded-full border-2 flex items-center justify-center"
+            style={{ borderColor: "hsl(var(--border))" }}
+          >
+            <div
+              className="w-14 h-14 rounded-full border flex items-center justify-center"
+              style={{ borderColor: "hsl(var(--border))" }}
+            >
+              <Heart size={20} style={{ fill: "hsl(var(--accent))", stroke: "none" }} />
             </div>
           </div>
         </div>
 
         <WeddingCard className="mb-6">
-          <p className="text-xs text-[#9CAF88] uppercase tracking-widest mb-3">Intestatario</p>
-          <p className="font-serif text-[#4A3728] text-lg mb-5">{WEDDING.giftHolder}</p>
+          <p className="text-xs text-muted-foreground uppercase tracking-widest mb-2">Intestatario</p>
+          <p className="font-serif text-lg mb-5" style={{ color: "hsl(var(--foreground))" }}>
+            {c.giftHolder}
+          </p>
 
-          <p className="text-xs text-[#9CAF88] uppercase tracking-widest mb-2">IBAN</p>
-          <div className="flex items-center gap-3 bg-[#FAF5EE] border border-[#E8D9C5] rounded-xl px-4 py-3">
+          <p className="text-xs text-muted-foreground uppercase tracking-widest mb-2">IBAN</p>
+          <div className="flex items-center gap-3 bg-background border border-border rounded-xl px-4 py-3">
             <p
-              className="font-mono text-[#4A3728] text-sm flex-1 tracking-wider"
+              className="font-mono text-sm flex-1 tracking-wider"
+              style={{ color: "hsl(var(--foreground))" }}
               data-testid="text-iban"
             >
-              {WEDDING.giftIBAN}
+              {c.giftIBAN}
             </p>
             <button
               onClick={copyIBAN}
               data-testid="button-copy-iban"
-              className="text-[#C2878A] hover:text-[#4A3728] transition-colors"
+              className="transition-colors"
+              style={{ color: copied ? "hsl(var(--accent))" : "hsl(var(--muted-foreground))" }}
               aria-label="Copia IBAN"
             >
               {copied ? <Check size={16} /> : <Copy size={16} />}
@@ -61,13 +72,21 @@ export default function Gift() {
           </div>
 
           {copied && (
-            <p className="text-xs text-[#9CAF88] text-center mt-2 animate-in fade-in duration-300">
+            <p
+              className="text-xs text-center mt-2 animate-in fade-in duration-300"
+              style={{ color: "hsl(var(--accent))" }}
+            >
               IBAN copiato!
             </p>
           )}
 
-          <p className="text-xs text-[#9CAF88] uppercase tracking-widest mt-5 mb-1">BIC / SWIFT</p>
-          <p className="font-mono text-[#4A3728] text-sm">{WEDDING.giftBIC}</p>
+          <p className="text-xs text-muted-foreground uppercase tracking-widest mt-5 mb-1">BIC / SWIFT</p>
+          <p
+            className="font-mono text-sm"
+            style={{ color: "hsl(var(--foreground))" }}
+          >
+            {c.giftBIC}
+          </p>
         </WeddingCard>
 
         <WeddingButton
@@ -87,7 +106,7 @@ export default function Gift() {
           )}
         </WeddingButton>
 
-        <p className="text-center text-xs text-[#C9B99A] mt-8 italic">
+        <p className="text-center text-xs text-muted-foreground mt-8 italic">
           La vostra presenza è il regalo più prezioso.
         </p>
       </PageContainer>

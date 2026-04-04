@@ -5,9 +5,7 @@ interface WeddingCardProps {
 
 export default function WeddingCard({ children, className = "" }: WeddingCardProps) {
   return (
-    <div
-      className={`bg-white/70 backdrop-blur-sm border border-[#E8D9C5] rounded-2xl p-6 shadow-sm ${className}`}
-    >
+    <div className={`bg-card border border-border rounded-2xl p-6 shadow-sm ${className}`}>
       {children}
     </div>
   );

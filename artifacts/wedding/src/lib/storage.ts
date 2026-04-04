@@ -26,6 +26,154 @@ export function storageRemove(key: string): void {
   }
 }
 
+// ─── PIN ────────────────────────────────────────────────────────────────────
+
+const DEFAULT_PIN = "1234";
+
+export function getAdminPIN(): string {
+  return storageGet<string>("admin_pin", DEFAULT_PIN);
+}
+
+export function setAdminPIN(pin: string): void {
+  storageSet("admin_pin", pin);
+}
+
+export function isAdminSessionUnlocked(): boolean {
+  try {
+    return sessionStorage.getItem("wedding_admin_unlocked") === "1";
+  } catch {
+    return false;
+  }
+}
+
+export function setAdminSessionUnlocked(unlocked: boolean): void {
+  try {
+    if (unlocked) {
+      sessionStorage.setItem("wedding_admin_unlocked", "1");
+    } else {
+      sessionStorage.removeItem("wedding_admin_unlocked");
+    }
+  } catch {
+    // ignore
+  }
+}
+
+// ─── EDITABLE CONTENT ───────────────────────────────────────────────────────
+
+export interface EditableContent {
+  // Intro
+  introTagline: string;
+  // Home hero
+  heroSubtitle: string;
+  brideName: string;
+  groomName: string;
+  weddingDate: string;
+  weddingDateISO: string;
+  weddingTime: string;
+  weddingLocation: string;
+  weddingAddress: string;
+  hashtag: string;
+  // Home body
+  welcomeTitle: string;
+  welcomeText: string;
+  ctaRSVP: string;
+  ctaDetails: string;
+  rsvpDeadline: string;
+  // Details
+  ceremonyPlace: string;
+  ceremonyTime: string;
+  ceremonyAddress: string;
+  ceremonyNote: string;
+  receptionPlace: string;
+  receptionTime: string;
+  receptionAddress: string;
+  receptionNote: string;
+  // Gift
+  giftTitle: string;
+  giftText: string;
+  giftIBAN: string;
+  giftBIC: string;
+  giftHolder: string;
+  // Pass
+  passTitle: string;
+  passSubtitle: string;
+}
+
+export const DEFAULT_CONTENT: EditableContent = {
+  introTagline: "il matrimonio di",
+  heroSubtitle: "il matrimonio di",
+  brideName: "Deborah",
+  groomName: "Davide",
+  weddingDate: "14 Settembre 2025",
+  weddingDateISO: "2025-09-14",
+  weddingTime: "16:00",
+  weddingLocation: "Villa Borgonuovo",
+  weddingAddress: "Via Borgonuovo 12, 40125 Bologna",
+  hashtag: "#DeboraheDavide2025",
+  welcomeTitle: "Siete i benvenuti",
+  welcomeText:
+    "Con immensa gioia vi invitiamo a celebrare con noi il giorno più bello della nostra vita. La vostra presenza renderà questo momento ancora più indimenticabile.",
+  ctaRSVP: "Conferma la tua presenza",
+  ctaDetails: "Il programma",
+  rsvpDeadline: "30 Luglio 2025",
+  ceremonyPlace: "Villa Borgonuovo — Cappella",
+  ceremonyTime: "16:00",
+  ceremonyAddress: "Via Borgonuovo 12, 40125 Bologna",
+  ceremonyNote: "Vi chiediamo di arrivare 15 minuti prima della cerimonia.",
+  receptionPlace: "Villa Borgonuovo — Cortile interno",
+  receptionTime: "18:30",
+  receptionAddress: "Via Borgonuovo 12, 40125 Bologna",
+  receptionNote: "Ci uniamo nel cortile per il ricevimento all'aperto.",
+  giftTitle: "Un pensiero per noi",
+  giftText:
+    "La vostra presenza è il regalo più bello che potessimo ricevere. Per chi volesse farci un pensiero, vi lasciamo i nostri riferimenti bancari.",
+  giftIBAN: "IT60 X054 2811 1010 0000 0123 456",
+  giftBIC: "BLOPIT22",
+  giftHolder: "Davide Rossi",
+  passTitle: "Il vostro invito",
+  passSubtitle: "Lasciate questo pass all'ingresso della villa",
+};
+
+export function getContent(): EditableContent {
+  const saved = storageGet<Partial<EditableContent>>("content", {});
+  return { ...DEFAULT_CONTENT, ...saved };
+}
+
+export function saveContent(content: EditableContent): void {
+  storageSet("content", content);
+}
+
+// ─── ADMIN SETTINGS ─────────────────────────────────────────────────────────
+
+export interface AdminSettings {
+  stylePreset: "ivory" | "blush" | "dark";
+  showCouplePhoto: boolean;
+  showCountdown: boolean;
+  showWelcomeSection: boolean;
+  showGiftSection: boolean;
+  showEntrancePass: boolean;
+}
+
+export const DEFAULT_ADMIN_SETTINGS: AdminSettings = {
+  stylePreset: "ivory",
+  showCouplePhoto: true,
+  showCountdown: true,
+  showWelcomeSection: true,
+  showGiftSection: true,
+  showEntrancePass: true,
+};
+
+export function getAdminSettings(): AdminSettings {
+  const saved = storageGet<Partial<AdminSettings>>("admin_settings", {});
+  return { ...DEFAULT_ADMIN_SETTINGS, ...saved };
+}
+
+export function saveAdminSettings(settings: AdminSettings): void {
+  storageSet("admin_settings", settings);
+}
+
+// ─── RSVP ───────────────────────────────────────────────────────────────────
+
 export interface RSVPEntry {
   id: string;
   fullName: string;
@@ -35,34 +183,6 @@ export interface RSVPEntry {
   message: string;
   submittedAt: string;
 }
-
-export interface AdminSettings {
-  stylePreset: "ivory" | "dark" | "blush";
-  showCouplePhoto: boolean;
-  showGiftSection: boolean;
-  showEntrancePass: boolean;
-  sectionTitles: {
-    home: string;
-    rsvp: string;
-    details: string;
-    gift: string;
-    pass: string;
-  };
-}
-
-export const DEFAULT_ADMIN_SETTINGS: AdminSettings = {
-  stylePreset: "ivory",
-  showCouplePhoto: true,
-  showGiftSection: true,
-  showEntrancePass: true,
-  sectionTitles: {
-    home: "Deborah & Davide",
-    rsvp: "RSVP",
-    details: "Il Programma",
-    gift: "Un Pensiero",
-    pass: "Il Tuo Invito",
-  },
-};
 
 export function getRSVPs(): RSVPEntry[] {
   return storageGet<RSVPEntry[]>("rsvps", []);
@@ -91,14 +211,6 @@ export function getMyRSVP(): RSVPEntry | null {
 export function saveMyRSVP(entry: RSVPEntry): void {
   storageSet("my_rsvp", entry);
   saveRSVP(entry);
-}
-
-export function getAdminSettings(): AdminSettings {
-  return storageGet<AdminSettings>("admin_settings", DEFAULT_ADMIN_SETTINGS);
-}
-
-export function saveAdminSettings(settings: AdminSettings): void {
-  storageSet("admin_settings", settings);
 }
 
 export function generateId(): string {
