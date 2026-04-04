@@ -145,7 +145,6 @@ function inferLegacyDietaryFlags(dietaryNotes: unknown): DietaryFlag[] {
   const text = dietaryNotes.toLowerCase();
   const flags: DietaryFlag[] = [];
 
-  if (text.includes("vegano")) flags.push("vegan");
   if (text.includes("vegetar")) flags.push("vegetarian");
   if (text.includes("celiac") || text.includes("senza glutine") || text.includes("glutine")) {
     flags.push("celiac");

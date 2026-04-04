@@ -1,4 +1,4 @@
-import { Edit3, Leaf, Sprout, WheatOff } from "lucide-react";
+import { Edit3, Leaf, WheatOff } from "lucide-react";
 import type { UseFormReturn } from "react-hook-form";
 import { DIETARY_FLAG_LABELS, type DietaryFlag } from "@/config/rsvp";
 import WeddingButton from "@/components/WeddingButton";
@@ -20,9 +20,13 @@ interface RsvpFormProps {
 
 const dietaryOptions: { flag: DietaryFlag; Icon: typeof Leaf }[] = [
   { flag: "vegetarian", Icon: Leaf },
-  { flag: "vegan", Icon: Sprout },
   { flag: "celiac", Icon: WheatOff },
 ];
+
+const dietaryIconColor: Record<DietaryFlag, string> = {
+  vegetarian: "#6f8f4a",
+  celiac: "#b38a63",
+};
 
 export default function RsvpForm({ form, editing, onCancelEdit, onSubmit }: RsvpFormProps) {
   return (
@@ -95,7 +99,7 @@ export default function RsvpForm({ form, editing, onCancelEdit, onSubmit }: Rsvp
               className="w-full rounded-xl border border-border bg-white px-3 py-2.5 flex items-center justify-between gap-3"
             >
               <span className="flex items-center gap-2.5 min-w-0">
-                <Icon size={16} style={{ color: "hsl(var(--accent))" }} />
+                <Icon size={16} style={{ color: dietaryIconColor[flag] }} />
                 <span className="font-sans text-xs tracking-wide uppercase text-foreground">
                   {DIETARY_FLAG_LABELS[flag]}
                 </span>

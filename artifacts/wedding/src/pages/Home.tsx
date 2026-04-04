@@ -1,9 +1,13 @@
 import { Link } from "wouter";
-import { Heart } from "lucide-react";
 import Layout from "@/components/Layout";
 import WeddingButton from "@/components/WeddingButton";
 import { getContent } from "@/lib/storage";
-import { FIXED_BRIDE_NAME, FIXED_GROOM_NAME, FIXED_WEDDING_DATE_CITY_LABEL } from "@/config/event";
+import {
+  FIXED_BRIDE_NAME,
+  FIXED_GROOM_NAME,
+  FIXED_WEDDING_CITY,
+  FIXED_WEDDING_DATE_LABEL,
+} from "@/config/event";
 import coupleVenueImg from "@assets/Evento_serale_elegante_nel_cortile_storico_1775302758542.png";
 
 export default function Home() {
@@ -36,12 +40,12 @@ export default function Home() {
         </div>
 
         <div className="flex-1 min-h-0 flex flex-col px-5 pt-3 pb-4 max-w-lg mx-auto w-full">
-          <div className="text-center flex-shrink-0">
+          <div className="text-center flex-shrink-0 flex flex-col items-center gap-[0.1rem]">
             <p
-              className="home-kicker text-[10px] tracking-[0.26em] uppercase mb-1"
+              className="home-kicker text-[7px] tracking-[0.18em] uppercase"
               style={{ color: "hsl(var(--muted-foreground))" }}
             >
-              {c.heroSubtitle}
+              {`${FIXED_WEDDING_DATE_LABEL} 2026`}
             </p>
             <h1
               className="home-title font-serif text-[1.85rem] leading-tight"
@@ -50,19 +54,17 @@ export default function Home() {
               {FIXED_BRIDE_NAME} & {FIXED_GROOM_NAME}
             </h1>
             <div
-              className="home-meta flex items-center justify-center gap-2 mt-1.5"
+              className="home-meta flex items-center justify-center gap-2"
               style={{ color: "hsl(var(--muted-foreground))" }}
             >
-              <span className="text-[11px] tracking-wider">{FIXED_WEDDING_DATE_CITY_LABEL}</span>
+              <span className="text-[11px] tracking-wider">{FIXED_WEDDING_CITY}</span>
             </div>
           </div>
 
           <div className="flex-1 min-h-0 flex flex-col justify-between mt-2.5">
             <div className="home-welcome text-center mb-2 overflow-hidden">
               <div className="flex items-center justify-center gap-3 mb-1.5">
-                <div className="h-px w-10 bg-border" />
-                <Heart size={10} style={{ fill: "hsl(var(--accent))", stroke: "none" }} />
-                <div className="h-px w-10 bg-border" />
+                <div className="h-px w-[7.5rem] bg-border" />
               </div>
               <h2
                 className="home-welcome-title font-serif text-[1.05rem] mb-1"
@@ -71,7 +73,7 @@ export default function Home() {
                 {c.welcomeTitle}
               </h2>
               <p
-                className="home-welcome-text text-muted-foreground text-[11px] leading-[1.35] overflow-hidden whitespace-pre-line text-center"
+                className="home-welcome-text font-serif text-muted-foreground text-[11px] leading-[1.35] overflow-hidden whitespace-pre-line text-center"
                 style={{ maxHeight: "5.2rem" }}
               >
                 {c.welcomeText}

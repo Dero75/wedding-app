@@ -2,7 +2,6 @@ import { z } from "zod";
 
 const dietaryCountsSchema = z.object({
   vegetarian: z.number().int().min(0).max(10),
-  vegan: z.number().int().min(0).max(10),
   celiac: z.number().int().min(0).max(10),
 });
 

@@ -45,16 +45,34 @@ start_server() {
     fi
   fi
 
-  nohup bash -lc "
-    cd '${ROOT_DIR}' || exit 1
-    while true; do
-      ${START_CMD}
-      code=\$?
-      echo \"[\$(date '+%Y-%m-%d %H:%M:%S')] wedding-dev exited with code \${code}, restarting in 1s\" >>'${LOG_FILE}'
-      sleep 1
-    done
-  " >"${LOG_FILE}" 2>&1 < /dev/null &
-  echo $! > "${PID_FILE}"
+  python3 - "$ROOT_DIR" "$LOG_FILE" "$START_CMD" "$PID_FILE" <<'PY'
+import shlex
+import subprocess
+import sys
+
+root_dir, log_file, start_cmd, pid_file = sys.argv[1:]
+launcher = f"""
+cd {shlex.quote(root_dir)} || exit 1
+while true; do
+  {start_cmd}
+  code=$?
+  echo "[\\$(date '+%Y-%m-%d %H:%M:%S')] wedding-dev exited with code \\${{code}}, restarting in 1s" >>{shlex.quote(log_file)}
+  sleep 1
+done
+"""
+
+with open(log_file, "ab", buffering=0) as log:
+  process = subprocess.Popen(
+    ["bash", "-lc", launcher],
+    stdin=subprocess.DEVNULL,
+    stdout=log,
+    stderr=log,
+    start_new_session=True,
+  )
+
+with open(pid_file, "w", encoding="utf-8") as pid:
+  pid.write(str(process.pid))
+PY
 
   if wait_for_port; then
     echo "wedding-dev: started on http://localhost:${PORT}"

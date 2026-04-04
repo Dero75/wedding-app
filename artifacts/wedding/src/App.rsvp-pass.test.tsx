@@ -36,7 +36,7 @@ describe("RSVP confirm-only flow and pass gating", () => {
     expect(await screen.findByText("Grazie, Mario Rossi!")).toBeInTheDocument();
     expect(screen.getByText("Conferma")).toBeInTheDocument();
     expect(screen.getByText("Registrata ✓")).toBeInTheDocument();
-    expect(screen.getByText(/Celiaco/)).toBeInTheDocument();
+    expect(screen.getByText(/Celiaci/)).toBeInTheDocument();
 
     fireEvent.click(screen.getByTestId("button-edit-rsvp"));
     expect(screen.getByTestId("input-first-name")).toBeInTheDocument();
@@ -60,7 +60,7 @@ describe("RSVP confirm-only flow and pass gating", () => {
         lastName: "Verdi",
         guestCount: 2,
         childrenCount: 0,
-        dietaryCounts: { vegetarian: 1, vegan: 0, celiac: 0 },
+        dietaryCounts: { vegetarian: 1, celiac: 0 },
         submittedAt: new Date().toISOString(),
       }),
     );
@@ -73,7 +73,7 @@ describe("RSVP confirm-only flow and pass gating", () => {
           lastName: "Verdi",
           guestCount: 2,
           childrenCount: 0,
-          dietaryCounts: { vegetarian: 1, vegan: 0, celiac: 0 },
+          dietaryCounts: { vegetarian: 1, celiac: 0 },
           submittedAt: new Date().toISOString(),
         },
       ]),

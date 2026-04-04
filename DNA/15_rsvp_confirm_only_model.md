@@ -12,7 +12,7 @@ Runtime RSVP model is now confirm-only:
 
 - Removed `attending` from canonical `RSVPEntry`.
 - Removed free text fields `dietaryNotes` and `message` from canonical `RSVPEntry`.
-- Added structured `dietaryCounts` (`vegetarian`, `vegan`, `celiac`) with numeric quantities.
+- Added structured `dietaryCounts` (`vegetarian`, `celiac`) with numeric quantities.
 - Added `childrenCount` for guests under 18.
 - RSVP form no longer asks yes/no attendance.
 - RSVP page now bootstraps `my_rsvp` once at mount and edits via local state (no per-render storage read loop).
@@ -51,3 +51,14 @@ Handled centrally in `src/lib/storage.ts`:
 - RSVP: header ridotto al solo titolo; select `Minorenni` con label `minorenne/minorenni`.
 - Tipografia canonica confermata: titoli serif, UI/testi sans.
 - Nessuna nuova logica business introdotta in questo allineamento documentale.
+
+## Aggiornamento Operativo Finale (2026-04-04)
+
+- Verifiche complete rieseguite: install/ typecheck/ lint/ build/ test tutti OK.
+- Rimozione completa logica `vegano` dal runtime RSVP (config, schema, form, storage, test).
+- Etichette alimentari aggiornate: `Vegetariani`, `Celiaci`.
+- Home ottimizzata: data fissa `Venerdi 11 Settembre 2026`, nome coppia e città centrati con interspazi ridotti; separatore senza icona cuore.
+- Dettagli (`Cerimonia`/`Ricevimento`) compattati ~20% mantenendo stile/layout canonico.
+- Header admin consolidato: `Home` a sinistra, switch USER/ADMIN centrato, hamburger assente in `/admin*`.
+- Stabilità dev server migliorata: avvio detached affidabile in `scripts/wedding-dev-server.sh` per evitare stop intermittenti su `5001`.
+- Nessuna modifica di business logic; solo consolidamento tecnico e coerenza runtime/documentazione.

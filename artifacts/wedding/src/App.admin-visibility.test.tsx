@@ -69,5 +69,7 @@ describe("runtime sections are always active", () => {
     render(<App />);
 
     expect(screen.queryByTestId("button-menu-toggle")).not.toBeInTheDocument();
+    expect(screen.getByTestId("button-admin-home-topbar")).toBeInTheDocument();
+    expect(screen.queryByText("Torna alla gestione")).not.toBeInTheDocument();
   });
 });

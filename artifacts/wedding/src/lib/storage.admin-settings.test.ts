@@ -73,7 +73,7 @@ describe("storage sanitization", () => {
     expect(rsvps[0]?.firstName).toBe("Mario");
     expect(rsvps[0]?.lastName).toBe("Rossi");
     expect((rsvps[0] as Record<string, unknown>).attending).toBeUndefined();
-    expect(rsvps[0]?.dietaryCounts).toEqual({ vegetarian: 0, vegan: 0, celiac: 1 });
+    expect(rsvps[0]?.dietaryCounts).toEqual({ vegetarian: 0, celiac: 1 });
   });
 
   it("clears legacy my_rsvp with attending=false", () => {

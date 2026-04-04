@@ -20,19 +20,19 @@ export default function Details() {
         </p>
 
         {/* Cerimonia card */}
-        <div className="bg-card border border-border rounded-2xl px-6 py-8 text-center mb-4">
-          <Sun size={22} className="mx-auto mb-3" style={{ color: "hsl(var(--accent))" }} />
-          <p className="text-xs uppercase tracking-[0.25em] text-muted-foreground mb-3">
+        <div className="bg-card border border-border rounded-2xl px-5 py-6 text-center mb-3.5">
+          <Sun size={18} className="mx-auto mb-2.5" style={{ color: "hsl(var(--accent))" }} />
+          <p className="text-[11px] uppercase tracking-[0.22em] text-muted-foreground mb-2.5">
             Cerimonia
           </p>
-          <p className="font-serif text-4xl mb-4" style={{ color: "hsl(var(--foreground))" }}>
+          <p className="font-serif text-3xl mb-3.5" style={{ color: "hsl(var(--foreground))" }}>
             ore {c.ceremonyTime}
           </p>
-          <div className="h-px w-10 mx-auto mb-4" style={{ background: "hsl(var(--border))" }} />
-          <p className="text-sm text-muted-foreground mb-1">{c.ceremonyPlace}</p>
-          <p className="text-xs text-muted-foreground mb-6">{c.ceremonyAddress}</p>
+          <div className="h-px w-9 mx-auto mb-3.5" style={{ background: "hsl(var(--border))" }} />
+          <p className="text-[0.95rem] text-muted-foreground mb-1">{c.ceremonyPlace}</p>
+          <p className="text-[11px] text-muted-foreground mb-5">{c.ceremonyAddress}</p>
           {c.ceremonyNote && (
-            <p className="text-xs italic text-muted-foreground mb-6 whitespace-pre-line text-center">
+            <p className="text-[11px] italic text-muted-foreground mb-5 whitespace-pre-line text-center">
               {c.ceremonyNote}
             </p>
           )}
@@ -40,9 +40,9 @@ export default function Details() {
             href={ceremonyMapsUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 border border-border rounded-full px-5 py-2.5 text-xs text-muted-foreground hover:text-foreground hover:border-muted-foreground/40 transition-all"
+            className="inline-flex items-center gap-2 border border-border rounded-full px-4 py-2 text-[11px] text-muted-foreground hover:text-foreground hover:border-muted-foreground/40 transition-all"
           >
-            <MapPin size={13} style={{ color: "hsl(var(--accent))" }} />
+            <MapPin size={12} style={{ color: "hsl(var(--accent))" }} />
             Apri in Maps
           </a>
         </div>
@@ -55,19 +55,19 @@ export default function Details() {
         </div>
 
         {/* Ricevimento card */}
-        <div className="bg-card border border-border rounded-2xl px-6 py-8 text-center mb-6">
-          <Star size={20} className="mx-auto mb-3" style={{ color: "hsl(var(--accent))" }} />
-          <p className="text-xs uppercase tracking-[0.25em] text-muted-foreground mb-3">
+        <div className="bg-card border border-border rounded-2xl px-5 py-6 text-center mb-6">
+          <Star size={16} className="mx-auto mb-2.5" style={{ color: "hsl(var(--accent))" }} />
+          <p className="text-[11px] uppercase tracking-[0.22em] text-muted-foreground mb-2.5">
             Ricevimento
           </p>
-          <p className="font-serif text-4xl mb-4" style={{ color: "hsl(var(--foreground))" }}>
+          <p className="font-serif text-3xl mb-3.5" style={{ color: "hsl(var(--foreground))" }}>
             ore {c.receptionTime}
           </p>
-          <div className="h-px w-10 mx-auto mb-4" style={{ background: "hsl(var(--border))" }} />
-          <p className="text-sm text-muted-foreground mb-1">{c.receptionPlace}</p>
-          <p className="text-xs text-muted-foreground mb-6">{c.receptionAddress}</p>
+          <div className="h-px w-9 mx-auto mb-3.5" style={{ background: "hsl(var(--border))" }} />
+          <p className="text-[0.95rem] text-muted-foreground mb-1">{c.receptionPlace}</p>
+          <p className="text-[11px] text-muted-foreground mb-5">{c.receptionAddress}</p>
           {c.receptionNote && (
-            <p className="text-xs italic text-muted-foreground mb-6 whitespace-pre-line text-center">
+            <p className="text-[11px] italic text-muted-foreground mb-5 whitespace-pre-line text-center">
               {c.receptionNote}
             </p>
           )}
@@ -75,9 +75,9 @@ export default function Details() {
             href={receptionMapsUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 border border-border rounded-full px-5 py-2.5 text-xs text-muted-foreground hover:text-foreground hover:border-muted-foreground/40 transition-all"
+            className="inline-flex items-center gap-2 border border-border rounded-full px-4 py-2 text-[11px] text-muted-foreground hover:text-foreground hover:border-muted-foreground/40 transition-all"
           >
-            <MapPin size={13} style={{ color: "hsl(var(--accent))" }} />
+            <MapPin size={12} style={{ color: "hsl(var(--accent))" }} />
             Apri in Maps
           </a>
         </div>

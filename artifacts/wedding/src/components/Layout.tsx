@@ -14,7 +14,7 @@ const NAV_ITEMS = [
 export default function Layout({ children }: { children: React.ReactNode }) {
   const [open, setOpen] = useState(false);
   const [location] = useLocation();
-  const showDevRoleSwitch =
+  const showCenteredDevRoleSwitch =
     import.meta.env.DEV && (location === "/home" || location.startsWith("/admin"));
   const isAdminRoute = location.startsWith("/admin");
   const isAdminHome = location === "/admin";
@@ -29,9 +29,15 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     <div className="min-h-screen bg-background font-sans">
       {/* Fixed nav */}
       <header className="fixed top-0 left-0 right-0 z-50 bg-background/90 backdrop-blur-md border-b border-border">
-        <div className="max-w-lg mx-auto px-5 h-14 flex items-center justify-between">
-          {showDevRoleSwitch ? (
-            <DevRoleSwitch />
+        <div className="relative max-w-lg mx-auto px-5 h-14 flex items-center justify-between">
+          {isAdminRoute ? (
+            <Link
+              href="/admin"
+              data-testid="button-admin-home-topbar"
+              className="font-sans text-foreground text-[11px] tracking-[0.2em] uppercase px-2.5 py-1.5 rounded-full border border-border hover:text-accent transition-colors"
+            >
+              Home
+            </Link>
           ) : (
             <Link
               href="/home"
@@ -40,6 +46,13 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               Home
             </Link>
           )}
+
+          {showCenteredDevRoleSwitch && (
+            <div className="absolute left-1/2 -translate-x-1/2">
+              <DevRoleSwitch />
+            </div>
+          )}
+
           {isAdminHome ? (
             <Link
               href="/admin/settings"
