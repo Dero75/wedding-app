@@ -8,21 +8,21 @@
 - Wedding app dev command is deterministic on local port 5001.
 - `Admin` and `RSVP` pages are now split into smaller modules with unchanged behavior.
 - Local-only dev switch `USER/ADMIN` is isolated and removable (`src/components/dev/DevRoleSwitch.tsx`).
+- Supabase future-sync project coordinates are already staged in `artifacts/wedding/.env.example`.
+- Dead-code governance now has explicit config (`knip.json`) scoped to runtime relevance.
 
 ## Open technical risks
 
-- Large dead/scaffold area:
-  - `knip` now reports 59 unused files (down from 113).
-  - Remaining unused surface is concentrated in `artifacts/mockup-sandbox`.
+- Remaining dead-code signal is now mostly export-level leftovers in shared utilities (`toast/tooltip/use-toast` and `lib/api-client-react`), after excluding non-runtime playground files.
 - Oversized modules increase maintenance risk:
   - `lib/api-client-react/src/custom-fetch.ts` (still complex, though reduced below 350 lines).
 - `format:check` currently fails because legacy codebase is not fully Prettier-aligned.
 
 ## Recommended priority order
 
-1. Dead code reduction pass (safe, incremental): clean mockup-sandbox scaffold package or explicitly mark it as intentional playground.
-2. Harden dead-code governance:
-   - add `knip.json` with explicit workspace entries/ignores, then switch `deadcode` to blocking mode.
+1. Decide whether to keep `artifacts/mockup-sandbox` as long-term playground or archive/remove it in a dedicated change.
+2. Tighten dead-code policy:
+   - either remove or formally keep the remaining unused exports in runtime/shared libs.
 3. Normalize formatting strategy:
    - either one-time repo-wide Prettier reformat, or scoped formatting policy with documented excludes.
 4. Add more tests for critical flows:

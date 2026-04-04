@@ -41,7 +41,6 @@ export const CONTENT_SECTIONS: ContentSection[] = [
       { key: "weddingTime", label: "Ora cerimonia" },
       { key: "weddingLocation", label: "Luogo" },
       { key: "weddingAddress", label: "Indirizzo" },
-      { key: "hashtag", label: "Hashtag" },
       { key: "welcomeTitle", label: "Titolo benvenuto" },
       { key: "welcomeText", label: "Testo benvenuto", multiline: true },
       { key: "ctaRSVP", label: "Bottone RSVP" },

@@ -2,19 +2,19 @@ import { CheckCircle, Users } from "lucide-react";
 
 interface AdminStatsProps {
   totalResponses: number;
-  attendingCount: number;
-  totalGuests: number;
+  confirmedAdults: number;
+  withDietaryFlagsCount: number;
 }
 
 export default function AdminStats({
   totalResponses,
-  attendingCount,
-  totalGuests,
+  confirmedAdults,
+  withDietaryFlagsCount,
 }: AdminStatsProps) {
   const stats = [
     { icon: <Users size={16} />, label: "Risposte", value: totalResponses },
-    { icon: <CheckCircle size={16} />, label: "Presenti", value: attendingCount },
-    { icon: <Users size={16} />, label: "Ospiti", value: totalGuests },
+    { icon: <CheckCircle size={16} />, label: "Confermati", value: confirmedAdults },
+    { icon: <Users size={16} />, label: "Con diete", value: withDietaryFlagsCount },
   ];
 
   return (

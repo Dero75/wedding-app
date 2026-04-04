@@ -1,13 +1,14 @@
+import { DIETARY_FLAG_VALUES, type DietaryFlag } from "@/config/rsvp";
+
 const PREFIX = "wedding_";
 const STORAGE_KEYS = {
   content: "content",
   adminSettings: "admin_settings",
   rsvps: "rsvps",
   myRsvp: "my_rsvp",
-  devSeedMarker: "dev_seed_marker_v1",
 } as const;
 
-export function storageGet<T>(key: string, fallback: T): T {
+function storageGet<T>(key: string, fallback: T): T {
   try {
     const raw = localStorage.getItem(PREFIX + key);
     if (raw === null) return fallback;
@@ -17,7 +18,7 @@ export function storageGet<T>(key: string, fallback: T): T {
   }
 }
 
-export function storageSet<T>(key: string, value: T): void {
+function storageSet<T>(key: string, value: T): void {
   try {
     localStorage.setItem(PREFIX + key, JSON.stringify(value));
   } catch {
@@ -25,7 +26,7 @@ export function storageSet<T>(key: string, value: T): void {
   }
 }
 
-export function storageRemove(key: string): void {
+function storageRemove(key: string): void {
   try {
     localStorage.removeItem(PREFIX + key);
   } catch {
@@ -45,7 +46,6 @@ export interface EditableContent {
   weddingTime: string;
   weddingLocation: string;
   weddingAddress: string;
-  hashtag: string;
   // Home body
   welcomeTitle: string;
   welcomeText: string;
@@ -71,7 +71,7 @@ export interface EditableContent {
   passSubtitle: string;
 }
 
-export const DEFAULT_CONTENT: EditableContent = {
+const DEFAULT_CONTENT: EditableContent = {
   introTagline: "il matrimonio di",
   heroSubtitle: "il matrimonio di",
   brideName: "Deborah",
@@ -79,7 +79,6 @@ export const DEFAULT_CONTENT: EditableContent = {
   weddingTime: "16:00",
   weddingLocation: "Villa Borgonuovo",
   weddingAddress: "Via Borgonuovo 12, 40125 Bologna",
-  hashtag: "#DeboraheDavide2025",
   welcomeTitle: "Siete i benvenuti",
   welcomeText:
     "Con immensa gioia vi invitiamo a celebrare con noi il giorno più bello della nostra vita. La vostra presenza renderà questo momento ancora più indimenticabile.",
@@ -104,7 +103,21 @@ export const DEFAULT_CONTENT: EditableContent = {
 };
 
 export function getContent(): EditableContent {
-  const saved = storageGet<Partial<EditableContent>>(STORAGE_KEYS.content, {});
+  const savedRaw = storageGet<Record<string, unknown>>(STORAGE_KEYS.content, {});
+  const saved: Partial<EditableContent> = {};
+
+  for (const key of Object.keys(DEFAULT_CONTENT) as (keyof EditableContent)[]) {
+    const value = savedRaw[key];
+    if (typeof value === "string") {
+      saved[key] = value;
+    }
+  }
+
+  // Cleanup legacy/dead fields from older snapshots (e.g. deprecated `hashtag`).
+  if (Object.keys(savedRaw).length !== Object.keys(saved).length) {
+    storageSet(STORAGE_KEYS.content, saved);
+  }
+
   return { ...DEFAULT_CONTENT, ...saved };
 }
 
@@ -146,6 +159,9 @@ export function getAdminSettings(): AdminSettings {
 
 export function saveAdminSettings(settings: AdminSettings): void {
   storageSet(STORAGE_KEYS.adminSettings, settings);
+  if (typeof window !== "undefined") {
+    window.dispatchEvent(new Event("admin-settings-changed"));
+  }
 }
 
 // ─── RSVP ───────────────────────────────────────────────────────────────────
@@ -153,18 +169,113 @@ export function saveAdminSettings(settings: AdminSettings): void {
 export interface RSVPEntry {
   id: string;
   fullName: string;
-  attending: boolean;
   guestCount: number;
-  dietaryNotes: string;
-  message: string;
+  childrenCount: number;
+  dietaryFlags: DietaryFlag[];
   submittedAt: string;
 }
 
-export function getRSVPs(): RSVPEntry[] {
-  return storageGet<RSVPEntry[]>(STORAGE_KEYS.rsvps, []);
+function uniqueDietaryFlags(values: DietaryFlag[]): DietaryFlag[] {
+  return Array.from(new Set(values));
 }
 
-export function saveRSVP(entry: RSVPEntry): void {
+function inferLegacyDietaryFlags(dietaryNotes: unknown): DietaryFlag[] {
+  if (typeof dietaryNotes !== "string") return [];
+  const text = dietaryNotes.toLowerCase();
+  const flags: DietaryFlag[] = [];
+
+  if (text.includes("vegano")) flags.push("vegan");
+  if (text.includes("vegetar")) flags.push("vegetarian");
+  if (text.includes("celiac") || text.includes("senza glutine") || text.includes("glutine")) {
+    flags.push("celiac");
+  }
+
+  return uniqueDietaryFlags(flags);
+}
+
+function sanitizeDietaryFlags(value: unknown, legacyDietaryNotes?: unknown): DietaryFlag[] {
+  if (!Array.isArray(value)) {
+    return inferLegacyDietaryFlags(legacyDietaryNotes);
+  }
+
+  const allowed = new Set<DietaryFlag>(DIETARY_FLAG_VALUES);
+  const sanitized = value
+    .filter((flag): flag is DietaryFlag => typeof flag === "string" && allowed.has(flag as DietaryFlag))
+    .slice(0, DIETARY_FLAG_VALUES.length);
+
+  return uniqueDietaryFlags(sanitized);
+}
+
+export function getRSVPs(): RSVPEntry[] {
+  const raw = storageGet<unknown[]>(STORAGE_KEYS.rsvps, []);
+  let hasLegacyMutation = false;
+
+  const sanitized: RSVPEntry[] = raw
+    .map((value) => {
+      if (!value || typeof value !== "object") return null;
+      const item = value as Record<string, unknown>;
+
+      // Legacy model had explicit declines (`attending: false`), now removed.
+      if (item.attending === false) {
+        hasLegacyMutation = true;
+        return null;
+      }
+
+      const fullName = typeof item.fullName === "string" ? item.fullName.trim() : "";
+      if (!fullName) {
+        hasLegacyMutation = true;
+        return null;
+      }
+
+      const guestCountRaw = item.guestCount;
+      const guestCount =
+        typeof guestCountRaw === "number" && Number.isFinite(guestCountRaw)
+          ? Math.max(1, Math.floor(guestCountRaw))
+          : 1;
+      if (guestCount !== guestCountRaw) {
+        hasLegacyMutation = true;
+      }
+
+      const childrenCountRaw = item.childrenCount;
+      const childrenCount =
+        typeof childrenCountRaw === "number" && Number.isFinite(childrenCountRaw)
+          ? Math.max(0, Math.floor(childrenCountRaw))
+          : 0;
+      if (childrenCount !== childrenCountRaw) {
+        hasLegacyMutation = true;
+      }
+
+      const dietaryFlags = sanitizeDietaryFlags(item.dietaryFlags, item.dietaryNotes);
+      if (
+        !Array.isArray(item.dietaryFlags) ||
+        JSON.stringify(item.dietaryFlags) !== JSON.stringify(dietaryFlags)
+      ) {
+        hasLegacyMutation = true;
+      }
+
+      if (typeof item.dietaryNotes === "string" || typeof item.message === "string") {
+        hasLegacyMutation = true;
+      }
+
+      return {
+        id: typeof item.id === "string" ? item.id : generateId(),
+        fullName,
+        guestCount,
+        childrenCount,
+        dietaryFlags,
+        submittedAt: typeof item.submittedAt === "string" ? item.submittedAt : new Date().toISOString(),
+      };
+    })
+    .filter((entry): entry is RSVPEntry => entry !== null);
+
+  if (sanitized.length !== raw.length || hasLegacyMutation) {
+    storageSet(STORAGE_KEYS.rsvps, sanitized);
+  }
+
+  return sanitized;
+}
+
+function saveRSVP(entry: RSVPEntry): void {
   const all = getRSVPs();
   const idx = all.findIndex((r) => r.id === entry.id);
   if (idx >= 0) {
@@ -175,13 +286,44 @@ export function saveRSVP(entry: RSVPEntry): void {
   storageSet(STORAGE_KEYS.rsvps, all);
 }
 
-export function deleteRSVP(id: string): void {
-  const all = getRSVPs().filter((r) => r.id !== id);
-  storageSet(STORAGE_KEYS.rsvps, all);
-}
-
 export function getMyRSVP(): RSVPEntry | null {
-  return storageGet<RSVPEntry | null>(STORAGE_KEYS.myRsvp, null);
+  const raw = storageGet<unknown>(STORAGE_KEYS.myRsvp, null);
+  if (!raw || typeof raw !== "object") return null;
+
+  const item = raw as Record<string, unknown>;
+  if (item.attending === false) {
+    storageRemove(STORAGE_KEYS.myRsvp);
+    return null;
+  }
+
+  const fullName = typeof item.fullName === "string" ? item.fullName.trim() : "";
+  if (!fullName) return null;
+
+  const guestCountRaw = item.guestCount;
+  const guestCount =
+    typeof guestCountRaw === "number" && Number.isFinite(guestCountRaw)
+      ? Math.max(1, Math.floor(guestCountRaw))
+      : 1;
+
+  const childrenCountRaw = item.childrenCount;
+  const childrenCount =
+    typeof childrenCountRaw === "number" && Number.isFinite(childrenCountRaw)
+      ? Math.max(0, Math.floor(childrenCountRaw))
+      : 0;
+
+  const dietaryFlags = sanitizeDietaryFlags(item.dietaryFlags, item.dietaryNotes);
+
+  const sanitized: RSVPEntry = {
+    id: typeof item.id === "string" ? item.id : generateId(),
+    fullName,
+    guestCount,
+    childrenCount,
+    dietaryFlags,
+    submittedAt: typeof item.submittedAt === "string" ? item.submittedAt : new Date().toISOString(),
+  };
+
+  storageSet(STORAGE_KEYS.myRsvp, sanitized);
+  return sanitized;
 }
 
 export function saveMyRSVP(entry: RSVPEntry): void {
@@ -193,173 +335,9 @@ export function generateId(): string {
   return `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
 }
 
-function pickRandom<T>(values: readonly T[]): T {
-  return values[Math.floor(Math.random() * values.length)]!;
-}
-
-function shouldInclude(probability: number): boolean {
-  return Math.random() < probability;
-}
-
-function randomGuestCount(): number {
-  const roll = Math.random();
-  if (roll < 0.5) return 1;
-  if (roll < 0.75) return 2;
-  if (roll < 0.88) return 3;
-  if (roll < 0.95) return 4;
-  if (roll < 0.98) return 5;
-  return 6;
-}
-
-function randomSubmittedAtIso(): string {
-  const daysAgo = Math.floor(Math.random() * 60);
-  const hoursAgo = Math.floor(Math.random() * 24);
-  const minutesAgo = Math.floor(Math.random() * 60);
-  const millis = (((daysAgo * 24 + hoursAgo) * 60 + minutesAgo) * 60 + 1) * 1000;
-  return new Date(Date.now() - millis).toISOString();
-}
-
-function buildTestRsvpEntries(count: number): RSVPEntry[] {
-  const firstNames = [
-    "Andrea",
-    "Giulia",
-    "Marco",
-    "Sara",
-    "Luca",
-    "Francesca",
-    "Matteo",
-    "Chiara",
-    "Alessio",
-    "Elena",
-    "Davide",
-    "Martina",
-  ] as const;
-  const lastNames = [
-    "Rossi",
-    "Bianchi",
-    "Romano",
-    "Conti",
-    "Ricci",
-    "Moretti",
-    "Greco",
-    "Marini",
-    "Gallo",
-    "Costa",
-    "Ferrari",
-    "Colombo",
-  ] as const;
-  const dietaryNotes = [
-    "Vegetariano",
-    "Senza lattosio",
-    "Celiaco",
-    "No crostacei",
-    "Allergia frutta secca",
-    "Pasto vegano",
-    "No maiale",
-  ] as const;
-  const messages = [
-    "Non vediamo l'ora!",
-    "Felici di esserci con voi.",
-    "Sara una giornata bellissima.",
-    "Grazie dell'invito, a presto.",
-    "Auguri di cuore agli sposi.",
-    "Ci vediamo al ricevimento.",
-  ] as const;
-
-  const baseline: RSVPEntry[] = [];
-
-  for (let guestCount = 1; guestCount <= 6; guestCount += 1) {
-    baseline.push({
-      id: generateId(),
-      fullName: `Test Presente Base ${guestCount}`,
-      attending: true,
-      guestCount,
-      dietaryNotes: "",
-      message: "",
-      submittedAt: randomSubmittedAtIso(),
-    });
-    baseline.push({
-      id: generateId(),
-      fullName: `Test Presente Completo ${guestCount}`,
-      attending: true,
-      guestCount,
-      dietaryNotes: pickRandom(dietaryNotes),
-      message: pickRandom(messages),
-      submittedAt: randomSubmittedAtIso(),
-    });
-  }
-
-  baseline.push({
-    id: generateId(),
-    fullName: "Test Non Presente 1",
-    attending: false,
-    guestCount: 1,
-    dietaryNotes: "",
-    message: "",
-    submittedAt: randomSubmittedAtIso(),
-  });
-  baseline.push({
-    id: generateId(),
-    fullName: "Test Non Presente 2",
-    attending: false,
-    guestCount: 1,
-    dietaryNotes: "",
-    message: pickRandom(messages),
-    submittedAt: randomSubmittedAtIso(),
-  });
-
-  const result = baseline.slice(0, count);
-
-  for (let index = result.length; index < count; index += 1) {
-    const attending = shouldInclude(0.72);
-    const guestCount = attending ? randomGuestCount() : 1;
-    const fullName = `${pickRandom(firstNames)} ${pickRandom(lastNames)} ${index + 1}`;
-
-    result.push({
-      id: generateId(),
-      fullName,
-      attending,
-      guestCount,
-      dietaryNotes: attending && shouldInclude(0.35) ? pickRandom(dietaryNotes) : "",
-      message: shouldInclude(0.45) ? pickRandom(messages) : "",
-      submittedAt: randomSubmittedAtIso(),
-    });
-  }
-
-  return result;
-}
-
-export function ensureDevTestRsvps(seedCount = 50): number {
-  const marker = storageGet<boolean>(STORAGE_KEYS.devSeedMarker, false);
-  if (marker) return 0;
-
-  const existing = getRSVPs();
-  if (existing.length >= seedCount) {
-    storageSet(STORAGE_KEYS.devSeedMarker, true);
-    return 0;
-  }
-
-  const toGenerate = seedCount - existing.length;
-  const generated = buildTestRsvpEntries(toGenerate);
-  const merged = [...existing, ...generated];
-
-  storageSet(STORAGE_KEYS.rsvps, merged);
-  storageSet(STORAGE_KEYS.devSeedMarker, true);
-
-  if (!getMyRSVP()) {
-    const fallbackMine = merged.find((entry) => entry.attending) ?? merged[0] ?? null;
-    if (fallbackMine) {
-      storageSet(STORAGE_KEYS.myRsvp, fallbackMine);
-    }
-  }
-
-  return generated.length;
-}
-
 export function clearAllLocalWeddingRecordsForSupabaseMigration(): void {
   storageRemove(STORAGE_KEYS.rsvps);
   storageRemove(STORAGE_KEYS.myRsvp);
   storageRemove(STORAGE_KEYS.content);
   storageRemove(STORAGE_KEYS.adminSettings);
-  storageRemove(STORAGE_KEYS.devSeedMarker);
 }

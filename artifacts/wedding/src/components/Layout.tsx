@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useLocation } from "wouter";
 import { Menu, Settings, X } from "lucide-react";
 import DevRoleSwitch from "@/components/dev/DevRoleSwitch";
+import { getAdminSettings } from "@/lib/storage";
 
 const NAV_ITEMS = [
   { label: "Home", href: "/home" },
@@ -9,14 +10,31 @@ const NAV_ITEMS = [
   { label: "Programma", href: "/details" },
   { label: "Regalo", href: "/gift" },
   { label: "Invito", href: "/pass" },
-];
+] as const;
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const [open, setOpen] = useState(false);
   const [location] = useLocation();
+  const [settings, setSettings] = useState(() => getAdminSettings());
   const showDevRoleSwitch =
     import.meta.env.DEV && (location === "/home" || location.startsWith("/admin"));
   const isAdminHome = location === "/admin";
+  const visibleNavItems = NAV_ITEMS.filter((item) => {
+    if (item.href === "/gift") return settings.showGiftSection;
+    if (item.href === "/pass") return settings.showEntrancePass;
+    return true;
+  });
+
+  useEffect(() => {
+    const syncSettings = () => setSettings(getAdminSettings());
+
+    window.addEventListener("storage", syncSettings);
+    window.addEventListener("admin-settings-changed", syncSettings);
+    return () => {
+      window.removeEventListener("storage", syncSettings);
+      window.removeEventListener("admin-settings-changed", syncSettings);
+    };
+  }, []);
 
   return (
     <div className="min-h-screen bg-background font-serif">
@@ -30,7 +48,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               href="/home"
               className="font-serif text-foreground text-base tracking-[0.2em] uppercase"
             >
-              D & D
+              Home
             </Link>
           )}
           {isAdminHome ? (
@@ -82,7 +100,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         </div>
 
         <div className="flex flex-col flex-1 px-6 pt-6 pb-8 gap-0.5">
-          {NAV_ITEMS.map((item) => (
+          {visibleNavItems.map((item) => (
             <Link
               key={item.href}
               href={item.href}

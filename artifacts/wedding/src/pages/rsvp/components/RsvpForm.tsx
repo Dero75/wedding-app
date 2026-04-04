@@ -1,5 +1,6 @@
-import { Edit3 } from "lucide-react";
+import { Edit3, Leaf, Sprout, WheatOff } from "lucide-react";
 import type { UseFormReturn } from "react-hook-form";
+import { DIETARY_FLAG_LABELS, type DietaryFlag } from "@/config/rsvp";
 import WeddingButton from "@/components/WeddingButton";
 import type { RSVPFormData } from "@/pages/rsvp/schema";
 import RsvpInputField from "./RsvpInputField";
@@ -15,7 +16,29 @@ interface RsvpFormProps {
 }
 
 export default function RsvpForm({ form, editing, onCancelEdit, onSubmit }: RsvpFormProps) {
-  const attendingValue = form.watch("attending");
+  const selectedFlags = form.watch("dietaryFlags") ?? [];
+
+  const dietaryOptions: { flag: DietaryFlag; Icon: typeof Leaf }[] = [
+    { flag: "vegetarian", Icon: Leaf },
+    { flag: "vegan", Icon: Sprout },
+    { flag: "celiac", Icon: WheatOff },
+  ];
+
+  const toggleDietaryFlag = (flag: DietaryFlag) => {
+    if (selectedFlags.includes(flag)) {
+      form.setValue(
+        "dietaryFlags",
+        selectedFlags.filter((item) => item !== flag),
+        { shouldDirty: true, shouldTouch: true },
+      );
+      return;
+    }
+
+    form.setValue("dietaryFlags", [...selectedFlags, flag], {
+      shouldDirty: true,
+      shouldTouch: true,
+    });
+  };
 
   return (
     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
@@ -39,83 +62,66 @@ export default function RsvpForm({ form, editing, onCancelEdit, onSubmit }: Rsvp
       </RsvpInputField>
 
       <RsvpInputField
-        label="Parteciperai al matrimonio? *"
-        error={form.formState.errors.attending?.message}
+        label="Numero adulti confermati (incluso te) *"
+        error={form.formState.errors.guestCount?.message}
       >
-        <div className="grid grid-cols-2 gap-3">
-          {[
-            { value: "yes", label: "Sì, ci sarò!" },
-            { value: "no", label: "Purtroppo no" },
-          ].map((option) => (
-            <label
-              key={option.value}
-              className={`flex items-center justify-center gap-2 border-2 rounded-xl py-3.5 cursor-pointer transition-all active:scale-[0.97] ${
-                attendingValue === option.value
-                  ? "border-accent bg-background"
-                  : "border-border bg-card hover:border-border/60"
-              }`}
-              style={{
-                color:
-                  attendingValue === option.value
-                    ? "hsl(var(--accent))"
-                    : "hsl(var(--muted-foreground))",
-              }}
-            >
-              <input
-                type="radio"
-                {...form.register("attending")}
-                value={option.value}
-                className="sr-only"
-                data-testid={`radio-attending-${option.value}`}
-              />
-              <span className="text-sm font-sans">{option.label}</span>
-            </label>
+        <select
+          {...form.register("guestCount", { valueAsNumber: true })}
+          data-testid="select-guest-count"
+          className={inputClass}
+        >
+          {[1, 2, 3, 4, 5, 6].map((count) => (
+            <option key={count} value={count}>
+              {count} {count === 1 ? "adulto" : "adulti"}
+            </option>
           ))}
-        </div>
+        </select>
       </RsvpInputField>
 
-      {attendingValue === "yes" && (
-        <RsvpInputField
-          label="Numero di persone (incluso te) *"
-          error={form.formState.errors.guestCount?.message}
+      <RsvpInputField
+        label="Numero bambini sotto i 16 anni"
+        error={form.formState.errors.childrenCount?.message}
+      >
+        <select
+          {...form.register("childrenCount", { valueAsNumber: true })}
+          data-testid="select-children-count"
+          className={inputClass}
         >
-          <select
-            {...form.register("guestCount", { valueAsNumber: true })}
-            data-testid="select-guest-count"
-            className={inputClass}
-          >
-            {[1, 2, 3, 4, 5, 6].map((count) => (
-              <option key={count} value={count}>
-                {count} {count === 1 ? "persona" : "persone"}
-              </option>
-            ))}
-          </select>
-        </RsvpInputField>
-      )}
+          {[0, 1, 2, 3, 4, 5, 6].map((count) => (
+            <option key={count} value={count}>
+              {count} {count === 1 ? "bambino" : "bambini"}
+            </option>
+          ))}
+        </select>
+      </RsvpInputField>
 
-      {attendingValue === "yes" && (
-        <RsvpInputField
-          label="Intolleranze o preferenze alimentari"
-          hint="Facoltativo — es. vegetariano, celiaco"
-        >
-          <textarea
-            {...form.register("dietaryNotes")}
-            data-testid="textarea-dietary-notes"
-            rows={2}
-            className={`${inputClass} resize-none`}
-            placeholder="Es. vegetariano, celiaco, allergie…"
-          />
-        </RsvpInputField>
-      )}
-
-      <RsvpInputField label="Un messaggio per noi" hint="Facoltativo">
-        <textarea
-          {...form.register("message")}
-          data-testid="textarea-message"
-          rows={3}
-          className={`${inputClass} resize-none`}
-          placeholder="Lascia un pensiero per gli sposi…"
-        />
+      <RsvpInputField label="Esigenze alimentari" hint="Facoltativo">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+          {dietaryOptions.map(({ flag, Icon }) => {
+            const isSelected = selectedFlags.includes(flag);
+            return (
+              <button
+                key={flag}
+                type="button"
+                onClick={() => toggleDietaryFlag(flag)}
+                data-testid={`toggle-dietary-${flag}`}
+                aria-pressed={isSelected}
+                className={`w-full rounded-xl border px-3 py-3 text-left transition-colors ${
+                  isSelected
+                    ? "border-accent bg-accent/10 text-foreground"
+                    : "border-border bg-background text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                <span className="flex items-center gap-2.5">
+                  <Icon size={16} style={{ color: "hsl(var(--accent))" }} />
+                  <span className="font-sans text-xs tracking-wide uppercase">
+                    {DIETARY_FLAG_LABELS[flag]}
+                  </span>
+                </span>
+              </button>
+            );
+          })}
+        </div>
       </RsvpInputField>
 
       <div className="flex gap-3 pt-1">

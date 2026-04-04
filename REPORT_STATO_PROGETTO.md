@@ -17,15 +17,14 @@ Cosa funziona davvero oggi:
 Cosa è incompleto:
 - Nessun backend reale per RSVP/contenuti (tutto in localStorage, per-device).
 - API server esiste ma espone solo healthcheck (`/api/healthz`) e non è integrato nel runtime wedding.
-- Copertura test molto bassa (1 test di routing intro).
+- Copertura test ancora parziale, ma i flussi critici toccati sono coperti (12 test attivi su RSVP/admin visibility/pass/storage).
 
 Cosa è temporaneo:
 - Switch `USER/ADMIN` in header visibile solo in DEV (`DevRoleSwitch`).
 - `artifacts/mockup-sandbox` è un ambiente preview/scaffold separato dal runtime wedding, con ampia superficie non usata.
 
 Cosa è incoerente o da rifinire:
-- Toggle Admin `showGiftSection` e `showEntrancePass` esistono e si salvano, ma non governano realmente navigazione/route rendering delle relative pagine.
-- Parte della documentazione interna in `DNA/` non è allineata allo stato codice attuale (es. admin ora separato in `/admin` + `/admin/settings`).
+- Parte della documentazione interna in `DNA/` va mantenuta allineata a ogni modifica (pattern già avviato, ma da proseguire in modo rigoroso).
 
 ## 2. Struttura reale del progetto
 
@@ -69,9 +68,8 @@ Configurazioni principali:
 
 Home Admin (`/admin`) oggi contiene:
 - Titolo pagina.
-- `AdminStats` (risposte, presenti, ospiti).
-- Card/pulsante `Impostazioni`.
-- Sezione `Lista RSVP (N)` con refresh e delete.
+- `AdminStats` (risposte, adulti confermati, conferme con flag alimentari).
+- Lista RSVP card-based sempre visibile in area scrollabile interna (senza container/header dedicato).
 
 Sezioni esistenti e separazione:
 - Configurazioni app sono state separate in `/admin/settings`:
@@ -85,10 +83,9 @@ Cosa è già separato:
 
 Cosa è ancora mescolato:
 - Nessuna protezione accesso admin (volutamente accesso diretto).
-- Alcuni toggle visibilità sono configurabili ma non pienamente applicati al comportamento runtime (vedi punto 4/7).
 
 Problemi UX/strutturali rilevati:
-- Non critici bloccanti; la principale incoerenza è funzionale (toggle non collegati), non visiva.
+- Non critici bloccanti nel runtime wedding; focus da mantenere su coerenza contenuti e copertura test.
 
 ## 4. Gestione contenuti
 
@@ -107,14 +104,14 @@ Contenuti non modificabili oggi:
 Criticità architetturali:
 - Salvataggio admin on-change a ogni input (semplice e reattivo, ma senza debounce/versioning).
 - Nessun livello di validazione editoriale lato admin oltre ai tipi TS.
-- Toggle `showGiftSection` e `showEntrancePass` persistiti ma non realmente consumati in routing/nav/rendering pagine.
 
 ## 5. RSVP e logica utente
 
 Stato reale del flusso RSVP:
-- Form con validazione zod (`fullName`, `attending`, `guestCount`, campi opzionali).
+- Form conferma-only con validazione zod (`fullName`, `guestCount`, `childrenCount`, `dietaryFlags`).
 - Conferma post-invio con possibilità di modifica.
 - Testo corrente: "Le adesioni sono sempre aperte."
+- Nessuna opzione di rifiuto esplicito nel runtime.
 
 Cosa viene salvato:
 - Entry completa `RSVPEntry` in `wedding_rsvps`.
@@ -133,8 +130,8 @@ Problemi di coerenza:
 ## 6. Pass / accesso / schermate collegate
 
 Stato reale pagina pass (`/pass`):
-- Se `my_rsvp` assente o `attending=false`: stato bloccato con CTA verso RSVP.
-- Se `attending=true`: pass completo con dati ospite e dettagli evento.
+- Se `my_rsvp` assente: stato bloccato con CTA verso RSVP.
+- Se esiste conferma valida: pass completo con dati ospite e dettagli evento.
 
 Dipendenze da RSVP:
 - Dipende interamente da `getMyRSVP()` locale.
@@ -153,16 +150,15 @@ Moduli troppo accoppiati:
 - `storage.ts` centralizza molti domini (content, settings, rsvp): comodo ma da monitorare per crescita.
 
 Dead code residuo:
-- `knip` rileva 59 file inutilizzati, quasi tutti in `artifacts/mockup-sandbox/src/components/ui/*`.
-- Rilevate anche molte devDependency inutilizzate del solo `mockup-sandbox`.
+- `knip` è stato configurato con `knip.json` per separare runtime wedding dal playground.
+- Il segnale residuo è concentrato su pochi export non usati in utility runtime/shared libs.
 
 Dipendenze dubbie/inutilizzate:
 - Forte concentrazione nel package `@workspace/mockup-sandbox` (scaffold UI molto ampio non usato nel runtime wedding).
 
 Punti fragili:
 - Asset hero principale molto pesante (~2.54 MB nel build output), potenziale impatto su first load mobile.
-- Suite test minimale (1 test), coverage reale bassa sui flussi critici.
-- Incoerenza tra toggle admin disponibili e comportamento reale su gift/pass.
+- Coverage ancora parziale, anche se ora sono coperti i flussi RSVP/pass confirm-only e visibilità admin essenziale.
 
 ## 8. Residui temporanei / sviluppo
 
@@ -177,22 +173,20 @@ Elementi da rimuovere/decidere a progetto finito:
 Scorciatoie locali/hack:
 - Nessun hack runtime critico trovato nel wedding app.
 - Esiste remote aggiuntivo `gitsafe-backup` in git config locale (non impatta runtime applicativo).
+- È presente script operativo dedicato per avvio locale stabile (`scripts/wedding-dev-server.sh` + script npm `app:*`).
 
 ## 9. Priorità consigliate
 
-1. Allineare i toggle admin al comportamento reale:
-- O collegare `showGiftSection`/`showEntrancePass` a nav e rendering pagine, oppure rimuoverli dalla UI admin per evitare ambiguità.
-
-2. Consolidare documentazione tecnica interna:
+1. Consolidare documentazione tecnica interna:
 - Aggiornare `DNA/09_wedding_pages_and_navigation.md` e `DNA/11_wedding_rsvp_and_admin.md` rispetto all’attuale split `/admin` + `/admin/settings`.
 
-3. Ridurre superficie morta del `mockup-sandbox`:
+2. Ridurre superficie morta del `mockup-sandbox`:
 - Scegliere se tenerlo come playground con confini chiari (e config knip dedicata) o alleggerirlo drasticamente.
 
-4. Rafforzare test sui flussi core:
-- RSVP submit/edit, persistenza admin settings/content, condizione pass lock/unlock.
+3. Rafforzare test sui flussi core:
+- RSVP submit/edit, persistenza admin settings/content, condizione pass lock/unlock, sanitizzazione snapshot legacy.
 
-5. Ottimizzare asset hero per mobile:
+4. Ottimizzare asset hero per mobile:
 - Conversione/compressione immagine principale mantenendo resa visiva.
 
 ## 10. File da tenere d’occhio

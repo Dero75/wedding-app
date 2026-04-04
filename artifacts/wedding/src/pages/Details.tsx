@@ -1,4 +1,4 @@
-import { Sun, Star, MapPin, Info } from "lucide-react";
+import { Sun, Star, MapPin } from "lucide-react";
 import Layout from "@/components/Layout";
 import PageContainer from "@/components/PageContainer";
 import SectionTitle from "@/components/SectionTitle";
@@ -78,13 +78,6 @@ export default function Details() {
           </a>
         </div>
 
-        {/* Footer note */}
-        <div className="flex items-start gap-3 bg-card border border-border rounded-xl px-4 py-3.5">
-          <Info size={14} className="mt-0.5 shrink-0" style={{ color: "hsl(var(--accent))" }} />
-          <p className="text-xs text-muted-foreground leading-relaxed">
-            Il ricevimento si svolgerà all'aperto. Si consiglia abbigliamento elegante.
-          </p>
-        </div>
       </PageContainer>
     </Layout>
   );

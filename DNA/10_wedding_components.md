@@ -4,10 +4,10 @@
 
 ### `Layout`
 
-- Fixed top nav bar (D & D monogram + hamburger) + slide-in right drawer
+- Fixed top nav bar (home label + hamburger) + slide-in right drawer
 - Drawer lists all 5 main routes + Admin link (bottom, subtle)
 - Active link uses `text-accent` (adapts to all presets)
-- Local development utility switch (`USER/ADMIN`) can replace monogram on `/home` and `/admin` only in DEV mode
+- Local development utility switch (`USER/ADMIN`) can replace the header home label on `/home` and `/admin` only in DEV mode
 
 ### `PageContainer`
 
@@ -40,7 +40,7 @@
 
 ## Page-level internal components (not extracted)
 
-- **RSVP confirmation card** — `RSVP.tsx` — shown after submission
+- **RSVP confirmation card** — `RSVP.tsx` — shown after submission (adults + children summary)
 - **Day timeline** — `Details.tsx` — vertical timeline with CSS border line
 - **Entrance pass card** — `EntrancePass.tsx` — dark premium card with gradient adapting to preset via `--p-pass-bg-from/to` CSS vars
 - **IBAN copy block** — `Gift.tsx` — monospace display + clipboard button

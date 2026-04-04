@@ -16,8 +16,8 @@ export default function EntrancePass() {
       <PageContainer>
         <SectionTitle title={c.passTitle} subtitle="Ingresso" />
 
-        {/* ─── Locked / not-attending state ─── */}
-        {(!rsvp || !rsvp.attending) && (
+        {/* ─── Locked state (no confirmation yet) ─── */}
+        {!rsvp && (
           <div className="text-center py-4">
             <div
               className="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 border-2"
@@ -30,18 +30,14 @@ export default function EntrancePass() {
             </div>
 
             <h3 className="font-serif text-xl mb-3" style={{ color: "hsl(var(--foreground))" }}>
-              {rsvp ? "Invito non disponibile" : "Conferma la tua presenza"}
+              Conferma la tua presenza
             </h3>
             <p className="text-sm text-muted-foreground mb-8 leading-relaxed max-w-xs mx-auto">
-              {rsvp
-                ? "Hai indicato che non potrai partecipare. L'invito digitale è disponibile soltanto per gli ospiti confermati."
-                : "Accedi al tuo invito digitale dopo aver confermato la presenza tramite il modulo RSVP."}
+              Accedi al tuo invito digitale dopo aver confermato la presenza tramite il modulo RSVP.
             </p>
 
             <Link href="/rsvp">
-              <WeddingButton data-testid="button-go-rsvp">
-                {rsvp ? "Modifica risposta" : "Conferma la presenza"}
-              </WeddingButton>
+              <WeddingButton data-testid="button-go-rsvp">Conferma la presenza</WeddingButton>
             </Link>
 
             {/* Decorative locked card preview */}
@@ -64,7 +60,7 @@ export default function EntrancePass() {
         )}
 
         {/* ─── Active pass ─── */}
-        {rsvp && rsvp.attending && (
+        {rsvp && (
           <>
             <p className="text-center text-sm text-muted-foreground mb-8">{c.passSubtitle}</p>
 
@@ -159,7 +155,10 @@ export default function EntrancePass() {
                     {rsvp.fullName}
                   </p>
                   <p className="text-xs mt-0.5" style={{ color: "rgba(201,185,154,0.55)" }}>
-                    {rsvp.guestCount} {rsvp.guestCount === 1 ? "persona" : "persone"}
+                    {rsvp.guestCount} {rsvp.guestCount === 1 ? "adulto" : "adulti"}
+                    {rsvp.childrenCount > 0
+                      ? ` · ${rsvp.childrenCount} ${rsvp.childrenCount === 1 ? "bambino" : "bambini"}`
+                      : ""}
                   </p>
                 </div>
 

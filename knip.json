@@ -1,0 +1,7 @@
+{
+  "$schema": "https://unpkg.com/knip@latest/schema-json/schema.json",
+  "ignore": [
+    "artifacts/mockup-sandbox/**",
+    "lib/api-spec/orval.config.ts"
+  ]
+}

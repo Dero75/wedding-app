@@ -12,7 +12,7 @@ import Gift from "@/pages/Gift";
 import EntrancePass from "@/pages/EntrancePass";
 import Admin from "@/pages/Admin";
 import AdminSettings from "@/pages/AdminSettings";
-import { ensureDevTestRsvps, getAdminSettings } from "@/lib/storage";
+import { clearAllLocalWeddingRecordsForSupabaseMigration, getAdminSettings } from "@/lib/storage";
 
 const queryClient = new QueryClient();
 
@@ -34,24 +34,32 @@ function PresetApplier() {
   return null;
 }
 
-function DevDataSeeder() {
+function DevLocalRecordsResetter() {
   useEffect(() => {
     if (!import.meta.env.DEV) return;
-    ensureDevTestRsvps(50);
+    if (import.meta.env.MODE === "test") return;
+    const resetMarkerKey = "wedding_local_records_reset_v1";
+    if (localStorage.getItem(resetMarkerKey) === "1") return;
+
+    clearAllLocalWeddingRecordsForSupabaseMigration();
+    localStorage.setItem(resetMarkerKey, "1");
+    window.location.reload();
   }, []);
 
   return null;
 }
 
 function Router() {
+  const settings = getAdminSettings();
+
   return (
     <Switch>
       <Route path="/" component={Intro} />
       <Route path="/home" component={Home} />
       <Route path="/rsvp" component={RSVP} />
       <Route path="/details" component={Details} />
-      <Route path="/gift" component={Gift} />
-      <Route path="/pass" component={EntrancePass} />
+      <Route path="/gift" component={settings.showGiftSection ? Gift : NotFound} />
+      <Route path="/pass" component={settings.showEntrancePass ? EntrancePass : NotFound} />
       <Route path="/admin/settings" component={AdminSettings} />
       <Route path="/admin" component={Admin} />
       <Route component={NotFound} />
@@ -64,7 +72,7 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <PresetApplier />
-        <DevDataSeeder />
+        <DevLocalRecordsResetter />
         <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, "")}>
           <Router />
         </WouterRouter>

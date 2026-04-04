@@ -1,42 +1,30 @@
-import { useState } from "react";
 import Layout from "@/components/Layout";
 import PageContainer from "@/components/PageContainer";
 import SectionTitle from "@/components/SectionTitle";
-import { deleteRSVP, getRSVPs, type RSVPEntry } from "@/lib/storage";
+import { getRSVPs } from "@/lib/storage";
 import AdminRsvpSection from "@/pages/admin/components/AdminRsvpSection";
 import AdminStats from "@/pages/admin/components/AdminStats";
 
 export default function Admin() {
-  const [rsvps, setRsvps] = useState<RSVPEntry[]>(() => getRSVPs());
+  const rsvps = getRSVPs();
 
-  const attending = rsvps.filter((rsvp) => rsvp.attending);
-  const nonAttending = rsvps.filter((rsvp) => !rsvp.attending);
-  const totalGuests = attending.reduce((acc, rsvp) => acc + rsvp.guestCount, 0);
-
-  const handleDeleteRsvp = (id: string) => {
-    deleteRSVP(id);
-    setRsvps(getRSVPs());
-  };
+  const confirmedAdults = rsvps.reduce((acc, rsvp) => acc + rsvp.guestCount, 0);
+  const withDietaryFlagsCount = rsvps.filter((rsvp) => rsvp.dietaryFlags.length > 0).length;
 
   return (
     <Layout>
-      <PageContainer>
-        <SectionTitle title="Pannello Admin" subtitle="Gestione" />
+      <PageContainer className="h-[calc(100dvh-3.5rem)] max-h-[calc(100dvh-3.5rem)] overflow-hidden flex flex-col pt-8 pb-4">
+        <SectionTitle title="Gestione Invitati" />
 
         <AdminStats
           totalResponses={rsvps.length}
-          attendingCount={attending.length}
-          totalGuests={totalGuests}
+          confirmedAdults={confirmedAdults}
+          withDietaryFlagsCount={withDietaryFlagsCount}
         />
 
-        <AdminRsvpSection
-          rsvps={rsvps}
-          attendingCount={attending.length}
-          nonAttendingCount={nonAttending.length}
-          totalGuests={totalGuests}
-          onRefresh={() => setRsvps(getRSVPs())}
-          onDelete={handleDeleteRsvp}
-        />
+        <div className="flex-1 min-h-0">
+          <AdminRsvpSection rsvps={rsvps} />
+        </div>
       </PageContainer>
     </Layout>
   );

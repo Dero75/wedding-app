@@ -52,7 +52,7 @@ export default function AdminSettings() {
           </Link>
         </div>
 
-        <SectionTitle title="Impostazioni" subtitle="Admin" />
+        <SectionTitle title="Impostazioni" />
 
         <AdminStyleSection
           selectedPreset={settings.stylePreset}

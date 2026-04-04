@@ -23,8 +23,12 @@
 ## Runtime/storage state
 
 - Client state and persistence: localStorage/sessionStorage via `artifacts/wedding/src/lib/storage.ts`.
+- RSVP canonical fields: `fullName`, `guestCount`, `childrenCount`, `dietaryFlags`, `submittedAt`.
 - No Supabase runtime wired.
 - API client package exists but is not currently used by wedding app runtime.
+- Supabase future-sync coordinates are registered in project template:
+  - `artifacts/wedding/.env.example`
+  - `DNA/12_wedding_future_supabase_plan.md`
 
 ## Structural findings
 
@@ -43,3 +47,4 @@
 - Root scripts required a global `pnpm` binary (not available in this environment).
 - Build failed on macOS because workspace overrides removed non-Linux Rollup/esbuild binaries.
 - Vite configs required `PORT` and `BASE_PATH` env vars with hard failure if missing.
+- Added deterministic local app lifecycle script (`scripts/wedding-dev-server.sh`) for port `5001` start/stop/restart/status.

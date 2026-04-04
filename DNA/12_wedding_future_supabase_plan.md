@@ -20,10 +20,9 @@ The only file that needs to change is `src/lib/storage.ts`. Replace the localSto
 CREATE TABLE rsvps (
   id TEXT PRIMARY KEY,
   full_name TEXT NOT NULL,
-  attending BOOLEAN NOT NULL,
   guest_count INTEGER NOT NULL,
-  dietary_notes TEXT,
-  message TEXT,
+  children_count INTEGER NOT NULL DEFAULT 0,
+  dietary_flags TEXT[] NOT NULL DEFAULT '{}',
   submitted_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
@@ -43,7 +42,6 @@ CREATE TABLE admin_settings (
 // Replace these with Supabase calls:
 getRSVPs(): Promise<RSVPEntry[]>
 saveRSVP(entry: RSVPEntry): Promise<void>
-deleteRSVP(id: string): Promise<void>
 getAdminSettings(): Promise<AdminSettings>
 saveAdminSettings(settings: AdminSettings): Promise<void>
 ```
@@ -51,11 +49,20 @@ saveAdminSettings(settings: AdminSettings): Promise<void>
 ### Steps
 
 1. Install `@supabase/supabase-js`
-2. Create `.env` with `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY`
+2. Create local env from template:
+   - copy `artifacts/wedding/.env.example` to `artifacts/wedding/.env.local`
+   - keep `.env.local` untracked (already covered by root `.gitignore`)
 3. Create `src/lib/supabaseClient.ts` with the Supabase client
 4. Rewrite `src/lib/storage.ts` to be async, using Supabase instead of localStorage
 5. Update all callers in pages to `await` the async calls
 6. Add Row Level Security to allow public inserts but admin-only reads
+
+## Project credentials registered (future sync)
+
+- `VITE_SUPABASE_URL`: `https://hrwkrytcmehswbhwvdpi.supabase.co`
+- `VITE_SUPABASE_ANON_KEY`: configured in `artifacts/wedding/.env.example`
+
+Current status: credentials are stored for future migration planning only. Supabase is not wired into runtime yet.
 
 ### Notes
 

@@ -34,12 +34,12 @@ Behavior and UI were preserved (same routes, same form flow, same persistence lo
 ## Temporary local dev switch
 
 - Added `artifacts/wedding/src/components/dev/DevRoleSwitch.tsx`.
-- Integrated in `Layout` replacing `D & D` in header left area when running locally in development:
+- Integrated in `Layout` replacing the header-left home label when running locally in development:
   - visible only with `import.meta.env.DEV`
   - active in `/home` and `/admin`
   - touch-friendly `USER` / `ADMIN` toggle
   - `USER` routes to `/home`, `ADMIN` routes to `/admin`
-- In production build the switch is hidden and original `D & D` link remains.
+- In production build the switch is hidden and the standard home link remains.
 
 ## Validation run
 
@@ -52,7 +52,7 @@ Behavior and UI were preserved (same routes, same form flow, same persistence lo
 
 ## Residual technical note
 
-- `knip` still reports many unused `components/ui/*` files across wedding/mockup-sandbox; cleanup should be done as a dedicated, staged operation to avoid accidental regression.
+- `knip` is now configured (`knip.json`) to focus on runtime-relevant scope; remaining signal is export-level and non-blocking.
 
 ## Subsequent updates (same day)
 

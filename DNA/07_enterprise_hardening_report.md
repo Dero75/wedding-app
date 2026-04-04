@@ -13,6 +13,10 @@ Consolidation pass after multiple change rounds, with strict constraints:
 - Removed RSVP deadline copy from runtime UI:
   - `artifacts/wedding/src/pages/RSVP.tsx`
   - Current copy: "Le adesioni sono sempre aperte."
+- Removed local demo RSVP auto-seeding from runtime and added one-shot local record reset in DEV.
+- Added operational app lifecycle scripts:
+  - `scripts/wedding-dev-server.sh`
+  - root commands: `app:start`, `app:stop`, `app:restart`, `app:status`
 - Removed dead admin visibility setting that had no active consumer:
   - `showCountdown` removed from `AdminSettings` in `src/lib/storage.ts`
   - corresponding toggle removed from `src/pages/admin/constants.ts`
@@ -38,13 +42,13 @@ All required gates are green.
 ## Measurable outcomes
 
 - Wedding `src/components/ui/` reduced from large scaffold set to 3 runtime files.
-- `knip` unused-files signal reduced from 112 to 59.
-- Remaining dead-code concentration is mostly in `artifacts/mockup-sandbox` (non-runtime for wedding app).
+- Added `knip.json` and reduced runtime dead-code signal to a short list of export-level leftovers.
+- Non-runtime playground (`artifacts/mockup-sandbox`) excluded from dead-code governance noise.
 - Wedding CSS bundle reduced from earlier 107.58 kB phase baseline to ~44.74 kB gzip-ready output in current build.
 - New backup generated with canonical naming and non-overwrite policy:
   - `backup/Backup_4 Aprile_15.23.tar.zst`
 
 ## Remaining non-blocking risks
 
-- `artifacts/mockup-sandbox` still contains large unused scaffold inventory; should be either cleaned or explicitly marked as playground-only in tooling config (`knip.json`).
+- Some exports are still unused in runtime/shared utility modules (`toast`, `tooltip`, `use-toast`, `lib/api-client-react`).
 - `lib/api-client-react/src/custom-fetch.ts` is now under threshold but remains a complex core utility; keep covered by regression tests if expanded.

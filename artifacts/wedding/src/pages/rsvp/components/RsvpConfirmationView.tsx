@@ -1,4 +1,5 @@
-import { CheckCircle, Edit3, Heart } from "lucide-react";
+import { CheckCircle, Edit3 } from "lucide-react";
+import { DIETARY_FLAG_LABELS } from "@/config/rsvp";
 import WeddingButton from "@/components/WeddingButton";
 import WeddingCard from "@/components/WeddingCard";
 import type { RSVPEntry } from "@/lib/storage";
@@ -9,6 +10,8 @@ interface RsvpConfirmationViewProps {
 }
 
 export default function RsvpConfirmationView({ submitted, onEdit }: RsvpConfirmationViewProps) {
+  const otherGuestsCount = submitted.guestCount + submitted.childrenCount - 1;
+
   return (
     <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
       <WeddingCard className="text-center mb-6">
@@ -22,23 +25,9 @@ export default function RsvpConfirmationView({ submitted, onEdit }: RsvpConfirma
           Grazie, {submitted.fullName}!
         </h3>
         <p className="text-sm text-muted-foreground mb-5 leading-relaxed">
-          {submitted.attending
-            ? `Non vediamo l'ora di festeggiare con te${
-                submitted.guestCount > 1 ? ` e i tuoi ${submitted.guestCount - 1} ospiti` : ""
-              }!`
-            : "Ci dispiace che non riuscirai a esserci. Saremo con te nel cuore."}
+          Non vediamo l'ora di festeggiare con te
+          {otherGuestsCount > 0 ? ` e i tuoi ${otherGuestsCount} ospiti` : ""}!
         </p>
-
-        {submitted.message && (
-          <div className="bg-background border border-border rounded-xl p-4 text-left mb-5">
-            <p className="text-[10px] text-muted-foreground uppercase tracking-widest mb-1.5">
-              Il tuo messaggio
-            </p>
-            <p className="text-sm italic" style={{ color: "hsl(var(--foreground))" }}>
-              "{submitted.message}"
-            </p>
-          </div>
-        )}
 
         <WeddingButton variant="outline" onClick={onEdit} data-testid="button-edit-rsvp">
           <Edit3 size={13} className="mr-2" />
@@ -48,34 +37,39 @@ export default function RsvpConfirmationView({ submitted, onEdit }: RsvpConfirma
 
       <div className="grid grid-cols-2 gap-3">
         {[
-          {
-            label: "Presenza",
-            value: submitted.attending ? "Confermata ✓" : "Non presente",
-            ok: submitted.attending,
-          },
-          { label: "Ospiti", value: submitted.guestCount, ok: true },
+          { label: "Conferma", value: "Registrata ✓" },
+          { label: "Adulti", value: submitted.guestCount },
+          { label: "Bambini", value: submitted.childrenCount },
         ].map((item) => (
           <div key={item.label} className="bg-card border border-border rounded-xl p-4 text-center">
             <p className="text-[10px] text-muted-foreground uppercase tracking-widest mb-1.5">
               {item.label}
             </p>
-            <p
-              className="font-serif text-base"
-              style={{
-                color: item.ok ? "hsl(var(--foreground))" : "hsl(var(--muted-foreground))",
-              }}
-            >
+            <p className="font-serif text-base" style={{ color: "hsl(var(--foreground))" }}>
               {item.value}
             </p>
           </div>
         ))}
       </div>
 
-      <div className="flex items-center justify-center gap-2 mt-8">
-        <Heart size={10} style={{ fill: "hsl(var(--accent))", stroke: "none" }} />
-        <span className="text-xs text-muted-foreground tracking-widest uppercase">D & D 2025</span>
-        <Heart size={10} style={{ fill: "hsl(var(--accent))", stroke: "none" }} />
-      </div>
+      {submitted.dietaryFlags.length > 0 && (
+        <div className="mt-3 rounded-xl border border-border bg-card px-4 py-3">
+          <p className="text-[10px] text-muted-foreground uppercase tracking-widest mb-2">
+            Esigenze alimentari
+          </p>
+          <div className="flex flex-wrap gap-2">
+            {submitted.dietaryFlags.map((flag) => (
+              <span
+                key={flag}
+                className="inline-flex items-center rounded-full border border-border px-2.5 py-1 text-[11px] uppercase tracking-wide"
+              >
+                {DIETARY_FLAG_LABELS[flag]}
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }

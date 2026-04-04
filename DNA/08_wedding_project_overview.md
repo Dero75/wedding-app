@@ -27,7 +27,8 @@ All user-facing text is in Italian.
 3. **AdminSettings** controls style preset and active section visibility toggles.
 4. **Preset system** — `document.documentElement.dataset.preset` is set to `"ivory" | "dark"` on mount by `PresetApplier` in `App.tsx`. CSS variable overrides in `index.css` drive the full visual theme.
 5. **Admin direct access** — `/admin` is directly available (no PIN gate).
-6. **Supabase-ready** — swap the implementations in `storage.ts`. Zero page changes needed.
+6. **RSVP model** — confirm-only with structured fields (`guestCount`, `childrenCount`, `dietaryFlags`).
+7. **Supabase-ready** — swap the implementations in `storage.ts`. Zero page changes needed.
 
 ## Folder structure
 
@@ -36,7 +37,7 @@ artifacts/wedding/
   src/
     App.tsx               # Router + PresetApplier effect
     index.css             # CSS variables + [data-preset] blocks + Google Fonts import
-    pages/                # 7 page components
+    pages/                # Page components (+ /admin and /admin/settings)
     components/           # Layout, WeddingButton, WeddingCard, Toggle, etc.
     lib/
       storage.ts          # ALL persistence: EditableContent, AdminSettings, RSVP
@@ -45,6 +46,6 @@ artifacts/wedding/
     pages/admin/          # Admin page submodules
     pages/rsvp/           # RSVP page submodules
     components/ui/        # Canonical runtime UI set: toast, toaster, tooltip
-../../DNA/                # Technical documentation (repository root)
-  attached_assets/        # Venue photos
+DNA/                      # Technical documentation (repository root)
+attached_assets/          # Venue photos
 ```
