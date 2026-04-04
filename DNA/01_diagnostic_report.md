@@ -30,11 +30,13 @@
 
 - Monorepo is valid and buildable after cleanup.
 - Large modules still present (top examples):
-  - `artifacts/wedding/src/components/ui/sidebar.tsx` (695 lines)
-  - `artifacts/wedding/src/components/ui/chart.tsx` (331 lines)
-  - `lib/api-client-react/src/custom-fetch.ts` (371 lines)
+  - `lib/api-client-react/src/custom-fetch.ts` (329 lines, reduced under 350 without logic changes)
 - `Admin.tsx` and `RSVP.tsx` are now modularized (`89` and `78` lines) with extracted submodules in `src/pages/admin/*` and `src/pages/rsvp/*`.
-- Dead/scaffold-heavy UI surface still exists (knip mostly flags `components/ui/*` scaffold files).
+- Wedding UI surface is now canonical and minimal:
+  - `src/components/ui/toast.tsx`
+  - `src/components/ui/toaster.tsx`
+  - `src/components/ui/tooltip.tsx`
+- Dead/scaffold-heavy area now remains mainly in `artifacts/mockup-sandbox` (non-runtime package for wedding app).
 
 ## Portability findings before fixes
 

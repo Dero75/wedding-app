@@ -4,7 +4,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import Layout from "@/components/Layout";
 import PageContainer from "@/components/PageContainer";
 import SectionTitle from "@/components/SectionTitle";
-import { FIXED_WEDDING_DATE_LABEL } from "@/config/event";
 import { generateId, getMyRSVP, saveMyRSVP, type RSVPEntry } from "@/lib/storage";
 import RsvpConfirmationView from "@/pages/rsvp/components/RsvpConfirmationView";
 import RsvpForm from "@/pages/rsvp/components/RsvpForm";
@@ -58,8 +57,7 @@ export default function RSVP() {
         <SectionTitle title="Conferma la tua presenza" subtitle="RSVP" />
 
         <p className="text-center text-sm text-muted-foreground mb-8">
-          Rispondi entro il{" "}
-          <strong style={{ color: "hsl(var(--foreground))" }}>{FIXED_WEDDING_DATE_LABEL}</strong>
+          Le adesioni sono sempre aperte.
         </p>
 
         {!showForm && submitted && (

@@ -7,6 +7,7 @@
 - Fixed top nav bar (D & D monogram + hamburger) + slide-in right drawer
 - Drawer lists all 5 main routes + Admin link (bottom, subtle)
 - Active link uses `text-accent` (adapts to all presets)
+- Local development utility switch (`USER/ADMIN`) can replace monogram on `/home` and `/admin` only in DEV mode
 
 ### `PageContainer`
 
@@ -39,7 +40,6 @@
 
 ## Page-level internal components (not extracted)
 
-- **Countdown grid** — `Home.tsx` — 4-column cards showing days/hours/min/sec
 - **RSVP confirmation card** — `RSVP.tsx` — shown after submission
 - **Day timeline** — `Details.tsx` — vertical timeline with CSS border line
 - **Entrance pass card** — `EntrancePass.tsx` — dark premium card with gradient adapting to preset via `--p-pass-bg-from/to` CSS vars
@@ -47,6 +47,8 @@
 
 ## shadcn/ui
 
-Available in `src/components/ui/`. Currently used:
+Canonical runtime set in `src/components/ui/`:
 
-- `Toaster` + `TooltipProvider` (wired in App.tsx)
+- `toast.tsx`
+- `toaster.tsx`
+- `tooltip.tsx`

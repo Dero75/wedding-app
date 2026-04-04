@@ -31,3 +31,5 @@
 - Pruned Replit Linux-only overrides from `pnpm-workspace.yaml` causing local build failures.
 - Added root `@vitejs/plugin-react` because it is used by `vitest.config.ts`.
 - Removed unused `eslint-plugin-react-refresh` dependency from root.
+- Reduced wedding package dependency footprint by removing unused UI/scaffold dependencies after usage verification.
+- Removed obsolete wedding UI scaffold files not referenced by runtime (keeping only toast/toaster/tooltip components).

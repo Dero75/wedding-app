@@ -110,7 +110,6 @@ export function saveContent(content: EditableContent): void {
 export interface AdminSettings {
   stylePreset: "ivory" | "blush" | "dark";
   showCouplePhoto: boolean;
-  showCountdown: boolean;
   showWelcomeSection: boolean;
   showGiftSection: boolean;
   showEntrancePass: boolean;
@@ -119,7 +118,6 @@ export interface AdminSettings {
 export const DEFAULT_ADMIN_SETTINGS: AdminSettings = {
   stylePreset: "ivory",
   showCouplePhoto: true,
-  showCountdown: true,
   showWelcomeSection: true,
   showGiftSection: true,
   showEntrancePass: true,

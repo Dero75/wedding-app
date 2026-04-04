@@ -12,15 +12,15 @@
 ## Open technical risks
 
 - Large dead/scaffold area:
-  - `knip` reports 113 unused files and many unused dependencies.
-  - Most are in `components/ui/*` for wedding/mockup-sandbox.
+  - `knip` now reports 59 unused files (down from 113).
+  - Remaining unused surface is concentrated in `artifacts/mockup-sandbox`.
 - Oversized modules increase maintenance risk:
-  - `ui/sidebar.tsx`, `custom-fetch.ts`.
+  - `lib/api-client-react/src/custom-fetch.ts` (still complex, though reduced below 350 lines).
 - `format:check` currently fails because legacy codebase is not fully Prettier-aligned.
 
 ## Recommended priority order
 
-1. Dead code reduction pass (safe, incremental): decide canonical UI surface and remove unused `components/ui/*` scaffold files in wedding/mockup-sandbox.
+1. Dead code reduction pass (safe, incremental): clean mockup-sandbox scaffold package or explicitly mark it as intentional playground.
 2. Harden dead-code governance:
    - add `knip.json` with explicit workspace entries/ignores, then switch `deadcode` to blocking mode.
 3. Normalize formatting strategy:

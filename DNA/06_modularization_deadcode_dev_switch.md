@@ -53,3 +53,12 @@ Behavior and UI were preserved (same routes, same form flow, same persistence lo
 ## Residual technical note
 
 - `knip` still reports many unused `components/ui/*` files across wedding/mockup-sandbox; cleanup should be done as a dedicated, staged operation to avoid accidental regression.
+
+## Subsequent updates (same day)
+
+- RSVP deadline text removed from runtime copy:
+  - `/rsvp` now states: "Le adesioni sono sempre aperte."
+- Removed dead admin toggle logic (`showCountdown`) because no countdown UI is active.
+- Wedding UI scaffold pruned to canonical runtime set (`toast`, `toaster`, `tooltip`) with no UX or business-logic changes.
+- Wedding package dependencies were reduced accordingly; full validation (`install`, `typecheck`, `lint`, `build`, `test`) remains green.
+- GitHub flow is now operational on `main` with successful push to `origin`.

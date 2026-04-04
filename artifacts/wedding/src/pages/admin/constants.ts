@@ -15,7 +15,6 @@ export const PRESET_COLORS: Record<AdminSettings["stylePreset"], string> = {
 };
 
 export const VISIBILITY_ITEMS = [
-  { key: "showCountdown", label: "Conto alla rovescia" },
   { key: "showWelcomeSection", label: "Sezione benvenuto" },
   { key: "showCouplePhoto", label: "Foto coppia (hero)" },
   { key: "showGiftSection", label: "Sezione regalo" },

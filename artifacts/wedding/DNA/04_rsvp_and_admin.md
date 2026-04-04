@@ -7,6 +7,7 @@
 3. On submit: saved to `wedding_rsvps` (all RSVPs) and `wedding_my_rsvp` (their entry)
 4. Confirmation card shown with edit button
 5. Guest can return and edit anytime
+6. RSVP stays open (no deadline constraint in UI or logic)
 
 ## RSVPEntry type
 
@@ -47,7 +48,6 @@ Selecting a preset: saves to `AdminSettings.stylePreset`, sets `document.documen
 
 Accordion section "Visibilità sezioni":
 
-- Conto alla rovescia (countdown)
 - Sezione benvenuto (welcome section)
 - Foto coppia (hero photo)
 - Sezione regalo

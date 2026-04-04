@@ -5,7 +5,7 @@
 | Route      | Page         | Description                                                                                                       |
 | ---------- | ------------ | ----------------------------------------------------------------------------------------------------------------- |
 | `/`        | Intro        | Fullscreen splash. Auto-advances after ~3.8s or on tap. Reads `getContent()` for names/date.                      |
-| `/home`    | Home         | Hero + welcome + countdown + CTA. Respects visibility toggles from AdminSettings.                                 |
+| `/home`    | Home         | Hero + welcome + CTA. Respects visibility toggles from AdminSettings.                                             |
 | `/rsvp`    | RSVP         | Form (name, attending, count, dietary, message). Explicit attending choice required. Confirmation card with edit. |
 | `/details` | Details      | Day timeline + ceremony/reception cards with venue photos. Reads `getContent()` for place/time/notes.             |
 | `/gift`    | Gift         | IBAN display with copy-to-clipboard. Reads `getContent()` for gift text and IBAN.                                 |
@@ -15,6 +15,7 @@
 ## Navigation (Layout.tsx)
 
 - Fixed top header: "D & D" monogram + hamburger icon
+- DEV only: compact `USER/ADMIN` switch can replace monogram on `/home` and `/admin`
 - Slide-in right drawer (300px, duration-300 ease-in-out)
 - Active link: `text-accent` (adapts to all presets)
 - Overlay backdrop closes drawer on tap
