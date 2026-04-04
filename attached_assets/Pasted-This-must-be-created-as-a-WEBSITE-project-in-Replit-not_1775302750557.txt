@@ -1,0 +1,201 @@
+This must be created as a WEBSITE project in Replit, not a Mobile project.
+Do not scaffold React Native, Expo, Expo Router, or any mobile-native environment.
+Guests must be able to open the app directly from a normal browser link on iPhone/Android without installing Expo Go or any other app.
+
+Build a mobile-first wedding invitation and RSVP web app for Deborah & Davide.
+
+Critical constraints:
+- This must be a true web app, not a native mobile app
+- Do not use Expo, React Native, Expo Router, or anything that requires Expo Go
+- Do not generate a Mobile project structure
+- The project must open and run directly in browser preview
+- The result must be portable and easy to continue later in Windsurf/Codex
+- Keep the foundation clean from the start
+
+Goal:
+Create the first structural version of an elegant wedding invitation app with RSVP, designed primarily for smartphone browsers, but still responsive on desktop.
+
+Product vision:
+The app must feel like a premium digital wedding invitation:
+- elegant
+- romantic
+- warm
+- soft
+- refined
+- boho / rustic-chic
+- not childish
+- not generic
+- highly touch-friendly
+- visually coherent from the first run
+
+Preferred stack:
+- React
+- Vite
+- TypeScript
+
+Technical requirements:
+- Standard web app architecture
+- Standard web routing
+- No backend unless strictly necessary
+- Local persistence only for now
+- Use localStorage for saved data
+- No database integration yet
+- No Supabase implementation yet
+- Prepare the structure so Supabase can be added later without rewriting everything
+- Keep the project modular, simple, and maintainable
+- Avoid unnecessary dependencies
+- Avoid unnecessary complexity
+- Avoid fake placeholder infrastructure that is not used
+
+Architecture rules:
+- Separate pages, reusable components, styles, content/config, and persistence logic
+- Keep files reasonably modular
+- Avoid oversized files
+- Centralize editable content where possible
+- Create a clear and future-proof folder structure
+- Do not leave broken routes
+- Do not leave dead code
+- Do not generate tab/mobile-native scaffolding
+- Make the app easy to export and continue outside Replit
+
+Required pages/screens:
+1. Intro / Splash
+2. Home
+3. RSVP
+4. Details
+5. Gift / IBAN
+6. Entrance Pass
+7. Admin
+
+Navigation requirements:
+- Mobile-first hamburger / drawer navigation
+- Clean navigation between all pages
+- No broken links
+- Smooth user flow on smartphone
+
+Page requirements:
+
+1. Intro / Splash
+- Elegant intro screen
+- Soft fade-in animation
+- Premium first impression
+- Mobile-first fullscreen feeling
+- Smooth transition into home
+
+2. Home
+- Couple names
+- Wedding date
+- Short welcome text
+- Optional couple photo area
+- CTA buttons leading to main sections
+- Hero layout optimized for mobile
+
+3. RSVP
+Form fields:
+- Full name
+- Confirmation of attendance
+- Number of guests
+- Dietary notes / intolerances
+- Message for the couple
+
+Behavior:
+- Save locally only
+- Editable after first save
+- Show confirmation state after submit
+- Allow user to update their own locally saved RSVP
+
+4. Details
+- Ceremony details
+- Reception details
+- Clear distinction between moments of the day
+- Elegant presentation
+- Easy to read on mobile
+
+5. Gift / IBAN
+- Dedicated page
+- IBAN text block
+- Copy-to-clipboard button
+- Elegant wording and visual treatment
+
+6. Entrance Pass
+- Dedicated page for reception entry/pass
+- Simple premium visual card style
+- Connected logically to RSVP completion state
+
+7. Admin
+For this first build, create a local-only admin page with:
+- local RSVP list
+- RSVP counters
+- simple style preset switcher
+- couple photo on/off toggle
+- basic section visibility controls
+- editable text blocks for main sections
+
+Design direction:
+- Romantic luxury wedding invitation
+- Boho / rustic-chic mood
+- Warm ivory / beige / soft taupe / dusty rose / muted earthy accents
+- Elegant typography
+- Soft shadows
+- Refined spacing
+- Rounded details where appropriate
+- Smooth transitions
+- Touch-friendly buttons and controls
+- Strong mobile visual hierarchy
+- Premium, polished, modern result
+
+Content requirements:
+- Write clean starter content
+- Keep copy elegant and easy to replace later
+- Organize text so future IT/EN translation is easy
+- Keep main editable texts centralized if possible
+
+Component requirements:
+Create reusable components where useful, for example:
+- page container
+- header / nav
+- section title
+- button
+- card
+- form field
+- toggle / switch
+- preset selector
+- RSVP summary item
+
+Persistence requirements:
+Use localStorage for:
+- RSVP data
+- saved local RSVP identity/state
+- admin style preset
+- admin visibility toggles
+- editable text content
+- couple photo enabled/disabled state
+
+Quality requirements:
+- App must run immediately
+- Routes must work
+- Navigation must work
+- UI must already look coherent
+- No incomplete placeholders pretending to be functional
+- Keep the code clean enough for later refinement in Windsurf/Codex
+
+Documentation requirements:
+Create a root folder called `DNA` and generate these markdown files:
+- 01_project_overview.md
+- 02_pages_and_navigation.md
+- 03_components.md
+- 04_rsvp_and_admin.md
+- 05_future_supabase_plan.md
+- 06_style_system.md
+
+These files must describe the actual implemented structure, not generic theory.
+
+Final delivery requirements:
+At the end:
+- ensure the app is runnable immediately
+- provide a short execution report explaining:
+  - what was created
+  - exact stack used
+  - folder structure
+  - what is already functional
+  - what is intentionally deferred
