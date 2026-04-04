@@ -24,7 +24,7 @@
 - **primary** — `bg-primary text-primary-foreground`, full rounded pill
 - **outline** — `border-border bg-card hover:bg-muted`
 - **ghost** — `text-muted-foreground hover:text-foreground hover:bg-muted`
-- All variants use semantic Tailwind tokens → automatically adapt to all 3 presets
+- All variants use semantic Tailwind tokens → automatically adapt to all available presets
 - `fullWidth` prop stretches to 100%
 
 ### `WeddingCard`

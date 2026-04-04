@@ -1,7 +1,7 @@
 import { useLocation } from "wouter";
 
-const activeClass = "bg-accent text-accent-foreground";
-const inactiveClass = "text-muted-foreground hover:text-foreground";
+const activeClass = "bg-primary text-primary-foreground shadow-sm";
+const inactiveClass = "text-foreground/70 hover:text-foreground";
 
 export default function DevRoleSwitch() {
   const [location, setLocation] = useLocation();

@@ -11,7 +11,8 @@ import Details from "@/pages/Details";
 import Gift from "@/pages/Gift";
 import EntrancePass from "@/pages/EntrancePass";
 import Admin from "@/pages/Admin";
-import { getAdminSettings } from "@/lib/storage";
+import AdminSettings from "@/pages/AdminSettings";
+import { ensureDevTestRsvps, getAdminSettings } from "@/lib/storage";
 
 const queryClient = new QueryClient();
 
@@ -33,6 +34,15 @@ function PresetApplier() {
   return null;
 }
 
+function DevDataSeeder() {
+  useEffect(() => {
+    if (!import.meta.env.DEV) return;
+    ensureDevTestRsvps(50);
+  }, []);
+
+  return null;
+}
+
 function Router() {
   return (
     <Switch>
@@ -42,6 +52,7 @@ function Router() {
       <Route path="/details" component={Details} />
       <Route path="/gift" component={Gift} />
       <Route path="/pass" component={EntrancePass} />
+      <Route path="/admin/settings" component={AdminSettings} />
       <Route path="/admin" component={Admin} />
       <Route component={NotFound} />
     </Switch>
@@ -53,6 +64,7 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <PresetApplier />
+        <DevDataSeeder />
         <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, "")}>
           <Router />
         </WouterRouter>

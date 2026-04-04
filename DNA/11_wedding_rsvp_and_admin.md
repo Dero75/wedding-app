@@ -39,7 +39,6 @@ interface RSVPEntry {
 Accordion section "Stile dell'app":
 
 - **Avorio Classico** (ivory) — warm ivory bg, deep brown primary, dusty rose accent
-- **Rosa Romantico** (blush) — blush pink bg, mauve-rose primary, deeper rose accent
 - **Serale Elegante** (dark) — near-black warm bg, gold primary, dark moody
 
 Selecting a preset: saves to `AdminSettings.stylePreset`, sets `document.documentElement.dataset.preset`, dispatches `preset-changed` event.

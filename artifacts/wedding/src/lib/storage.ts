@@ -1,4 +1,11 @@
 const PREFIX = "wedding_";
+const STORAGE_KEYS = {
+  content: "content",
+  adminSettings: "admin_settings",
+  rsvps: "rsvps",
+  myRsvp: "my_rsvp",
+  devSeedMarker: "dev_seed_marker_v1",
+} as const;
 
 export function storageGet<T>(key: string, fallback: T): T {
   try {
@@ -97,18 +104,18 @@ export const DEFAULT_CONTENT: EditableContent = {
 };
 
 export function getContent(): EditableContent {
-  const saved = storageGet<Partial<EditableContent>>("content", {});
+  const saved = storageGet<Partial<EditableContent>>(STORAGE_KEYS.content, {});
   return { ...DEFAULT_CONTENT, ...saved };
 }
 
 export function saveContent(content: EditableContent): void {
-  storageSet("content", content);
+  storageSet(STORAGE_KEYS.content, content);
 }
 
 // ─── ADMIN SETTINGS ─────────────────────────────────────────────────────────
 
 export interface AdminSettings {
-  stylePreset: "ivory" | "blush" | "dark";
+  stylePreset: "ivory" | "dark";
   showCouplePhoto: boolean;
   showWelcomeSection: boolean;
   showGiftSection: boolean;
@@ -123,13 +130,22 @@ export const DEFAULT_ADMIN_SETTINGS: AdminSettings = {
   showEntrancePass: true,
 };
 
+function sanitizeStylePreset(value: unknown): AdminSettings["stylePreset"] {
+  if (value === "dark") return "dark";
+  return "ivory";
+}
+
 export function getAdminSettings(): AdminSettings {
-  const saved = storageGet<Partial<AdminSettings>>("admin_settings", {});
-  return { ...DEFAULT_ADMIN_SETTINGS, ...saved };
+  const saved = storageGet<Partial<AdminSettings>>(STORAGE_KEYS.adminSettings, {});
+  return {
+    ...DEFAULT_ADMIN_SETTINGS,
+    ...saved,
+    stylePreset: sanitizeStylePreset(saved.stylePreset),
+  };
 }
 
 export function saveAdminSettings(settings: AdminSettings): void {
-  storageSet("admin_settings", settings);
+  storageSet(STORAGE_KEYS.adminSettings, settings);
 }
 
 // ─── RSVP ───────────────────────────────────────────────────────────────────
@@ -145,7 +161,7 @@ export interface RSVPEntry {
 }
 
 export function getRSVPs(): RSVPEntry[] {
-  return storageGet<RSVPEntry[]>("rsvps", []);
+  return storageGet<RSVPEntry[]>(STORAGE_KEYS.rsvps, []);
 }
 
 export function saveRSVP(entry: RSVPEntry): void {
@@ -156,23 +172,194 @@ export function saveRSVP(entry: RSVPEntry): void {
   } else {
     all.push(entry);
   }
-  storageSet("rsvps", all);
+  storageSet(STORAGE_KEYS.rsvps, all);
 }
 
 export function deleteRSVP(id: string): void {
   const all = getRSVPs().filter((r) => r.id !== id);
-  storageSet("rsvps", all);
+  storageSet(STORAGE_KEYS.rsvps, all);
 }
 
 export function getMyRSVP(): RSVPEntry | null {
-  return storageGet<RSVPEntry | null>("my_rsvp", null);
+  return storageGet<RSVPEntry | null>(STORAGE_KEYS.myRsvp, null);
 }
 
 export function saveMyRSVP(entry: RSVPEntry): void {
-  storageSet("my_rsvp", entry);
+  storageSet(STORAGE_KEYS.myRsvp, entry);
   saveRSVP(entry);
 }
 
 export function generateId(): string {
   return `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
+}
+
+function pickRandom<T>(values: readonly T[]): T {
+  return values[Math.floor(Math.random() * values.length)]!;
+}
+
+function shouldInclude(probability: number): boolean {
+  return Math.random() < probability;
+}
+
+function randomGuestCount(): number {
+  const roll = Math.random();
+  if (roll < 0.5) return 1;
+  if (roll < 0.75) return 2;
+  if (roll < 0.88) return 3;
+  if (roll < 0.95) return 4;
+  if (roll < 0.98) return 5;
+  return 6;
+}
+
+function randomSubmittedAtIso(): string {
+  const daysAgo = Math.floor(Math.random() * 60);
+  const hoursAgo = Math.floor(Math.random() * 24);
+  const minutesAgo = Math.floor(Math.random() * 60);
+  const millis = (((daysAgo * 24 + hoursAgo) * 60 + minutesAgo) * 60 + 1) * 1000;
+  return new Date(Date.now() - millis).toISOString();
+}
+
+function buildTestRsvpEntries(count: number): RSVPEntry[] {
+  const firstNames = [
+    "Andrea",
+    "Giulia",
+    "Marco",
+    "Sara",
+    "Luca",
+    "Francesca",
+    "Matteo",
+    "Chiara",
+    "Alessio",
+    "Elena",
+    "Davide",
+    "Martina",
+  ] as const;
+  const lastNames = [
+    "Rossi",
+    "Bianchi",
+    "Romano",
+    "Conti",
+    "Ricci",
+    "Moretti",
+    "Greco",
+    "Marini",
+    "Gallo",
+    "Costa",
+    "Ferrari",
+    "Colombo",
+  ] as const;
+  const dietaryNotes = [
+    "Vegetariano",
+    "Senza lattosio",
+    "Celiaco",
+    "No crostacei",
+    "Allergia frutta secca",
+    "Pasto vegano",
+    "No maiale",
+  ] as const;
+  const messages = [
+    "Non vediamo l'ora!",
+    "Felici di esserci con voi.",
+    "Sara una giornata bellissima.",
+    "Grazie dell'invito, a presto.",
+    "Auguri di cuore agli sposi.",
+    "Ci vediamo al ricevimento.",
+  ] as const;
+
+  const baseline: RSVPEntry[] = [];
+
+  for (let guestCount = 1; guestCount <= 6; guestCount += 1) {
+    baseline.push({
+      id: generateId(),
+      fullName: `Test Presente Base ${guestCount}`,
+      attending: true,
+      guestCount,
+      dietaryNotes: "",
+      message: "",
+      submittedAt: randomSubmittedAtIso(),
+    });
+    baseline.push({
+      id: generateId(),
+      fullName: `Test Presente Completo ${guestCount}`,
+      attending: true,
+      guestCount,
+      dietaryNotes: pickRandom(dietaryNotes),
+      message: pickRandom(messages),
+      submittedAt: randomSubmittedAtIso(),
+    });
+  }
+
+  baseline.push({
+    id: generateId(),
+    fullName: "Test Non Presente 1",
+    attending: false,
+    guestCount: 1,
+    dietaryNotes: "",
+    message: "",
+    submittedAt: randomSubmittedAtIso(),
+  });
+  baseline.push({
+    id: generateId(),
+    fullName: "Test Non Presente 2",
+    attending: false,
+    guestCount: 1,
+    dietaryNotes: "",
+    message: pickRandom(messages),
+    submittedAt: randomSubmittedAtIso(),
+  });
+
+  const result = baseline.slice(0, count);
+
+  for (let index = result.length; index < count; index += 1) {
+    const attending = shouldInclude(0.72);
+    const guestCount = attending ? randomGuestCount() : 1;
+    const fullName = `${pickRandom(firstNames)} ${pickRandom(lastNames)} ${index + 1}`;
+
+    result.push({
+      id: generateId(),
+      fullName,
+      attending,
+      guestCount,
+      dietaryNotes: attending && shouldInclude(0.35) ? pickRandom(dietaryNotes) : "",
+      message: shouldInclude(0.45) ? pickRandom(messages) : "",
+      submittedAt: randomSubmittedAtIso(),
+    });
+  }
+
+  return result;
+}
+
+export function ensureDevTestRsvps(seedCount = 50): number {
+  const marker = storageGet<boolean>(STORAGE_KEYS.devSeedMarker, false);
+  if (marker) return 0;
+
+  const existing = getRSVPs();
+  if (existing.length >= seedCount) {
+    storageSet(STORAGE_KEYS.devSeedMarker, true);
+    return 0;
+  }
+
+  const toGenerate = seedCount - existing.length;
+  const generated = buildTestRsvpEntries(toGenerate);
+  const merged = [...existing, ...generated];
+
+  storageSet(STORAGE_KEYS.rsvps, merged);
+  storageSet(STORAGE_KEYS.devSeedMarker, true);
+
+  if (!getMyRSVP()) {
+    const fallbackMine = merged.find((entry) => entry.attending) ?? merged[0] ?? null;
+    if (fallbackMine) {
+      storageSet(STORAGE_KEYS.myRsvp, fallbackMine);
+    }
+  }
+
+  return generated.length;
+}
+
+export function clearAllLocalWeddingRecordsForSupabaseMigration(): void {
+  storageRemove(STORAGE_KEYS.rsvps);
+  storageRemove(STORAGE_KEYS.myRsvp);
+  storageRemove(STORAGE_KEYS.content);
+  storageRemove(STORAGE_KEYS.adminSettings);
+  storageRemove(STORAGE_KEYS.devSeedMarker);
 }

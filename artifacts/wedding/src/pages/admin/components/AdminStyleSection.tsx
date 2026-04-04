@@ -20,7 +20,7 @@ export default function AdminStyleSection({
       >
         Scegli il tema visivo
       </p>
-      <div className="grid grid-cols-3 gap-3">
+      <div className="grid grid-cols-2 gap-3">
         {STYLE_PRESETS.map((preset) => (
           <button
             key={preset}

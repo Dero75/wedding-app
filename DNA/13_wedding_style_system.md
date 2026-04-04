@@ -12,24 +12,23 @@ Loaded via Google Fonts in `index.css` (must be first import before Tailwind).
 
 ## Preset system
 
-Three selectable presets, set via `data-preset` attribute on `<html>`:
+Two selectable presets, set via `data-preset` attribute on `<html>`:
 
 | Preset            | Background                | Primary                       | Accent               | Mood                 |
 | ----------------- | ------------------------- | ----------------------------- | -------------------- | -------------------- |
 | `ivory` (default) | Warm ivory `#FAF5EE`      | Deep brown `#4A3728`          | Dusty rose `#C2878A` | Boho romantic        |
-| `blush`           | Blush `#FDF0F2`           | Mauve-rose `hsl(340,45%,35%)` | Deep rose `#C4566A`  | Romantic feminine    |
 | `dark`            | Near-black warm `#1C1410` | Gold `hsl(38,55%,62%)`        | Deep gold `#C9A15A`  | Moody evening luxury |
 
 Each preset block in `index.css` overrides all CSS variables AND the `--p-*` decorator tokens:
 
 ```css
-[data-preset="blush"] {
-  --background: 345 38% 97%;
-  --primary: 340 45% 35%;
-  --accent: 340 55% 58%;
+[data-preset="dark"] {
+  --background: 22 22% 9%;
+  --primary: 38 55% 62%;
+  --accent: 38 65% 52%;
   /* ... */
-  --p-pass-bg-from: #7a2b40;
-  --p-hero-from: rgba(100, 45, 55, 0.85);
+  --p-pass-bg-from: #1c1410;
+  --p-hero-from: rgba(15, 10, 7, 0.85);
   /* ... */
 }
 ```
@@ -38,7 +37,7 @@ Each preset block in `index.css` overrides all CSS variables AND the `--p-*` dec
 
 ## Semantic tokens (Tailwind)
 
-All shared components (`WeddingButton`, `WeddingCard`, `Layout`, `SectionTitle`, `Toggle`) use Tailwind semantic classes (`bg-primary`, `text-foreground`, `border-border`, `text-muted-foreground`, `bg-accent`, etc.) — never hardcoded hex. This ensures every component adapts to all 3 presets without modification.
+All shared components (`WeddingButton`, `WeddingCard`, `Layout`, `SectionTitle`, `Toggle`) use Tailwind semantic classes (`bg-primary`, `text-foreground`, `border-border`, `text-muted-foreground`, `bg-accent`, etc.) — never hardcoded hex. This ensures every component adapts to all available presets without modification.
 
 ## Preset application
 

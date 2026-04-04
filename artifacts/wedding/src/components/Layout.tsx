@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useLocation } from "wouter";
-import { Menu, X } from "lucide-react";
+import { Menu, Settings, X } from "lucide-react";
 import DevRoleSwitch from "@/components/dev/DevRoleSwitch";
 
 const NAV_ITEMS = [
@@ -16,6 +16,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   const [location] = useLocation();
   const showDevRoleSwitch =
     import.meta.env.DEV && (location === "/home" || location.startsWith("/admin"));
+  const isAdminHome = location === "/admin";
 
   return (
     <div className="min-h-screen bg-background font-serif">
@@ -32,14 +33,25 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               D & D
             </Link>
           )}
-          <button
-            data-testid="button-menu-toggle"
-            onClick={() => setOpen(!open)}
-            className="p-2 -mr-2 text-foreground hover:text-accent transition-colors"
-            aria-label={open ? "Chiudi menu" : "Apri menu"}
-          >
-            {open ? <X size={20} /> : <Menu size={20} />}
-          </button>
+          {isAdminHome ? (
+            <Link
+              href="/admin/settings"
+              data-testid="button-admin-settings-topbar"
+              className="p-2 -mr-2 text-foreground hover:text-accent transition-colors"
+              aria-label="Apri impostazioni admin"
+            >
+              <Settings size={20} />
+            </Link>
+          ) : (
+            <button
+              data-testid="button-menu-toggle"
+              onClick={() => setOpen(!open)}
+              className="p-2 -mr-2 text-foreground hover:text-accent transition-colors"
+              aria-label={open ? "Chiudi menu" : "Apri menu"}
+            >
+              {open ? <X size={20} /> : <Menu size={20} />}
+            </button>
+          )}
         </div>
       </header>
 

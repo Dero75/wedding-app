@@ -1,16 +1,14 @@
 import type { AdminSettings, EditableContent } from "@/lib/storage";
 
-export const STYLE_PRESETS = ["ivory", "blush", "dark"] as const;
+export const STYLE_PRESETS = ["ivory", "dark"] as const;
 
 export const PRESET_LABELS: Record<AdminSettings["stylePreset"], string> = {
   ivory: "Avorio Classico",
-  blush: "Rosa Romantico",
   dark: "Serale Elegante",
 };
 
 export const PRESET_COLORS: Record<AdminSettings["stylePreset"], string> = {
   ivory: "#FAF5EE",
-  blush: "#FDF0F2",
   dark: "#1C1410",
 };
 
