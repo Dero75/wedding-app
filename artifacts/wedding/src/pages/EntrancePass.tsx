@@ -5,6 +5,7 @@ import PageContainer from "@/components/PageContainer";
 import SectionTitle from "@/components/SectionTitle";
 import WeddingButton from "@/components/WeddingButton";
 import { getMyRSVP, getContent } from "@/lib/storage";
+import { FIXED_WEDDING_DATE_LABEL } from "@/config/event";
 
 export default function EntrancePass() {
   const rsvp = getMyRSVP();
@@ -29,9 +30,7 @@ export default function EntrancePass() {
             </div>
 
             <h3 className="font-serif text-xl mb-3" style={{ color: "hsl(var(--foreground))" }}>
-              {rsvp
-                ? "Invito non disponibile"
-                : "Conferma la tua presenza"}
+              {rsvp ? "Invito non disponibile" : "Conferma la tua presenza"}
             </h3>
             <p className="text-sm text-muted-foreground mb-8 leading-relaxed max-w-xs mx-auto">
               {rsvp
@@ -67,9 +66,7 @@ export default function EntrancePass() {
         {/* ─── Active pass ─── */}
         {rsvp && rsvp.attending && (
           <>
-            <p className="text-center text-sm text-muted-foreground mb-8">
-              {c.passSubtitle}
-            </p>
+            <p className="text-center text-sm text-muted-foreground mb-8">{c.passSubtitle}</p>
 
             {/* Pass card */}
             <div
@@ -114,10 +111,7 @@ export default function EntrancePass() {
                   >
                     {c.brideName}
                   </h2>
-                  <p
-                    className="font-serif text-lg my-1"
-                    style={{ color: "rgba(201,185,154,0.7)" }}
-                  >
+                  <p className="font-serif text-lg my-1" style={{ color: "rgba(201,185,154,0.7)" }}>
                     &
                   </p>
                   <h2
@@ -164,10 +158,7 @@ export default function EntrancePass() {
                   >
                     {rsvp.fullName}
                   </p>
-                  <p
-                    className="text-xs mt-0.5"
-                    style={{ color: "rgba(201,185,154,0.55)" }}
-                  >
+                  <p className="text-xs mt-0.5" style={{ color: "rgba(201,185,154,0.55)" }}>
                     {rsvp.guestCount} {rsvp.guestCount === 1 ? "persona" : "persone"}
                   </p>
                 </div>
@@ -178,15 +169,21 @@ export default function EntrancePass() {
                   style={{ background: "rgba(255,255,255,0.08)" }}
                 >
                   <div>
-                    <p className="text-[10px] uppercase tracking-widest mb-1" style={{ color: "rgba(201,185,154,0.55)" }}>
+                    <p
+                      className="text-[10px] uppercase tracking-widest mb-1"
+                      style={{ color: "rgba(201,185,154,0.55)" }}
+                    >
                       Data
                     </p>
                     <p className="text-sm" style={{ color: "hsl(38 60% 95%)" }}>
-                      {c.weddingDate}
+                      {FIXED_WEDDING_DATE_LABEL}
                     </p>
                   </div>
                   <div>
-                    <p className="text-[10px] uppercase tracking-widest mb-1" style={{ color: "rgba(201,185,154,0.55)" }}>
+                    <p
+                      className="text-[10px] uppercase tracking-widest mb-1"
+                      style={{ color: "rgba(201,185,154,0.55)" }}
+                    >
                       Ore
                     </p>
                     <p className="text-sm" style={{ color: "hsl(38 60% 95%)" }}>
@@ -194,7 +191,10 @@ export default function EntrancePass() {
                     </p>
                   </div>
                   <div className="col-span-2">
-                    <p className="text-[10px] uppercase tracking-widest mb-1" style={{ color: "rgba(201,185,154,0.55)" }}>
+                    <p
+                      className="text-[10px] uppercase tracking-widest mb-1"
+                      style={{ color: "rgba(201,185,154,0.55)" }}
+                    >
                       Luogo
                     </p>
                     <p className="text-sm" style={{ color: "hsl(38 60% 95%)" }}>
@@ -218,10 +218,9 @@ export default function EntrancePass() {
                           key={i}
                           className="rounded-sm"
                           style={{
-                            background:
-                              [0, 2, 4, 6, 8].includes(i)
-                                ? "rgba(201,185,154,0.65)"
-                                : "rgba(201,185,154,0.15)",
+                            background: [0, 2, 4, 6, 8].includes(i)
+                              ? "rgba(201,185,154,0.65)"
+                              : "rgba(201,185,154,0.15)",
                           }}
                         />
                       ))}

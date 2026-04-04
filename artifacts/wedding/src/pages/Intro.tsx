@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useLocation } from "wouter";
 import { getContent } from "@/lib/storage";
+import { FIXED_WEDDING_CITY, FIXED_WEDDING_DATE_LABEL } from "@/config/event";
 
 export default function Intro() {
   const [, setLocation] = useLocation();
@@ -11,7 +12,10 @@ export default function Intro() {
   useEffect(() => {
     const t1 = setTimeout(() => setVisible(true), 100);
     const t2 = setTimeout(() => handleLeave(), 3800);
-    return () => { clearTimeout(t1); clearTimeout(t2); };
+    return () => {
+      clearTimeout(t1);
+      clearTimeout(t2);
+    };
   }, []);
 
   const handleLeave = () => {
@@ -43,7 +47,7 @@ export default function Intro() {
         {/* Date row */}
         <div className="flex items-center gap-3" style={{ color: "rgba(201,185,154,0.6)" }}>
           <div className="h-px w-12 bg-current" />
-          <span className="text-xs tracking-[0.3em] uppercase">{c.weddingDate}</span>
+          <span className="text-xs tracking-[0.3em] uppercase">{FIXED_WEDDING_DATE_LABEL}</span>
           <div className="h-px w-12 bg-current" />
         </div>
 
@@ -75,7 +79,7 @@ export default function Intro() {
         {/* Location row */}
         <div className="flex items-center gap-3" style={{ color: "rgba(201,185,154,0.6)" }}>
           <div className="h-px w-12 bg-current" />
-          <span className="text-xs tracking-[0.3em] uppercase">Bologna</span>
+          <span className="text-xs tracking-[0.3em] uppercase">{FIXED_WEDDING_CITY}</span>
           <div className="h-px w-12 bg-current" />
         </div>
       </div>

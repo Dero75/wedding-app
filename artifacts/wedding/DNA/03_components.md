@@ -3,19 +3,23 @@
 ## Shared components (`src/components/`)
 
 ### `Layout`
+
 - Fixed top nav bar (D & D monogram + hamburger) + slide-in right drawer
 - Drawer lists all 5 main routes + Admin link (bottom, subtle)
 - Active link uses `text-accent` (adapts to all presets)
 
 ### `PageContainer`
+
 - `max-w-lg mx-auto px-5 py-10`
 
 ### `SectionTitle`
+
 - Optional subtitle (10px caps, `text-muted-foreground`)
 - Serif title heading (`text-foreground`)
 - Centered gradient divider line using CSS variable border color
 
 ### `WeddingButton`
+
 - **primary** — `bg-primary text-primary-foreground`, full rounded pill
 - **outline** — `border-border bg-card hover:bg-muted`
 - **ghost** — `text-muted-foreground hover:text-foreground hover:bg-muted`
@@ -23,19 +27,15 @@
 - `fullWidth` prop stretches to 100%
 
 ### `WeddingCard`
+
 - `bg-card border border-border rounded-2xl shadow-sm`
 - All tokens → adapts to all presets
 
 ### `Toggle`
+
 - Accessible switch (`role="switch"`)
 - `bg-accent` when on, `bg-muted` when off
 - Used in Admin visibility toggles
-
-### `AdminPinGate`
-- Shown when `isAdminSessionUnlocked()` returns false on `/admin`
-- 4-digit PIN entry with inline inputs (auto-advance, backspace nav)
-- Error shake animation on wrong PIN
-- Stores unlock state in `sessionStorage`
 
 ## Page-level internal components (not extracted)
 
@@ -48,4 +48,5 @@
 ## shadcn/ui
 
 Available in `src/components/ui/`. Currently used:
+
 - `Toaster` + `TooltipProvider` (wired in App.tsx)

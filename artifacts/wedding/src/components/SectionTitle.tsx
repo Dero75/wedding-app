@@ -15,7 +15,9 @@ export default function SectionTitle({ title, subtitle, center = true }: Section
       <h2 className="font-serif text-2xl sm:text-3xl text-foreground leading-snug">{title}</h2>
       <div
         className={`mt-3 h-px w-28 ${center ? "mx-auto" : ""}`}
-        style={{ background: "linear-gradient(to right, transparent, hsl(var(--border)), transparent)" }}
+        style={{
+          background: "linear-gradient(to right, transparent, hsl(var(--border)), transparent)",
+        }}
       />
     </div>
   );

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useLocation } from "wouter";
 import { Menu, X } from "lucide-react";
+import DevRoleSwitch from "@/components/dev/DevRoleSwitch";
 
 const NAV_ITEMS = [
   { label: "Home", href: "/home" },
@@ -13,18 +14,24 @@ const NAV_ITEMS = [
 export default function Layout({ children }: { children: React.ReactNode }) {
   const [open, setOpen] = useState(false);
   const [location] = useLocation();
+  const showDevRoleSwitch =
+    import.meta.env.DEV && (location === "/home" || location.startsWith("/admin"));
 
   return (
     <div className="min-h-screen bg-background font-serif">
       {/* Fixed nav */}
       <header className="fixed top-0 left-0 right-0 z-50 bg-background/90 backdrop-blur-md border-b border-border">
         <div className="max-w-lg mx-auto px-5 h-14 flex items-center justify-between">
-          <Link
-            href="/home"
-            className="font-serif text-foreground text-base tracking-[0.2em] uppercase"
-          >
-            D & D
-          </Link>
+          {showDevRoleSwitch ? (
+            <DevRoleSwitch />
+          ) : (
+            <Link
+              href="/home"
+              className="font-serif text-foreground text-base tracking-[0.2em] uppercase"
+            >
+              D & D
+            </Link>
+          )}
           <button
             data-testid="button-menu-toggle"
             onClick={() => setOpen(!open)}
@@ -51,7 +58,9 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         }`}
       >
         <div className="flex items-center justify-between px-6 h-14 border-b border-border">
-          <span className="font-serif text-foreground text-sm tracking-[0.2em] uppercase">Menu</span>
+          <span className="font-serif text-foreground text-sm tracking-[0.2em] uppercase">
+            Menu
+          </span>
           <button
             onClick={() => setOpen(false)}
             className="p-1.5 text-muted-foreground hover:text-foreground transition-colors"
@@ -68,9 +77,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               data-testid={`link-nav-${item.label.toLowerCase()}`}
               onClick={() => setOpen(false)}
               className={`py-3.5 text-base font-serif tracking-wide border-b border-border/50 transition-colors ${
-                location === item.href
-                  ? "text-accent"
-                  : "text-foreground hover:text-accent"
+                location === item.href ? "text-accent" : "text-foreground hover:text-accent"
               }`}
             >
               {item.label}

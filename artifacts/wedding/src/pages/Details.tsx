@@ -3,6 +3,7 @@ import Layout from "@/components/Layout";
 import PageContainer from "@/components/PageContainer";
 import SectionTitle from "@/components/SectionTitle";
 import { getContent } from "@/lib/storage";
+import { FIXED_WEDDING_DATE_LABEL } from "@/config/event";
 
 export default function Details() {
   const c = getContent();
@@ -14,7 +15,9 @@ export default function Details() {
     <Layout>
       <PageContainer>
         <SectionTitle title="Il Nostro Giorno" subtitle="Dettagli" />
-        <p className="text-center text-sm text-muted-foreground -mt-4 mb-10">{c.weddingDate}</p>
+        <p className="text-center text-sm text-muted-foreground -mt-4 mb-10">
+          {FIXED_WEDDING_DATE_LABEL}
+        </p>
 
         {/* Cerimonia card */}
         <div className="bg-card border border-border rounded-2xl px-6 py-8 text-center mb-4">
@@ -25,10 +28,7 @@ export default function Details() {
           <p className="font-serif text-4xl mb-4" style={{ color: "hsl(var(--foreground))" }}>
             ore {c.ceremonyTime}
           </p>
-          <div
-            className="h-px w-10 mx-auto mb-4"
-            style={{ background: "hsl(var(--border))" }}
-          />
+          <div className="h-px w-10 mx-auto mb-4" style={{ background: "hsl(var(--border))" }} />
           <p className="text-sm text-muted-foreground mb-1">{c.ceremonyPlace}</p>
           <p className="text-xs text-muted-foreground mb-6">{c.ceremonyAddress}</p>
           {c.ceremonyNote && (
@@ -48,10 +48,7 @@ export default function Details() {
         {/* Divider ornament */}
         <div className="flex items-center justify-center gap-3 my-4">
           <div className="h-px w-16" style={{ background: "hsl(var(--border))" }} />
-          <div
-            className="w-1.5 h-1.5 rotate-45"
-            style={{ background: "hsl(var(--accent))" }}
-          />
+          <div className="w-1.5 h-1.5 rotate-45" style={{ background: "hsl(var(--accent))" }} />
           <div className="h-px w-16" style={{ background: "hsl(var(--border))" }} />
         </div>
 
@@ -64,10 +61,7 @@ export default function Details() {
           <p className="font-serif text-4xl mb-4" style={{ color: "hsl(var(--foreground))" }}>
             ore {c.receptionTime}
           </p>
-          <div
-            className="h-px w-10 mx-auto mb-4"
-            style={{ background: "hsl(var(--border))" }}
-          />
+          <div className="h-px w-10 mx-auto mb-4" style={{ background: "hsl(var(--border))" }} />
           <p className="text-sm text-muted-foreground mb-1">{c.receptionPlace}</p>
           <p className="text-xs text-muted-foreground mb-6">{c.receptionAddress}</p>
           {c.receptionNote && (

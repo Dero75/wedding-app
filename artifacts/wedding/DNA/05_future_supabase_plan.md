@@ -60,5 +60,5 @@ saveAdminSettings(settings: AdminSettings): Promise<void>
 ### Notes
 
 - Keep localStorage as a fallback for offline scenarios or use it for caching
-- The admin page will need a simple PIN or Supabase Auth to protect sensitive RSVP data
+- The admin page should use Supabase Auth/roles to protect sensitive RSVP data
 - The `my_rsvp` identity should remain in localStorage so guests can identify themselves

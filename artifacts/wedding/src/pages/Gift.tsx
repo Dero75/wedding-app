@@ -46,7 +46,9 @@ export default function Gift() {
         </div>
 
         <WeddingCard className="mb-6">
-          <p className="text-xs text-muted-foreground uppercase tracking-widest mb-2">Intestatario</p>
+          <p className="text-xs text-muted-foreground uppercase tracking-widest mb-2">
+            Intestatario
+          </p>
           <p className="font-serif text-lg mb-5" style={{ color: "hsl(var(--foreground))" }}>
             {c.giftHolder}
           </p>
@@ -80,11 +82,10 @@ export default function Gift() {
             </p>
           )}
 
-          <p className="text-xs text-muted-foreground uppercase tracking-widest mt-5 mb-1">BIC / SWIFT</p>
-          <p
-            className="font-mono text-sm"
-            style={{ color: "hsl(var(--foreground))" }}
-          >
+          <p className="text-xs text-muted-foreground uppercase tracking-widest mt-5 mb-1">
+            BIC / SWIFT
+          </p>
+          <p className="font-mono text-sm" style={{ color: "hsl(var(--foreground))" }}>
             {c.giftBIC}
           </p>
         </WeddingCard>

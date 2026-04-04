@@ -2,11 +2,11 @@
 
 ## Typography
 
-| Role | Font | Weight |
-|---|---|---|
+| Role                           | Font               | Weight  |
+| ------------------------------ | ------------------ | ------- |
 | Headings, couple names, titles | Cormorant Garamond | 300–600 |
-| Body text, labels, UI | Jost | 300–500 |
-| IBAN, monospace | system mono | — |
+| Body text, labels, UI          | Jost               | 300–500 |
+| IBAN, monospace                | system mono        | —       |
 
 Loaded via Google Fonts in `index.css` (must be first import before Tailwind).
 
@@ -14,11 +14,11 @@ Loaded via Google Fonts in `index.css` (must be first import before Tailwind).
 
 Three selectable presets, set via `data-preset` attribute on `<html>`:
 
-| Preset | Background | Primary | Accent | Mood |
-|---|---|---|---|---|
-| `ivory` (default) | Warm ivory `#FAF5EE` | Deep brown `#4A3728` | Dusty rose `#C2878A` | Boho romantic |
-| `blush` | Blush `#FDF0F2` | Mauve-rose `hsl(340,45%,35%)` | Deep rose `#C4566A` | Romantic feminine |
-| `dark` | Near-black warm `#1C1410` | Gold `hsl(38,55%,62%)` | Deep gold `#C9A15A` | Moody evening luxury |
+| Preset            | Background                | Primary                       | Accent               | Mood                 |
+| ----------------- | ------------------------- | ----------------------------- | -------------------- | -------------------- |
+| `ivory` (default) | Warm ivory `#FAF5EE`      | Deep brown `#4A3728`          | Dusty rose `#C2878A` | Boho romantic        |
+| `blush`           | Blush `#FDF0F2`           | Mauve-rose `hsl(340,45%,35%)` | Deep rose `#C4566A`  | Romantic feminine    |
+| `dark`            | Near-black warm `#1C1410` | Gold `hsl(38,55%,62%)`        | Deep gold `#C9A15A`  | Moody evening luxury |
 
 Each preset block in `index.css` overrides all CSS variables AND the `--p-*` decorator tokens:
 
@@ -28,7 +28,7 @@ Each preset block in `index.css` overrides all CSS variables AND the `--p-*` dec
   --primary: 340 45% 35%;
   --accent: 340 55% 58%;
   /* ... */
-  --p-pass-bg-from: #7A2B40;
+  --p-pass-bg-from: #7a2b40;
   --p-hero-from: rgba(100, 45, 55, 0.85);
   /* ... */
 }
@@ -43,6 +43,7 @@ All shared components (`WeddingButton`, `WeddingCard`, `Layout`, `SectionTitle`,
 ## Preset application
 
 `App.tsx` mounts a `PresetApplier` effect that:
+
 1. Reads `getAdminSettings().stylePreset`
 2. Sets `document.documentElement.dataset.preset = preset`
 3. Listens for `storage` and `preset-changed` events to keep in sync

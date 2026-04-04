@@ -1,0 +1,10 @@
+.git
+.cache
+.local
+.agents
+node_modules
+dist
+coverage
+pnpm-lock.yaml
+attached_assets
+artifacts/mockup-sandbox/src/.generated

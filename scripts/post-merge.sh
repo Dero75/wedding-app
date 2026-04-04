@@ -1,4 +1,8 @@
-#!/bin/bash
-set -e
-pnpm install --frozen-lockfile
-pnpm --filter db push
+#!/usr/bin/env bash
+set -euo pipefail
+
+corepack pnpm install --frozen-lockfile
+
+if [ -n "${DATABASE_URL:-}" ]; then
+  corepack pnpm --filter @workspace/db run push
+fi

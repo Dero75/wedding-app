@@ -26,38 +26,6 @@ export function storageRemove(key: string): void {
   }
 }
 
-// ─── PIN ────────────────────────────────────────────────────────────────────
-
-const DEFAULT_PIN = "1234";
-
-export function getAdminPIN(): string {
-  return storageGet<string>("admin_pin", DEFAULT_PIN);
-}
-
-export function setAdminPIN(pin: string): void {
-  storageSet("admin_pin", pin);
-}
-
-export function isAdminSessionUnlocked(): boolean {
-  try {
-    return sessionStorage.getItem("wedding_admin_unlocked") === "1";
-  } catch {
-    return false;
-  }
-}
-
-export function setAdminSessionUnlocked(unlocked: boolean): void {
-  try {
-    if (unlocked) {
-      sessionStorage.setItem("wedding_admin_unlocked", "1");
-    } else {
-      sessionStorage.removeItem("wedding_admin_unlocked");
-    }
-  } catch {
-    // ignore
-  }
-}
-
 // ─── EDITABLE CONTENT ───────────────────────────────────────────────────────
 
 export interface EditableContent {
@@ -67,8 +35,6 @@ export interface EditableContent {
   heroSubtitle: string;
   brideName: string;
   groomName: string;
-  weddingDate: string;
-  weddingDateISO: string;
   weddingTime: string;
   weddingLocation: string;
   weddingAddress: string;
@@ -78,7 +44,6 @@ export interface EditableContent {
   welcomeText: string;
   ctaRSVP: string;
   ctaDetails: string;
-  rsvpDeadline: string;
   // Details
   ceremonyPlace: string;
   ceremonyTime: string;
@@ -104,8 +69,6 @@ export const DEFAULT_CONTENT: EditableContent = {
   heroSubtitle: "il matrimonio di",
   brideName: "Deborah",
   groomName: "Davide",
-  weddingDate: "14 Settembre 2025",
-  weddingDateISO: "2025-09-14",
   weddingTime: "16:00",
   weddingLocation: "Villa Borgonuovo",
   weddingAddress: "Via Borgonuovo 12, 40125 Bologna",
@@ -115,7 +78,6 @@ export const DEFAULT_CONTENT: EditableContent = {
     "Con immensa gioia vi invitiamo a celebrare con noi il giorno più bello della nostra vita. La vostra presenza renderà questo momento ancora più indimenticabile.",
   ctaRSVP: "Conferma la tua presenza",
   ctaDetails: "Il programma",
-  rsvpDeadline: "30 Luglio 2025",
   ceremonyPlace: "Villa Borgonuovo — Cappella",
   ceremonyTime: "16:00",
   ceremonyAddress: "Via Borgonuovo 12, 40125 Bologna",
