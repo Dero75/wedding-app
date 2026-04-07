@@ -15,17 +15,8 @@ export default function Home() {
 
   return (
     <Layout>
-      <div
-        className="home-screen flex flex-col overflow-hidden"
-        style={{
-          height: "calc(100vh - 3.5rem)",
-          minHeight: "calc(100dvh - 3.5rem)",
-        }}
-      >
-        <div
-          className="home-photo relative flex-shrink-0 overflow-hidden"
-          style={{ height: "41.25%" }}
-        >
+      <div className="home-screen flex flex-col overflow-x-hidden overflow-y-auto">
+        <div className="home-photo relative flex-shrink-0 overflow-hidden">
           <div
             className="absolute inset-0 bg-cover bg-center bg-no-repeat"
             style={{ backgroundImage: `url(${coupleVenueImg})` }}
@@ -62,7 +53,7 @@ export default function Home() {
           </div>
 
           <div className="flex-1 min-h-0 flex flex-col justify-start mt-2.5">
-            <div className="home-welcome text-center mb-3 overflow-hidden">
+            <div className="home-welcome text-center mb-3">
               <div className="flex items-center justify-center gap-3 mb-1.5">
                 <div className="h-px w-[9.375rem] bg-border" />
               </div>
@@ -73,8 +64,7 @@ export default function Home() {
                 {c.welcomeTitle}
               </h2>
               <p
-                className="home-welcome-text font-serif text-muted-foreground text-[15px] leading-[1.35] overflow-hidden whitespace-pre-line text-center"
-                style={{ maxHeight: "6.5rem" }}
+                className="home-welcome-text font-serif text-muted-foreground text-[15px] leading-[1.35] whitespace-pre-line text-center"
               >
                 {c.welcomeText}
               </p>

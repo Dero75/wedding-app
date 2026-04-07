@@ -18,7 +18,7 @@ const STORAGE_KEYS = {
 const LEGACY_ADMIN_SETTINGS_KEY = "admin_settings";
 const DEV_RESET_MARKER_KEY = "local_records_reset_v1";
 const IS_TEST = import.meta.env.MODE === "test";
-const USE_DB_SOURCE = !IS_TEST;
+const USE_DB_SOURCE = !IS_TEST && hasSupabaseConfig && supabase !== null;
 
 let contentCache: EditableContent = DEFAULT_CONTENT;
 let rsvpsCache: RSVPEntry[] = [];
@@ -88,17 +88,10 @@ async function bootstrapFromDb(): Promise<void> {
     storageRemove(STORAGE_KEYS.myRsvpId);
   }
 
-  if (!hasSupabaseConfig || !supabase) {
-    contentCache = DEFAULT_CONTENT;
-    rsvpsCache = [];
-    myRsvpCache = null;
-    return;
-  }
-
   try {
     const [{ data: contentRow }, { data: rsvpRows }] = await Promise.all([
-      supabase.from("wedding_content").select("*").eq("id", 1).maybeSingle(),
-      supabase.from("rsvps").select("*").order("submitted_at", { ascending: false }),
+      supabase!.from("wedding_content").select("*").eq("id", 1).maybeSingle(),
+      supabase!.from("rsvps").select("*").order("submitted_at", { ascending: false }),
     ]);
 
     contentCache = mapDbContentRow(contentRow ?? null);
@@ -180,14 +173,19 @@ export function getContent(): EditableContent {
 export function saveContent(content: EditableContent): void {
   contentCache = content;
 
-  if (USE_DB_SOURCE && hasSupabaseConfig && supabase) {
-    void supabase.from("wedding_content").upsert(toDbContentRow(content), { onConflict: "id" });
+  if (USE_DB_SOURCE) {
+    void supabase!
+      .from("wedding_content")
+      .upsert(toDbContentRow(content), { onConflict: "id" })
+      .then(({ error }) => {
+        if (!error) return;
+        storageSet(STORAGE_KEYS.content, content);
+        console.error("[storage] saveContent Supabase upsert failed", error.message);
+      });
     return;
   }
 
-  if (!USE_DB_SOURCE) {
-    storageSet(STORAGE_KEYS.content, content);
-  }
+  storageSet(STORAGE_KEYS.content, content);
 }
 
 export function clearLegacyAdminSettingsSnapshot(): void {
@@ -214,17 +212,23 @@ export function saveMyRSVP(entry: RSVPEntry): void {
   })();
   myRsvpCache = entry;
 
-  if (USE_DB_SOURCE && hasSupabaseConfig && supabase) {
+  if (USE_DB_SOURCE) {
     storageSet(STORAGE_KEYS.myRsvpId, entry.id);
     storageRemove(STORAGE_KEYS.myRsvp);
-    void supabase.from("rsvps").upsert(toDbRsvpRow(entry), { onConflict: "id" });
+    void supabase!
+      .from("rsvps")
+      .upsert(toDbRsvpRow(entry), { onConflict: "id" })
+      .then(({ error }) => {
+        if (!error) return;
+        storageSet(STORAGE_KEYS.myRsvp, entry);
+        storageSet(STORAGE_KEYS.rsvps, rsvpsCache);
+        console.error("[storage] saveMyRSVP Supabase upsert failed", error.message);
+      });
     return;
   }
 
-  if (!USE_DB_SOURCE) {
-    storageSet(STORAGE_KEYS.myRsvp, entry);
-    storageSet(STORAGE_KEYS.rsvps, rsvpsCache);
-  }
+  storageSet(STORAGE_KEYS.myRsvp, entry);
+  storageSet(STORAGE_KEYS.rsvps, rsvpsCache);
 }
 
 export function generateId(): string {

@@ -22,6 +22,9 @@ export interface EditableContent {
   receptionTime: string;
   receptionAddress: string;
   receptionNote: string;
+  detailsGiftTitle: string;
+  detailsGiftSubtitle: string;
+  detailsGiftButtonLabel: string;
   // Gift
   giftTitle: string;
   giftText: string;
@@ -52,6 +55,9 @@ export const DEFAULT_CONTENT: EditableContent = {
   receptionTime: "18:30",
   receptionAddress: "Via Borgonuovo 12, 40125 Bologna",
   receptionNote: "Ci uniamo nel cortile per il ricevimento all'aperto.",
+  detailsGiftTitle: "Il regalo più bello sarà condividere con voi questo giorno.",
+  detailsGiftSubtitle: "Se desiderate accompagnarci anche con un pensiero, potete farlo qui.",
+  detailsGiftButtonLabel: "Contributo IBAN",
   giftTitle: "Un pensiero per noi",
   giftText:
     "La vostra presenza è il regalo più bello che potessimo ricevere. Per chi volesse farci un pensiero, vi lasciamo i nostri riferimenti bancari.",

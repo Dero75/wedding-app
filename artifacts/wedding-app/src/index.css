@@ -252,7 +252,7 @@
 
 @media (max-height: 740px) {
   .home-photo {
-    height: 31% !important;
+    height: 38.75% !important;
   }
 
   .home-title {
@@ -269,7 +269,6 @@
   }
 
   .home-welcome-text {
-    max-height: 4.2rem !important;
     line-height: 1.28;
   }
 
@@ -280,7 +279,7 @@
 
 @media (max-height: 680px) {
   .home-photo {
-    height: 29% !important;
+    height: 36.25% !important;
   }
 
   .home-kicker {
@@ -305,7 +304,6 @@
   }
 
   .home-welcome-text {
-    max-height: 3.4rem !important;
     font-size: 0.65rem;
     line-height: 1.25;
   }
@@ -313,4 +311,20 @@
   .home-actions {
     gap: 0.45rem;
   }
+}
+
+.home-screen {
+  height: calc(100vh - 3.5rem);
+  min-height: calc(100vh - 3.5rem);
+}
+
+@supports (height: 100dvh) {
+  .home-screen {
+    height: calc(100dvh - 3.5rem);
+    min-height: calc(100dvh - 3.5rem);
+  }
+}
+
+.home-photo {
+  height: 41.25%;
 }

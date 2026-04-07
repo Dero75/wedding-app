@@ -40,7 +40,7 @@ export default function Details() {
   return (
     <Layout>
       <PageContainer>
-        <SectionTitle title="Il Nostro Giorno" subtitle="Dettagli" />
+        <SectionTitle title="Debora & Davide" />
         <p className="text-center text-sm text-muted-foreground -mt-4 mb-10">
           {FIXED_WEDDING_DATE_LABEL}
         </p>
@@ -69,7 +69,7 @@ export default function Details() {
             className="inline-flex items-center gap-2 border border-border rounded-full px-4 py-2 text-[11px] text-muted-foreground hover:text-foreground hover:border-muted-foreground/40 transition-all"
           >
             <MapPin size={12} style={{ color: "hsl(var(--accent))" }} />
-            Apri in Maps
+            Apri mappa
           </a>
         </div>
 
@@ -104,23 +104,29 @@ export default function Details() {
             className="inline-flex items-center gap-2 border border-border rounded-full px-4 py-2 text-[11px] text-muted-foreground hover:text-foreground hover:border-muted-foreground/40 transition-all"
           >
             <MapPin size={12} style={{ color: "hsl(var(--accent))" }} />
-            Apri in Maps
+            Apri mappa
           </a>
         </div>
 
+        <div className="flex items-center justify-center gap-3 my-6">
+          <div className="h-px w-16" style={{ background: "hsl(var(--border))" }} />
+          <div className="w-1.5 h-1.5 rotate-45" style={{ background: "hsl(var(--accent))" }} />
+          <div className="h-px w-16" style={{ background: "hsl(var(--border))" }} />
+        </div>
+
         <div className="bg-card border border-border rounded-2xl px-5 py-6 text-center">
-          <p className="font-sans text-lg leading-relaxed mb-3" style={{ color: "hsl(var(--foreground))" }}>
-            Il regalo più bello sarà condividere con voi questo giorno.
+          <p className="font-serif text-lg leading-relaxed mb-3" style={{ color: "hsl(var(--foreground))" }}>
+            {c.detailsGiftTitle}
           </p>
           <p className="text-sm text-muted-foreground leading-relaxed mb-5">
-            Se desiderate accompagnarci anche con un pensiero, potete farlo qui.
+            {c.detailsGiftSubtitle}
           </p>
           <button
             type="button"
             onClick={() => setIsGiftModalOpen(true)}
             className="inline-flex items-center gap-2 border border-border rounded-full px-5 py-2.5 text-[11px] uppercase tracking-wider text-foreground hover:text-accent hover:border-muted-foreground/40 transition-all"
           >
-            Contributo IBAN
+            {c.detailsGiftButtonLabel}
           </button>
         </div>
 
@@ -151,7 +157,7 @@ export default function Details() {
                 className="font-serif text-[1.85rem] leading-tight text-center mb-5"
                 style={{ color: "hsl(var(--foreground))" }}
               >
-                Un pensiero per noi
+                {c.giftTitle}
               </h3>
 
               <div className="space-y-4 text-center">

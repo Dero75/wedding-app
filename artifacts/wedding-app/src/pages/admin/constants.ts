@@ -13,14 +13,6 @@ type ContentSection = {
 
 export const CONTENT_SECTIONS: ContentSection[] = [
   {
-    title: "Home",
-    fields: [
-      { key: "weddingTime", label: "Ora cerimonia" },
-      { key: "weddingLocation", label: "Luogo" },
-      { key: "weddingAddress", label: "Indirizzo" },
-    ],
-  },
-  {
     title: "Benvenuto",
     fields: [
       { key: "welcomeTitle", label: "Titolo benvenuto" },
@@ -37,17 +29,22 @@ export const CONTENT_SECTIONS: ContentSection[] = [
   {
     title: "Programma",
     fields: [
-      { key: "ceremonyPlace", label: "Luogo cerimonia" },
       { key: "ceremonyTime", label: "Ora cerimonia" },
+      { key: "ceremonyPlace", label: "Luogo cerimonia" },
+      { key: "ceremonyAddress", label: "Indirizzo cerimonia" },
       { key: "ceremonyNote", label: "Note cerimonia" },
-      { key: "receptionPlace", label: "Luogo ricevimento" },
       { key: "receptionTime", label: "Ora ricevimento" },
+      { key: "receptionPlace", label: "Luogo ricevimento" },
+      { key: "receptionAddress", label: "Indirizzo ricevimento" },
       { key: "receptionNote", label: "Note ricevimento" },
     ],
   },
   {
     title: "Regalo",
     fields: [
+      { key: "detailsGiftTitle", label: "Titolo box programma", multiline: true },
+      { key: "detailsGiftSubtitle", label: "Sottotitolo box programma", multiline: true },
+      { key: "detailsGiftButtonLabel", label: "Testo pulsante box programma" },
       { key: "giftTitle", label: "Titolo sezione" },
       { key: "giftText", label: "Testo", multiline: true },
       { key: "giftIBAN", label: "IBAN" },
