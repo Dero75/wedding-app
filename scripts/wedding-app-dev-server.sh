@@ -4,9 +4,9 @@ set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 PORT=5001
-PID_FILE="/tmp/wedding-dev-server.pid"
-LOG_FILE="/tmp/wedding-dev.log"
-START_CMD="corepack pnpm --filter @workspace/wedding dev"
+PID_FILE="/tmp/wedding-app-dev-server.pid"
+LOG_FILE="/tmp/wedding-app-dev.log"
+START_CMD="corepack pnpm --filter @wedding-app/wedding-app dev"
 
 is_pid_running() {
   local pid="$1"
@@ -30,7 +30,7 @@ wait_for_port() {
 
 start_server() {
   if [[ -n "$(listener_pids)" ]]; then
-    echo "wedding-dev: already running on port ${PORT}"
+    echo "wedding-app-dev: already running on port ${PORT}"
     return 0
   fi
 
@@ -38,7 +38,7 @@ start_server() {
     local stale_pid
     stale_pid="$(cat "${PID_FILE}" 2>/dev/null || true)"
     if [[ -n "${stale_pid}" ]] && is_pid_running "${stale_pid}"; then
-      echo "wedding-dev: process ${stale_pid} alive but port ${PORT} closed, forcing restart"
+      echo "wedding-app-dev: process ${stale_pid} alive but port ${PORT} closed, forcing restart"
       stop_server
     else
       rm -f "${PID_FILE}"
@@ -56,7 +56,7 @@ cd {shlex.quote(root_dir)} || exit 1
 while true; do
   {start_cmd}
   code=$?
-  echo "[\\$(date '+%Y-%m-%d %H:%M:%S')] wedding-dev exited with code \\${{code}}, restarting in 1s" >>{shlex.quote(log_file)}
+  echo "[\\$(date '+%Y-%m-%d %H:%M:%S')] wedding-app-dev exited with code \\${{code}}, restarting in 1s" >>{shlex.quote(log_file)}
   sleep 1
 done
 """
@@ -75,11 +75,11 @@ with open(pid_file, "w", encoding="utf-8") as pid:
 PY
 
   if wait_for_port; then
-    echo "wedding-dev: started on http://localhost:${PORT}"
+    echo "wedding-app-dev: started on http://localhost:${PORT}"
     return 0
   fi
 
-  echo "wedding-dev: failed to start" >&2
+  echo "wedding-app-dev: failed to start" >&2
   tail -n 60 "${LOG_FILE}" 2>/dev/null || true
   return 1
 }
@@ -116,9 +116,9 @@ stop_server() {
   fi
 
   if [[ "${stopped}" -eq 1 ]]; then
-    echo "wedding-dev: stopped"
+    echo "wedding-app-dev: stopped"
   else
-    echo "wedding-dev: already stopped"
+    echo "wedding-app-dev: already stopped"
   fi
 }
 
@@ -136,16 +136,16 @@ status_server() {
   local pids
   pids="$(listener_pids)"
   if [[ -n "${pids}" ]] && [[ -n "${supervisor_pid}" ]]; then
-    echo "wedding-dev: running on port ${PORT} (server pid: ${pids//$'\n'/, }, supervisor pid: ${supervisor_pid})"
+    echo "wedding-app-dev: running on port ${PORT} (server pid: ${pids//$'\n'/, }, supervisor pid: ${supervisor_pid})"
     exit 0
   fi
 
   if [[ -n "${pids}" ]]; then
-    echo "wedding-dev: running on port ${PORT} (server pid: ${pids//$'\n'/, }, supervisor missing)"
+    echo "wedding-app-dev: running on port ${PORT} (server pid: ${pids//$'\n'/, }, supervisor missing)"
     exit 0
   fi
 
-  echo "wedding-dev: not running"
+  echo "wedding-app-dev: not running"
   exit 1
 }
 

@@ -1,7 +1,7 @@
 # REPORT_STATO_PROGETTO
 
 Data analisi: 2026-04-04
-Repository: `/Users/dero/Documents/Elegant-Event-Planner`
+Repository: `/Users/dero/Documents/wedding-app`
 
 ## 1. Stato generale del progetto
 
@@ -31,7 +31,7 @@ Cosa è incoerente o da rifinire:
 Il repository è un monorepo pnpm workspace.
 
 Cartelle principali:
-- `artifacts/wedding`: app frontend principale (runtime utente reale).
+- `artifacts/wedding-app`: app frontend principale (runtime utente reale).
 - `artifacts/api-server`: server Express 5.
 - `artifacts/mockup-sandbox`: sandbox preview componenti.
 - `lib/*`: librerie condivise (`api-client-react`, `api-zod`, `api-spec`, `db`).
@@ -40,7 +40,7 @@ Cartelle principali:
 - `backup`: archivi locali non versionati (tranne `README.md`).
 
 Entrypoint reali:
-- Frontend wedding: `artifacts/wedding/src/main.tsx` -> `App.tsx`.
+- Frontend wedding: `artifacts/wedding-app/src/main.tsx` -> `App.tsx`.
 - API server: `artifacts/api-server/src/index.ts` -> `app.ts`.
 - Mockup sandbox: `artifacts/mockup-sandbox/src/main.tsx`.
 
@@ -54,15 +54,15 @@ Componenti chiave:
 - Moduli RSVP: `src/pages/rsvp/components/*` + `schema.ts`.
 
 Shared logic importanti:
-- Persistenza e modelli: `artifacts/wedding/src/lib/storage.ts`.
-- Costanti evento fisso: `artifacts/wedding/src/config/event.ts`.
+- Persistenza e modelli: `artifacts/wedding-app/src/lib/storage.ts`.
+- Costanti evento fisso: `artifacts/wedding-app/src/config/event.ts`.
 
 Configurazioni principali:
 - Workspace/scripts: `package.json`, `pnpm-workspace.yaml`.
 - TS strict base: `tsconfig.base.json`.
 - Lint: `eslint.config.mjs`.
 - Test: `vitest.config.ts`.
-- Vite wedding: `artifacts/wedding/vite.config.ts` (porta default 5001).
+- Vite wedding: `artifacts/wedding-app/vite.config.ts` (porta default 5001).
 
 ## 3. Admin: stato reale
 
@@ -90,7 +90,7 @@ Problemi UX/strutturali rilevati:
 Dove sono salvati testi/config:
 - `wedding_content` in localStorage (contenuti editabili).
 - `wedding_admin_settings` rimosso a runtime come chiave legacy.
-- Logica in `artifacts/wedding/src/lib/storage.ts`.
+- Logica in `artifacts/wedding-app/src/lib/storage.ts`.
 
 Contenuti modificabili oggi:
 - Testi home, CTA, dettagli programma, testi regalo, testi pass.
@@ -141,8 +141,8 @@ Limiti/simplificazioni attuali:
 
 File troppo lunghi:
 - Nessun file funzionale oltre 350 righe.
-- `artifacts/wedding/src/lib/storage.ts` è stato ridotto a 349 righe.
-- File più grande: `artifacts/wedding/src/index.css` (~498 righe), coerente con ruolo style-system.
+- `artifacts/wedding-app/src/lib/storage.ts` è stato ridotto a 349 righe.
+- File più grande: `artifacts/wedding-app/src/index.css` (~498 righe), coerente con ruolo style-system.
 
 Moduli troppo accoppiati:
 - `storage.ts` centralizza molti domini (content, settings, rsvp): comodo ma da monitorare per crescita.
@@ -152,7 +152,7 @@ Dead code residuo:
 - Il segnale residuo è concentrato su pochi export non usati in utility runtime/shared libs.
 
 Dipendenze dubbie/inutilizzate:
-- Forte concentrazione nel package `@workspace/mockup-sandbox` (scaffold UI molto ampio non usato nel runtime wedding).
+- Forte concentrazione nel package `@wedding-app/mockup-sandbox` (scaffold UI molto ampio non usato nel runtime wedding).
 
 Punti fragili:
 - Asset hero principale molto pesante (~2.54 MB nel build output), potenziale impatto su first load mobile.
@@ -161,7 +161,7 @@ Punti fragili:
 ## 8. Residui temporanei / sviluppo
 
 Utility temporanee presenti:
-- `artifacts/wedding/src/components/dev/DevRoleSwitch.tsx` (solo DEV).
+- `artifacts/wedding-app/src/components/dev/DevRoleSwitch.tsx` (solo DEV).
 
 Elementi da rimuovere/decidere a progetto finito:
 - Dev switch USER/ADMIN.
@@ -171,7 +171,7 @@ Elementi da rimuovere/decidere a progetto finito:
 Scorciatoie locali/hack:
 - Nessun hack runtime critico trovato nel wedding app.
 - Esiste remote aggiuntivo `gitsafe-backup` in git config locale (non impatta runtime applicativo).
-- È presente script operativo dedicato per avvio locale stabile (`scripts/wedding-dev-server.sh` + script npm `app:*`).
+- È presente script operativo dedicato per avvio locale stabile (`scripts/wedding-app-dev-server.sh` + script npm `app:*`).
 
 ## 9. Priorità consigliate
 
@@ -189,31 +189,31 @@ Scorciatoie locali/hack:
 
 ## 10. File da tenere d’occhio
 
-- `artifacts/wedding/src/lib/storage.ts`
+- `artifacts/wedding-app/src/lib/storage.ts`
   - È il punto unico di persistenza; ogni evoluzione impatta tutto il runtime wedding.
 
-- `artifacts/wedding/src/pages/Admin.tsx`
+- `artifacts/wedding-app/src/pages/Admin.tsx`
   - Deve restare focalizzato su adesioni, senza reintrodurre configurazioni duplicate.
 
-- `artifacts/wedding/src/pages/AdminSettings.tsx`
+- `artifacts/wedding-app/src/pages/AdminSettings.tsx`
   - È il contenitore canonico delle impostazioni app.
 
-- `artifacts/wedding/src/pages/admin/constants.ts`
+- `artifacts/wedding-app/src/pages/admin/constants.ts`
   - Contiene mapping campi contenuto admin; va mantenuto coerente col runtime.
 
-- `artifacts/wedding/src/components/Layout.tsx`
+- `artifacts/wedding-app/src/components/Layout.tsx`
   - Gestisce nav globale + switch DEV; punto sensibile per UX mobile e accessibilità.
 
-- `artifacts/wedding/src/pages/Home.tsx`
+- `artifacts/wedding-app/src/pages/Home.tsx`
   - Ha vincoli di viewport per no-scroll iniziale e dipende da settings/content.
 
-- `artifacts/wedding/src/pages/RSVP.tsx` e `src/pages/rsvp/components/*`
+- `artifacts/wedding-app/src/pages/RSVP.tsx` e `src/pages/rsvp/components/*`
   - Flusso core utente, da proteggere con test di regressione.
 
-- `artifacts/wedding/src/pages/EntrancePass.tsx`
+- `artifacts/wedding-app/src/pages/EntrancePass.tsx`
   - Dipende direttamente dalla coerenza RSVP e dai contenuti evento.
 
-- `artifacts/wedding/src/config/event.ts`
+- `artifacts/wedding-app/src/config/event.ts`
   - Fonte canonica della data fissa; ogni modifica qui impatta più schermate.
 
 - `artifacts/mockup-sandbox/package.json`
@@ -237,5 +237,5 @@ Scorciatoie locali/hack:
 - Home ottimizzata: data fissa `Venerdi 11 Settembre 2026`, nome coppia e città centrati con interspazi ridotti; separatore senza icona cuore.
 - Dettagli (`Cerimonia`/`Ricevimento`) compattati ~20% mantenendo stile/layout canonico.
 - Header admin consolidato: `Home` a sinistra, switch USER/ADMIN centrato, hamburger assente in `/admin*`.
-- Stabilità dev server migliorata: avvio detached affidabile in `scripts/wedding-dev-server.sh` per evitare stop intermittenti su `5001`.
+- Stabilità dev server migliorata: avvio detached affidabile in `scripts/wedding-app-dev-server.sh` per evitare stop intermittenti su `5001`.
 - Nessuna modifica di business logic; solo consolidamento tecnico e coerenza runtime/documentazione.

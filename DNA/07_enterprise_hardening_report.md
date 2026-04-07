@@ -11,11 +11,11 @@ Consolidation pass after multiple change rounds, with strict constraints:
 ## Changes applied
 
 - Removed RSVP deadline copy from runtime UI:
-  - `artifacts/wedding/src/pages/RSVP.tsx`
+  - `artifacts/wedding-app/src/pages/RSVP.tsx`
   - Current copy: "Le adesioni sono sempre aperte."
 - Removed local demo RSVP auto-seeding from runtime and added one-shot local record reset in DEV.
 - Added operational app lifecycle scripts:
-  - `scripts/wedding-dev-server.sh`
+  - `scripts/wedding-app-dev-server.sh`
   - root commands: `app:start`, `app:stop`, `app:restart`, `app:status`
 - Removed dead admin visibility setting that had no active consumer:
   - `showCountdown` removed from `AdminSettings` in `src/lib/storage.ts`
@@ -71,5 +71,5 @@ All required gates are green.
 - Home ottimizzata: data fissa `Venerdi 11 Settembre 2026`, nome coppia e città centrati con interspazi ridotti; separatore senza icona cuore.
 - Dettagli (`Cerimonia`/`Ricevimento`) compattati ~20% mantenendo stile/layout canonico.
 - Header admin consolidato: `Home` a sinistra, switch USER/ADMIN centrato, hamburger assente in `/admin*`.
-- Stabilità dev server migliorata: avvio detached affidabile in `scripts/wedding-dev-server.sh` per evitare stop intermittenti su `5001`.
+- Stabilità dev server migliorata: avvio detached affidabile in `scripts/wedding-app-dev-server.sh` per evitare stop intermittenti su `5001`.
 - Nessuna modifica di business logic; solo consolidamento tecnico e coerenza runtime/documentazione.

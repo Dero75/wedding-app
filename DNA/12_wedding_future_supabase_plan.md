@@ -40,7 +40,7 @@ saveRSVP(entry: RSVPEntry): Promise<void>
 
 1. Install `@supabase/supabase-js`
 2. Create local env from template:
-   - copy `artifacts/wedding/.env.example` to `artifacts/wedding/.env.local`
+   - copy `artifacts/wedding-app/.env.example` to `artifacts/wedding-app/.env.local`
    - keep `.env.local` untracked (already covered by root `.gitignore`)
 3. Create `src/lib/supabaseClient.ts` with the Supabase client
 4. Rewrite `src/lib/storage.ts` to be async, using Supabase instead of localStorage
@@ -50,7 +50,7 @@ saveRSVP(entry: RSVPEntry): Promise<void>
 ## Project credentials registered (future sync)
 
 - `VITE_SUPABASE_URL`: `https://hrwkrytcmehswbhwvdpi.supabase.co`
-- `VITE_SUPABASE_ANON_KEY`: configured in `artifacts/wedding/.env.example`
+- `VITE_SUPABASE_ANON_KEY`: configured in `artifacts/wedding-app/.env.example`
 
 Current status: credentials are stored for future migration planning only. Supabase is not wired into runtime yet.
 
@@ -78,5 +78,5 @@ Current status: credentials are stored for future migration planning only. Supab
 - Home ottimizzata: data fissa `Venerdi 11 Settembre 2026`, nome coppia e città centrati con interspazi ridotti; separatore senza icona cuore.
 - Dettagli (`Cerimonia`/`Ricevimento`) compattati ~20% mantenendo stile/layout canonico.
 - Header admin consolidato: `Home` a sinistra, switch USER/ADMIN centrato, hamburger assente in `/admin*`.
-- Stabilità dev server migliorata: avvio detached affidabile in `scripts/wedding-dev-server.sh` per evitare stop intermittenti su `5001`.
+- Stabilità dev server migliorata: avvio detached affidabile in `scripts/wedding-app-dev-server.sh` per evitare stop intermittenti su `5001`.
 - Nessuna modifica di business logic; solo consolidamento tecnico e coerenza runtime/documentazione.

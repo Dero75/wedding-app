@@ -8,7 +8,7 @@
 - Wedding app dev command is deterministic on local port 5001.
 - `Admin` and `RSVP` pages are now split into smaller modules with unchanged behavior.
 - Local-only dev switch `USER/ADMIN` is isolated and removable (`src/components/dev/DevRoleSwitch.tsx`).
-- Supabase future-sync project coordinates are already staged in `artifacts/wedding/.env.example`.
+- Supabase future-sync project coordinates are already staged in `artifacts/wedding-app/.env.example`.
 - Dead-code governance now has explicit config (`knip.json`) scoped to runtime relevance.
 
 ## Open technical risks
@@ -47,5 +47,5 @@
 - Home ottimizzata: data fissa `Venerdi 11 Settembre 2026`, nome coppia e città centrati con interspazi ridotti; separatore senza icona cuore.
 - Dettagli (`Cerimonia`/`Ricevimento`) compattati ~20% mantenendo stile/layout canonico.
 - Header admin consolidato: `Home` a sinistra, switch USER/ADMIN centrato, hamburger assente in `/admin*`.
-- Stabilità dev server migliorata: avvio detached affidabile in `scripts/wedding-dev-server.sh` per evitare stop intermittenti su `5001`.
+- Stabilità dev server migliorata: avvio detached affidabile in `scripts/wedding-app-dev-server.sh` per evitare stop intermittenti su `5001`.
 - Nessuna modifica di business logic; solo consolidamento tecnico e coerenza runtime/documentazione.

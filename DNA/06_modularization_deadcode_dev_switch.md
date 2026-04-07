@@ -2,14 +2,14 @@
 
 ## Modularization completed
 
-- `artifacts/wedding/src/pages/Admin.tsx` reduced to orchestration only.
+- `artifacts/wedding-app/src/pages/Admin.tsx` reduced to orchestration only.
 - Extracted admin modules:
   - `src/pages/admin/constants.ts`
   - `src/pages/admin/components/AdminTextField.tsx`
   - `src/pages/admin/components/AdminStats.tsx`
   - `src/pages/admin/components/AdminContentSection.tsx`
   - `src/pages/admin/components/AdminRsvpSection.tsx`
-- `artifacts/wedding/src/pages/RSVP.tsx` reduced to orchestration only.
+- `artifacts/wedding-app/src/pages/RSVP.tsx` reduced to orchestration only.
 - Extracted RSVP modules:
   - `src/pages/rsvp/schema.ts`
   - `src/pages/rsvp/components/RsvpInputField.tsx`
@@ -21,7 +21,7 @@ Behavior and UI were preserved (same routes, same form flow, same persistence lo
 ## Dead code / dependency cleanup (safe)
 
 - Removed unused file:
-  - `artifacts/wedding/src/lib/hooks.ts`
+  - `artifacts/wedding-app/src/lib/hooks.ts`
 - Removed unused dependency in wedding package:
   - `react-icons`
 - Removed unused dependencies in `lib/db` package:
@@ -30,7 +30,7 @@ Behavior and UI were preserved (same routes, same form flow, same persistence lo
 
 ## Temporary local dev switch
 
-- Added `artifacts/wedding/src/components/dev/DevRoleSwitch.tsx`.
+- Added `artifacts/wedding-app/src/components/dev/DevRoleSwitch.tsx`.
 - Integrated in `Layout` replacing the header-left home label when running locally in development:
   - visible only with `import.meta.env.DEV`
   - active in `/home` and `/admin`
@@ -80,5 +80,5 @@ Behavior and UI were preserved (same routes, same form flow, same persistence lo
 - Home ottimizzata: data fissa `Venerdi 11 Settembre 2026`, nome coppia e città centrati con interspazi ridotti; separatore senza icona cuore.
 - Dettagli (`Cerimonia`/`Ricevimento`) compattati ~20% mantenendo stile/layout canonico.
 - Header admin consolidato: `Home` a sinistra, switch USER/ADMIN centrato, hamburger assente in `/admin*`.
-- Stabilità dev server migliorata: avvio detached affidabile in `scripts/wedding-dev-server.sh` per evitare stop intermittenti su `5001`.
+- Stabilità dev server migliorata: avvio detached affidabile in `scripts/wedding-app-dev-server.sh` per evitare stop intermittenti su `5001`.
 - Nessuna modifica di business logic; solo consolidamento tecnico e coerenza runtime/documentazione.

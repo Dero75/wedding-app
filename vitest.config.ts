@@ -9,24 +9,24 @@ export default defineConfig({
   plugins: [react()],
   resolve: {
     alias: {
-      "@": path.resolve(rootDir, "artifacts/wedding/src"),
+      "@": path.resolve(rootDir, "artifacts/wedding-app/src"),
       "@assets": path.resolve(rootDir, "attached_assets"),
     },
   },
   test: {
     environment: "jsdom",
     globals: true,
-    setupFiles: ["./artifacts/wedding/src/test/setup.ts"],
-    include: ["artifacts/wedding/src/**/*.test.{ts,tsx}"],
+    setupFiles: ["./artifacts/wedding-app/src/test/setup.ts"],
+    include: ["artifacts/wedding-app/src/**/*.test.{ts,tsx}"],
     coverage: {
       provider: "v8",
       reporter: ["text", "lcov"],
       reportsDirectory: "coverage",
-      include: ["artifacts/wedding/src/**/*.{ts,tsx}"],
+      include: ["artifacts/wedding-app/src/**/*.{ts,tsx}"],
       exclude: [
         "**/*.test.{ts,tsx}",
-        "artifacts/wedding/src/main.tsx",
-        "artifacts/wedding/src/components/ui/**",
+        "artifacts/wedding-app/src/main.tsx",
+        "artifacts/wedding-app/src/components/ui/**",
       ],
     },
   },
