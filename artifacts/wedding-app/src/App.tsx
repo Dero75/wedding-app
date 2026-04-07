@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Switch, Route, Router as WouterRouter } from "wouter";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
@@ -13,8 +13,8 @@ import EntrancePass from "@/pages/EntrancePass";
 import Admin from "@/pages/Admin";
 import AdminSettings from "@/pages/AdminSettings";
 import {
-  clearAllLocalWeddingRecordsForSupabaseMigration,
   clearLegacyAdminSettingsSnapshot,
+  initializeWeddingDataSource,
 } from "@/lib/storage";
 
 const queryClient = new QueryClient();
@@ -23,21 +23,6 @@ function LegacyStorageSanitizer() {
   useEffect(() => {
     clearLegacyAdminSettingsSnapshot();
   }, []);
-  return null;
-}
-
-function DevLocalRecordsResetter() {
-  useEffect(() => {
-    if (!import.meta.env.DEV) return;
-    if (import.meta.env.MODE === "test") return;
-    const resetMarkerKey = "wedding_local_records_reset_v1";
-    if (localStorage.getItem(resetMarkerKey) === "1") return;
-
-    clearAllLocalWeddingRecordsForSupabaseMigration();
-    localStorage.setItem(resetMarkerKey, "1");
-    window.location.reload();
-  }, []);
-
   return null;
 }
 
@@ -57,15 +42,38 @@ function Router() {
   );
 }
 
+function DataSourceBootstrapper({ children }: { children: React.ReactNode }) {
+  const isTestMode = import.meta.env.MODE === "test";
+  const [ready, setReady] = useState(isTestMode);
+
+  useEffect(() => {
+    if (isTestMode) return;
+    let active = true;
+    void initializeWeddingDataSource().finally(() => {
+      if (active) setReady(true);
+    });
+    return () => {
+      active = false;
+    };
+  }, [isTestMode]);
+
+  if (!ready) {
+    return <div className="min-h-screen bg-background" />;
+  }
+
+  return <>{children}</>;
+}
+
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <LegacyStorageSanitizer />
-        <DevLocalRecordsResetter />
-        <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, "")}>
-          <Router />
-        </WouterRouter>
+        <DataSourceBootstrapper>
+          <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, "")}>
+            <Router />
+          </WouterRouter>
+        </DataSourceBootstrapper>
         <Toaster />
       </TooltipProvider>
     </QueryClientProvider>

@@ -73,7 +73,7 @@ export default function Home() {
                 {c.welcomeTitle}
               </h2>
               <p
-                className="home-welcome-text font-serif text-muted-foreground text-[13.75px] leading-[1.35] overflow-hidden whitespace-pre-line text-center"
+                className="home-welcome-text font-sans text-muted-foreground text-[15px] leading-[1.35] overflow-hidden whitespace-pre-line text-center"
                 style={{ maxHeight: "6.5rem" }}
               >
                 {c.welcomeText}

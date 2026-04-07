@@ -109,7 +109,7 @@ export default function Details() {
         </div>
 
         <div className="bg-card border border-border rounded-2xl px-5 py-6 text-center">
-          <p className="font-serif text-lg leading-relaxed mb-3" style={{ color: "hsl(var(--foreground))" }}>
+          <p className="font-sans text-lg leading-relaxed mb-3" style={{ color: "hsl(var(--foreground))" }}>
             Il regalo più bello sarà condividere con voi questo giorno.
           </p>
           <p className="text-sm text-muted-foreground leading-relaxed mb-5">
@@ -136,15 +136,7 @@ export default function Details() {
               aria-modal="true"
               aria-label="Dettagli contributo IBAN"
             >
-              <div className="flex items-start justify-between mb-4">
-                <div>
-                  <p className="text-[10px] uppercase tracking-wider text-muted-foreground mb-1">
-                    Un pensiero per noi
-                  </p>
-                  <h3 className="font-serif text-2xl leading-none" style={{ color: "hsl(var(--foreground))" }}>
-                    Coordinate bancarie
-                  </h3>
-                </div>
+              <div className="flex items-start justify-end mb-2">
                 <button
                   type="button"
                   onClick={() => setIsGiftModalOpen(false)}
@@ -155,7 +147,14 @@ export default function Details() {
                 </button>
               </div>
 
-              <div className="space-y-4">
+              <h3
+                className="font-serif text-[1.85rem] leading-tight text-center mb-5"
+                style={{ color: "hsl(var(--foreground))" }}
+              >
+                Un pensiero per noi
+              </h3>
+
+              <div className="space-y-4 text-center">
                 <div>
                   <p className="text-[10px] uppercase tracking-wider text-muted-foreground mb-1">
                     Intestatario conto
@@ -169,9 +168,9 @@ export default function Details() {
                   <p className="text-[10px] uppercase tracking-wider text-muted-foreground mb-1">
                     IBAN
                   </p>
-                  <div className="flex items-center gap-2 rounded-xl border border-border bg-background px-3 py-2.5">
+                  <div className="flex items-center justify-center gap-2 rounded-xl border border-border bg-background px-3 py-2.5">
                     <p
-                      className="font-mono text-sm tracking-wider flex-1 whitespace-pre-line"
+                      className="font-sans text-sm tracking-wider flex-1 whitespace-pre-line"
                       style={{ color: "hsl(var(--foreground))" }}
                     >
                       {c.giftIBAN}

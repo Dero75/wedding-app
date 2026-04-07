@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useLocation } from "wouter";
+import DevRoleSwitch from "@/components/dev/DevRoleSwitch";
 import {
   FIXED_BRIDE_NAME,
   FIXED_GROOM_NAME,
@@ -35,6 +36,10 @@ export default function Intro() {
         background: `var(--p-intro-bg, #3D2B1F)`,
       }}
     >
+      <div className="absolute top-4 left-1/2 -translate-x-1/2 z-20">
+        <DevRoleSwitch />
+      </div>
+
       <div
         className="absolute inset-0 opacity-80"
         style={{

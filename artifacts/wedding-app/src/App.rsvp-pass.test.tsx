@@ -37,6 +37,7 @@ describe("RSVP confirm-only flow and pass gating", () => {
     expect(screen.getByText("Conferma")).toBeInTheDocument();
     expect(screen.getByText("Registrata ✓")).toBeInTheDocument();
     expect(screen.getByText(/Celiaci/)).toBeInTheDocument();
+    fireEvent.click(screen.getByLabelText("Chiudi finestra"));
 
     fireEvent.click(screen.getByTestId("button-edit-rsvp"));
     expect(screen.getByTestId("input-first-name")).toBeInTheDocument();

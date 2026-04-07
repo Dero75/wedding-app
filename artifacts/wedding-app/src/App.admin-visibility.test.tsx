@@ -1,5 +1,5 @@
 import React from "react";
-import { fireEvent, render, screen } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import App from "./App";
 
 describe("runtime sections are always active", () => {
@@ -7,7 +7,7 @@ describe("runtime sections are always active", () => {
     localStorage.clear();
   });
 
-  it("always shows gift and pass links in nav", () => {
+  it("keeps user topbar minimal without dropdown menu", () => {
     localStorage.setItem(
       "wedding_admin_settings",
       JSON.stringify({
@@ -20,10 +20,8 @@ describe("runtime sections are always active", () => {
 
     render(<App />);
 
-    fireEvent.click(screen.getByTestId("button-menu-toggle"));
-
-    expect(screen.getByTestId("link-nav-regalo")).toBeInTheDocument();
-    expect(screen.getByTestId("link-nav-invito")).toBeInTheDocument();
+    expect(screen.queryByTestId("button-menu-toggle")).not.toBeInTheDocument();
+    expect(screen.getAllByText("Home").length).toBeGreaterThan(0);
   });
 
   it("keeps /gift route available even with legacy disabled flags in storage", () => {

@@ -13,6 +13,7 @@
     "@hookform/resolvers": "^3.10.0",
     "@radix-ui/react-toast": "^1.2.7",
     "@radix-ui/react-tooltip": "^1.2.0",
+    "@supabase/supabase-js": "^2.53.0",
     "@tailwindcss/typography": "^0.5.15",
     "@tailwindcss/vite": "catalog:",
     "@tanstack/react-query": "catalog:",

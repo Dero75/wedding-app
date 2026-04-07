@@ -56,7 +56,7 @@ export default function Gift() {
           <p className="text-xs text-muted-foreground uppercase tracking-wider mb-2">IBAN</p>
           <div className="flex items-center gap-3 bg-background border border-border rounded-xl px-4 py-3">
             <p
-              className="font-mono text-sm flex-1 tracking-wider whitespace-pre-line"
+              className="font-sans text-sm flex-1 tracking-wider whitespace-pre-line"
               style={{ color: "hsl(var(--foreground))" }}
               data-testid="text-iban"
             >
@@ -85,7 +85,7 @@ export default function Gift() {
           <p className="text-xs text-muted-foreground uppercase tracking-wider mt-5 mb-1">
             BIC / SWIFT
           </p>
-          <p className="font-mono text-sm whitespace-pre-line" style={{ color: "hsl(var(--foreground))" }}>
+          <p className="font-sans text-sm whitespace-pre-line" style={{ color: "hsl(var(--foreground))" }}>
             {c.giftBIC}
           </p>
         </WeddingCard>
