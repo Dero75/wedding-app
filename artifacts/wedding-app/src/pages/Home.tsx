@@ -36,7 +36,7 @@ export default function Home() {
               className="home-kicker text-[12.5px] tracking-wider uppercase"
               style={{ color: "hsl(var(--muted-foreground))" }}
             >
-              {`${FIXED_WEDDING_DATE_LABEL} 2026`}
+              {FIXED_WEDDING_DATE_LABEL}
             </p>
             <h1
               className="home-title font-serif text-[2.3125rem] leading-tight"

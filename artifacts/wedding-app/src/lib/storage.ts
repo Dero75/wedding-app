@@ -1,4 +1,6 @@
 import { hasSupabaseConfig, supabase } from "@/lib/supabaseClient";
+import { formatIban } from "@/lib/iban";
+import { normalizePersonName } from "@/lib/personName";
 import { mapDbContentRow, mapDbRsvpRows, toDbContentRow, toDbRsvpRow } from "@/lib/storageMappers";
 import { sanitizeRsvpEntry } from "@/lib/storageRsvpSanitizer";
 import {
@@ -117,7 +119,11 @@ function bootstrapFromLocal(): void {
   if (Object.keys(savedRaw).length !== Object.keys(saved).length) {
     storageSet(STORAGE_KEYS.content, saved);
   }
-  contentCache = { ...DEFAULT_CONTENT, ...saved };
+  contentCache = {
+    ...DEFAULT_CONTENT,
+    ...saved,
+    giftIBAN: formatIban((saved.giftIBAN as string) ?? DEFAULT_CONTENT.giftIBAN),
+  };
 
   const raw = storageGet<unknown[]>(STORAGE_KEYS.rsvps, []);
   let hasLegacyMutation = false;
@@ -160,6 +166,23 @@ export async function initializeWeddingDataSource(): Promise<void> {
   return bootstrapPromise;
 }
 
+export async function refreshRsvpsFromDb(): Promise<void> {
+  if (!USE_DB_SOURCE) return;
+
+  try {
+    const { data: rsvpRows } = await supabase!
+      .from("rsvps")
+      .select("*")
+      .order("submitted_at", { ascending: false });
+
+    rsvpsCache = mapDbRsvpRows((rsvpRows ?? []) as DbRsvpRow[], generateId);
+    const myId = readLocalMyRsvpId();
+    myRsvpCache = myId ? rsvpsCache.find((entry) => entry.id === myId) ?? null : null;
+  } catch {
+    // Keep existing cache on transient realtime refresh failures
+  }
+}
+
 function ensureBootstrappedSyncFallback(): void {
   if (bootstrapPromise || USE_DB_SOURCE) return;
   bootstrapFromLocal();
@@ -171,21 +194,25 @@ export function getContent(): EditableContent {
 }
 
 export function saveContent(content: EditableContent): void {
-  contentCache = content;
+  const normalizedContent: EditableContent = {
+    ...content,
+    giftIBAN: formatIban(content.giftIBAN),
+  };
+  contentCache = normalizedContent;
 
   if (USE_DB_SOURCE) {
     void supabase!
       .from("wedding_content")
-      .upsert(toDbContentRow(content), { onConflict: "id" })
+      .upsert(toDbContentRow(normalizedContent), { onConflict: "id" })
       .then(({ error }) => {
         if (!error) return;
-        storageSet(STORAGE_KEYS.content, content);
+        storageSet(STORAGE_KEYS.content, normalizedContent);
         console.error("[storage] saveContent Supabase upsert failed", error.message);
       });
     return;
   }
 
-  storageSet(STORAGE_KEYS.content, content);
+  storageSet(STORAGE_KEYS.content, normalizedContent);
 }
 
 export function clearLegacyAdminSettingsSnapshot(): void {
@@ -203,31 +230,70 @@ export function getMyRSVP(): RSVPEntry | null {
 }
 
 export function saveMyRSVP(entry: RSVPEntry): void {
+  const normalizedEntry: RSVPEntry = {
+    ...entry,
+    firstName: normalizePersonName(entry.firstName),
+    lastName: normalizePersonName(entry.lastName),
+  };
   rsvpsCache = (() => {
     const next = [...rsvpsCache];
-    const idx = next.findIndex((r) => r.id === entry.id);
-    if (idx >= 0) next[idx] = entry;
-    else next.push(entry);
+    const idx = next.findIndex((r) => r.id === normalizedEntry.id);
+    if (idx >= 0) next[idx] = normalizedEntry;
+    else next.push(normalizedEntry);
     return next;
   })();
-  myRsvpCache = entry;
+  myRsvpCache = normalizedEntry;
 
   if (USE_DB_SOURCE) {
-    storageSet(STORAGE_KEYS.myRsvpId, entry.id);
+    storageSet(STORAGE_KEYS.myRsvpId, normalizedEntry.id);
     storageRemove(STORAGE_KEYS.myRsvp);
     void supabase!
       .from("rsvps")
-      .upsert(toDbRsvpRow(entry), { onConflict: "id" })
+      .upsert(toDbRsvpRow(normalizedEntry), { onConflict: "id" })
       .then(({ error }) => {
         if (!error) return;
-        storageSet(STORAGE_KEYS.myRsvp, entry);
+        storageSet(STORAGE_KEYS.myRsvp, normalizedEntry);
         storageSet(STORAGE_KEYS.rsvps, rsvpsCache);
         console.error("[storage] saveMyRSVP Supabase upsert failed", error.message);
       });
     return;
   }
 
-  storageSet(STORAGE_KEYS.myRsvp, entry);
+  storageSet(STORAGE_KEYS.myRsvp, normalizedEntry);
+  storageSet(STORAGE_KEYS.rsvps, rsvpsCache);
+}
+
+export async function deleteRSVPById(id: string): Promise<void> {
+  ensureBootstrappedSyncFallback();
+
+  const previousRsvps = rsvpsCache;
+  const previousMyRsvp = myRsvpCache;
+  const isDeletingMyRsvp = myRsvpCache?.id === id;
+
+  rsvpsCache = rsvpsCache.filter((entry) => entry.id !== id);
+  if (isDeletingMyRsvp) {
+    myRsvpCache = null;
+  }
+
+  if (USE_DB_SOURCE) {
+    const { error } = await supabase!.from("rsvps").delete().eq("id", id);
+    if (error) {
+      rsvpsCache = previousRsvps;
+      myRsvpCache = previousMyRsvp;
+      throw new Error(error.message);
+    }
+
+    if (isDeletingMyRsvp) {
+      storageRemove(STORAGE_KEYS.myRsvpId);
+    }
+    storageRemove(STORAGE_KEYS.myRsvp);
+    storageSet(STORAGE_KEYS.rsvps, rsvpsCache);
+    return;
+  }
+
+  if (isDeletingMyRsvp) {
+    storageRemove(STORAGE_KEYS.myRsvp);
+  }
   storageSet(STORAGE_KEYS.rsvps, rsvpsCache);
 }
 

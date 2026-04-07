@@ -113,3 +113,33 @@ All required gates are green.
   - `test` OK (13/13)
   - `build` OK
 - SQL/Supabase: in questo ciclo non sono stati introdotti cambi schema DB; quindi nessun nuovo script SQL necessario.
+
+## Aggiornamento Enterprise Finale (2026-04-08 — ciclo finale realtime + RSVP)
+
+- Audit completo rieseguito con qualità verde: `lint`, `typecheck`, `test`, `build` OK.
+- Verificata soglia file funzionali: nessun file oltre 350 righe (`RSVP.tsx` 321, `storage.ts` 310).
+- Abilitata sincronizzazione realtime in Admin (`Gestione Invitati`) via subscription Supabase su `public.rsvps`.
+- Corretto errore TypeScript nel cleanup channel realtime (`supabase` nullable guard).
+- RSVP esteso a doppio esito mantenendo UX coerente:
+  - conferma presenza con modale di conferma pre-invio,
+  - non partecipazione con flusso dedicato (solo nome/cognome),
+  - nome/cognome normalizzati con iniziali maiuscole anche per composti.
+- Admin RSVP allineato al nuovo stato:
+  - evidenza visiva rossa per `Non partecipa`,
+  - doppia conferma modale prima dell'eliminazione,
+  - filtri smart tra riepilogo e cards (`A-Z/Z-A`, `Tutti/Confermati/Eliminati`),
+  - pulsante elimina ridotto a sola icona cestino rossa senza bordo/testo.
+- Riepilogo Admin aggiornato a due box (`Adulti`, `Under 18`) senza icone.
+- Intro aggiornata: switch `USER/ADMIN` non visualizzato nella schermata intro.
+- Invito scaricato da RSVP allineato alla intro in versione standard generica:
+  - nessun nominativo ospite,
+  - testo finale: `Invito da presentare a Palazzo Isolani.`
+- Admin Settings pulito:
+  - rimosso box `Invito / Pass`,
+  - rimosso campo `BIC / SWIFT`,
+  - rimosso campo `Testo` della sezione regalo non presente nel runtime utente.
+- IBAN aggiornato a formato compatto senza spazi (migliore copia/incolla bonifico) con normalizzazione centralizzata.
+- Deadcode scan rieseguito: restano solo export non critici fuori flusso runtime principale.
+- SQL necessario introdotto in questo ciclo:
+  - `ALTER TABLE public.rsvps ADD COLUMN attending boolean not null default true;`
+  - `ALTER PUBLICATION supabase_realtime ADD TABLE public.rsvps;`

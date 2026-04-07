@@ -1,7 +1,9 @@
 import { Edit3, Leaf, WheatOff } from "lucide-react";
+import { useState } from "react";
 import type { UseFormReturn } from "react-hook-form";
 import { DIETARY_FLAG_LABELS, type DietaryFlag } from "@/config/rsvp";
 import WeddingButton from "@/components/WeddingButton";
+import { normalizePersonName } from "@/lib/personName";
 import type { RSVPFormData } from "@/pages/rsvp/schema";
 import RsvpInputField from "./RsvpInputField";
 
@@ -16,6 +18,7 @@ interface RsvpFormProps {
   editing: boolean;
   onCancelEdit: () => void;
   onSubmit: (data: RSVPFormData) => void;
+  onDecline: (firstName: string, lastName: string) => Promise<void> | void;
 }
 
 const dietaryOptions: { flag: DietaryFlag; Icon: typeof Leaf }[] = [
@@ -28,9 +31,29 @@ const dietaryIconColor: Record<DietaryFlag, string> = {
   celiac: "#b38a63",
 };
 
-export default function RsvpForm({ form, editing, onCancelEdit, onSubmit }: RsvpFormProps) {
+export default function RsvpForm({ form, editing, onCancelEdit, onSubmit, onDecline }: RsvpFormProps) {
+  const [declineMode, setDeclineMode] = useState(false);
+  const firstNameField = form.register("firstName");
+  const lastNameField = form.register("lastName");
+  const handleSubmitForm = form.handleSubmit((data) => {
+    if (declineMode) {
+      return onDecline(data.firstName, data.lastName);
+    }
+    return onSubmit(data);
+  });
+
+  const normalizeNameOnBlur = (field: "firstName" | "lastName", value: string) => {
+    const normalized = normalizePersonName(value);
+    if (value === normalized) return;
+    form.setValue(field, normalized, {
+      shouldDirty: true,
+      shouldTouch: true,
+      shouldValidate: true,
+    });
+  };
+
   return (
-    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+    <form onSubmit={handleSubmitForm} className="space-y-6">
       {editing && (
         <div
           className="flex items-center gap-2 px-4 py-3 rounded-xl text-sm border border-border bg-white"
@@ -44,98 +67,128 @@ export default function RsvpForm({ form, editing, onCancelEdit, onSubmit }: Rsvp
       <div className="grid grid-cols-2 gap-3">
         <RsvpInputField label="Nome *" error={form.formState.errors.firstName?.message}>
           <input
-            {...form.register("firstName")}
+            {...firstNameField}
             data-testid="input-first-name"
             className={inputClass}
             placeholder="Nome"
+            onBlur={(event) => {
+              firstNameField.onBlur(event);
+              normalizeNameOnBlur("firstName", event.target.value);
+            }}
           />
         </RsvpInputField>
 
         <RsvpInputField label="Cognome *" error={form.formState.errors.lastName?.message}>
           <input
-            {...form.register("lastName")}
+            {...lastNameField}
             data-testid="input-last-name"
             className={inputClass}
             placeholder="Cognome"
+            onBlur={(event) => {
+              lastNameField.onBlur(event);
+              normalizeNameOnBlur("lastName", event.target.value);
+            }}
           />
         </RsvpInputField>
       </div>
 
-      <div className="grid grid-cols-2 gap-3">
-        <RsvpInputField label="Adulti *" error={form.formState.errors.guestCount?.message}>
-          <select
-            {...form.register("guestCount", { valueAsNumber: true })}
-            data-testid="select-guest-count"
-            className={inputClass}
-          >
-            {[1, 2, 3, 4, 5, 6].map((count) => (
-              <option key={count} value={count}>
-                {count} {count === 1 ? "adulto" : "adulti"}
-              </option>
-            ))}
-          </select>
-        </RsvpInputField>
-
-        <RsvpInputField label="Minorenni" error={form.formState.errors.childrenCount?.message}>
-          <select
-            {...form.register("childrenCount", { valueAsNumber: true })}
-            data-testid="select-children-count"
-            className={inputClass}
-          >
-            {[0, 1, 2, 3, 4, 5, 6].map((count) => (
-              <option key={count} value={count}>
-                {count} {count === 1 ? "minorenne" : "minorenni"}
-              </option>
-            ))}
-          </select>
-        </RsvpInputField>
-      </div>
-
-      <RsvpInputField label="Esigenze alimentari">
-        <div className="space-y-2.5">
-          {dietaryOptions.map(({ flag, Icon }) => (
-            <div
-              key={flag}
-              className="w-full rounded-xl border border-border bg-white px-3 py-2.5 flex items-center justify-between gap-3"
-            >
-              <span className="flex items-center gap-2.5 min-w-0">
-                <Icon size={16} style={{ color: dietaryIconColor[flag] }} />
-                <span className="font-sans text-xs tracking-wider uppercase text-foreground">
-                  {DIETARY_FLAG_LABELS[flag]}
-                </span>
-              </span>
-
+      {!declineMode && (
+        <>
+          <div className="grid grid-cols-2 gap-3">
+            <RsvpInputField label="Adulti *" error={form.formState.errors.guestCount?.message}>
               <select
-                {...form.register(`dietaryCounts.${flag}`, { valueAsNumber: true })}
-                data-testid={`select-dietary-${flag}`}
-                className={dietarySelectClass}
+                {...form.register("guestCount", { valueAsNumber: true })}
+                data-testid="select-guest-count"
+                className={inputClass}
               >
-                {Array.from({ length: 7 }, (_, index) => index).map((count) => (
-                  <option key={`${flag}-${count}`} value={count}>
-                    {count}
+                {[1, 2, 3, 4, 5, 6].map((count) => (
+                  <option key={count} value={count}>
+                    {count} {count === 1 ? "adulto" : "adulti"}
                   </option>
                 ))}
               </select>
+            </RsvpInputField>
+
+            <RsvpInputField label="Minorenni" error={form.formState.errors.childrenCount?.message}>
+              <select
+                {...form.register("childrenCount", { valueAsNumber: true })}
+                data-testid="select-children-count"
+                className={inputClass}
+              >
+                {[0, 1, 2, 3, 4, 5, 6].map((count) => (
+                  <option key={count} value={count}>
+                    {count} {count === 1 ? "minorenne" : "minorenni"}
+                  </option>
+                ))}
+              </select>
+            </RsvpInputField>
+          </div>
+
+          <RsvpInputField label="Esigenze alimentari">
+            <div className="space-y-2.5">
+              {dietaryOptions.map(({ flag, Icon }) => (
+                <div
+                  key={flag}
+                  className="w-full rounded-xl border border-border bg-white px-3 py-2.5 flex items-center justify-between gap-3"
+                >
+                  <span className="flex items-center gap-2.5 min-w-0">
+                    <Icon size={16} style={{ color: dietaryIconColor[flag] }} />
+                    <span className="font-sans text-xs tracking-wider uppercase text-foreground">
+                      {DIETARY_FLAG_LABELS[flag]}
+                    </span>
+                  </span>
+
+                  <select
+                    {...form.register(`dietaryCounts.${flag}`, { valueAsNumber: true })}
+                    data-testid={`select-dietary-${flag}`}
+                    className={dietarySelectClass}
+                  >
+                    {Array.from({ length: 7 }, (_, index) => index).map((count) => (
+                      <option key={`${flag}-${count}`} value={count}>
+                        {count}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
-      </RsvpInputField>
+          </RsvpInputField>
+        </>
+      )}
 
       <div className="flex gap-3 pt-1">
-        {editing && (
+        {(editing || declineMode) && (
           <WeddingButton
             variant="outline"
             type="button"
-            onClick={onCancelEdit}
+            onClick={() => {
+              if (declineMode) {
+                setDeclineMode(false);
+                return;
+              }
+              onCancelEdit();
+            }}
             data-testid="button-cancel-edit"
           >
             Annulla
           </WeddingButton>
         )}
         <WeddingButton type="submit" fullWidth data-testid="button-submit-rsvp">
-          {editing ? "Aggiorna risposta" : "Invia risposta"}
+          {editing ? "Aggiorna risposta" : declineMode ? "Invia non partecipazione" : "Invia conferma"}
         </WeddingButton>
       </div>
+
+      {!editing && !declineMode && (
+        <button
+          type="button"
+          data-testid="button-decline-rsvp"
+          onClick={() => setDeclineMode(true)}
+          className="w-full inline-flex items-center justify-center rounded-full border border-border bg-white px-5 py-3 text-xs uppercase tracking-wider text-foreground hover:opacity-95 transition-opacity"
+        >
+          Non potrò partecipare
+        </button>
+      )}
+
     </form>
   );
 }

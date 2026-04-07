@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Sun, Star, MapPin, Copy, Check, X } from "lucide-react";
+import { MapPin, Copy, Check, X } from "lucide-react";
 import Layout from "@/components/Layout";
 import PageContainer from "@/components/PageContainer";
 import SectionTitle from "@/components/SectionTitle";
@@ -40,15 +40,19 @@ export default function Details() {
   return (
     <Layout>
       <PageContainer>
-        <SectionTitle title="Debora & Davide" />
+        <div className="[&_h2]:text-[2.4rem] sm:[&_h2]:text-[2.7rem]">
+          <SectionTitle title="Debora & Davide" />
+        </div>
         <p className="text-center text-sm text-muted-foreground -mt-4 mb-10">
           {FIXED_WEDDING_DATE_LABEL}
         </p>
 
         {/* Cerimonia card */}
         <div className="bg-card border border-border rounded-2xl px-5 py-6 text-center mb-3.5">
-          <Sun size={18} className="mx-auto mb-2.5" style={{ color: "hsl(var(--accent))" }} />
-          <p className="text-[11px] uppercase tracking-wider text-muted-foreground mb-2.5">
+          <p
+            className="text-[14px] uppercase tracking-wider mb-2.5"
+            style={{ color: "hsl(var(--muted-foreground))" }}
+          >
             Cerimonia
           </p>
           <p className="font-serif text-3xl mb-3.5" style={{ color: "hsl(var(--foreground))" }}>
@@ -82,8 +86,10 @@ export default function Details() {
 
         {/* Ricevimento card */}
         <div className="bg-card border border-border rounded-2xl px-5 py-6 text-center mb-6">
-          <Star size={16} className="mx-auto mb-2.5" style={{ color: "hsl(var(--accent))" }} />
-          <p className="text-[11px] uppercase tracking-wider text-muted-foreground mb-2.5">
+          <p
+            className="text-[14px] uppercase tracking-wider mb-2.5"
+            style={{ color: "hsl(var(--muted-foreground))" }}
+          >
             Ricevimento
           </p>
           <p className="font-serif text-3xl mb-3.5" style={{ color: "hsl(var(--foreground))" }}>

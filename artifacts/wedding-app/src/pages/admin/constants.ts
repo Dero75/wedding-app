@@ -46,17 +46,8 @@ export const CONTENT_SECTIONS: ContentSection[] = [
       { key: "detailsGiftSubtitle", label: "Sottotitolo box programma", multiline: true },
       { key: "detailsGiftButtonLabel", label: "Testo pulsante box programma" },
       { key: "giftTitle", label: "Titolo sezione" },
-      { key: "giftText", label: "Testo", multiline: true },
       { key: "giftIBAN", label: "IBAN" },
-      { key: "giftBIC", label: "BIC / SWIFT" },
       { key: "giftHolder", label: "Intestatario" },
-    ],
-  },
-  {
-    title: "Invito / Pass",
-    fields: [
-      { key: "passTitle", label: "Titolo pass" },
-      { key: "passSubtitle", label: "Sottotitolo pass" },
     ],
   },
 ];

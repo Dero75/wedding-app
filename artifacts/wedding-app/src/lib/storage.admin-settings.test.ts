@@ -3,6 +3,7 @@ import {
   getContent,
   getMyRSVP,
   getRSVPs,
+  saveContent,
 } from "@/lib/storage";
 
 describe("storage sanitization", () => {
@@ -42,7 +43,7 @@ describe("storage sanitization", () => {
     expect(saved).not.toHaveProperty("hashtag");
   });
 
-  it("drops legacy declined entries from RSVP storage", () => {
+  it("keeps legacy declined entries from RSVP storage", () => {
     localStorage.setItem(
       "wedding_rsvps",
       JSON.stringify([
@@ -69,14 +70,17 @@ describe("storage sanitization", () => {
 
     const rsvps = getRSVPs();
 
-    expect(rsvps).toHaveLength(1);
+    expect(rsvps).toHaveLength(2);
     expect(rsvps[0]?.firstName).toBe("Mario");
     expect(rsvps[0]?.lastName).toBe("Rossi");
-    expect((rsvps[0] as Record<string, unknown>).attending).toBeUndefined();
+    expect(rsvps[0]?.attending).toBe(true);
     expect(rsvps[0]?.dietaryCounts).toEqual({ vegetarian: 0, celiac: 1 });
+    expect(rsvps[1]?.firstName).toBe("Luigi");
+    expect(rsvps[1]?.lastName).toBe("Bianchi");
+    expect(rsvps[1]?.attending).toBe(false);
   });
 
-  it("clears legacy my_rsvp with attending=false", () => {
+  it("keeps legacy my_rsvp with attending=false and marks it as non participant", () => {
     localStorage.setItem(
       "wedding_my_rsvp",
       JSON.stringify({
@@ -90,7 +94,40 @@ describe("storage sanitization", () => {
       }),
     );
 
-    expect(getMyRSVP()).toBeNull();
-    expect(localStorage.getItem("wedding_my_rsvp")).toBeNull();
+    const myRsvp = getMyRSVP();
+    expect(myRsvp).not.toBeNull();
+    expect(myRsvp?.attending).toBe(false);
+  });
+
+  it("normalizes first name and surname with capital initials", () => {
+    localStorage.setItem(
+      "wedding_rsvps",
+      JSON.stringify([
+        {
+          id: "cap-1",
+          firstName: "davide",
+          lastName: "de rose",
+          attending: true,
+          guestCount: 1,
+          childrenCount: 0,
+          dietaryCounts: { vegetarian: 0, celiac: 0 },
+          submittedAt: "2026-04-08T09:00:00.000Z",
+        },
+      ]),
+    );
+
+    const rsvps = getRSVPs();
+    expect(rsvps[0]?.firstName).toBe("Davide");
+    expect(rsvps[0]?.lastName).toBe("De Rose");
+  });
+
+  it("formats IBAN with standard spacing when saving content", () => {
+    const current = getContent();
+    saveContent({
+      ...current,
+      giftIBAN: "it60x0542811101000000123456",
+    });
+
+    expect(getContent().giftIBAN).toBe("IT60X0542811101000000123456");
   });
 });

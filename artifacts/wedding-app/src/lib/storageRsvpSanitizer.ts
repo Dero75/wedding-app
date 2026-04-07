@@ -4,6 +4,7 @@ import {
   type DietaryCounts,
   type DietaryFlag,
 } from "@/config/rsvp";
+import { normalizePersonName } from "@/lib/personName";
 import type { RSVPEntry } from "@/lib/storageTypes";
 
 function uniqueDietaryFlags(values: DietaryFlag[]): DietaryFlag[] {
@@ -37,11 +38,11 @@ function sanitizeDietaryFlags(value: unknown, legacyDietaryNotes?: unknown): Die
 }
 
 function splitLegacyFullName(fullName: string): { firstName: string; lastName: string } | null {
-  const parts = fullName
+  const parts = normalizePersonName(fullName)
     .split(/\s+/)
     .map((part) => part.trim())
     .filter(Boolean);
-  if (parts.length === 0) return null;
+  if (parts.length < 2) return null;
 
   return {
     firstName: parts[0],
@@ -54,11 +55,18 @@ function sanitizeNameFields(item: Record<string, unknown>): {
   lastName: string;
   mutated: boolean;
 } | null {
-  const firstName = typeof item.firstName === "string" ? item.firstName.trim() : "";
-  const lastName = typeof item.lastName === "string" ? item.lastName.trim() : "";
+  const firstName = normalizePersonName(typeof item.firstName === "string" ? item.firstName : "");
+  const lastName = normalizePersonName(typeof item.lastName === "string" ? item.lastName : "");
 
-  if (firstName) {
-    return { firstName, lastName, mutated: typeof item.fullName === "string" };
+  if (firstName && lastName) {
+    const rawFirstName = typeof item.firstName === "string" ? item.firstName.trim() : "";
+    const rawLastName = typeof item.lastName === "string" ? item.lastName.trim() : "";
+    return {
+      firstName,
+      lastName,
+      mutated:
+        typeof item.fullName === "string" || rawFirstName !== firstName || rawLastName !== lastName,
+    };
   }
 
   const fullName = typeof item.fullName === "string" ? item.fullName.trim() : "";
@@ -110,20 +118,21 @@ export function sanitizeRsvpEntry(
   if (!value || typeof value !== "object") return { entry: null, mutated: false };
   const item = value as Record<string, unknown>;
 
-  if (item.attending === false) {
-    return { entry: null, mutated: true };
-  }
-
   const names = sanitizeNameFields(item);
   if (!names) {
     return { entry: null, mutated: true };
   }
 
+  const attendingRaw = item.attending;
+  const attending = typeof attendingRaw === "boolean" ? attendingRaw : true;
+
   const guestCountRaw = item.guestCount;
   const guestCount =
     typeof guestCountRaw === "number" && Number.isFinite(guestCountRaw)
-      ? Math.max(1, Math.floor(guestCountRaw))
-      : 1;
+      ? Math.max(attending ? 1 : 0, Math.floor(guestCountRaw))
+      : attending
+        ? 1
+        : 0;
 
   const childrenCountRaw = item.childrenCount;
   const childrenCount =
@@ -135,6 +144,7 @@ export function sanitizeRsvpEntry(
 
   const mutated =
     names.mutated ||
+    attending !== attendingRaw ||
     guestCount !== guestCountRaw ||
     childrenCount !== childrenCountRaw ||
     !hasExactDietaryCountsSnapshot(item.dietaryCounts, dietaryCounts) ||
@@ -148,6 +158,7 @@ export function sanitizeRsvpEntry(
       id: typeof item.id === "string" ? item.id : generateId(),
       firstName: names.firstName,
       lastName: names.lastName,
+      attending,
       guestCount,
       childrenCount,
       dietaryCounts,

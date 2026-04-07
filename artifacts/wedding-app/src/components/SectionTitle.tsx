@@ -2,9 +2,15 @@ interface SectionTitleProps {
   title: string;
   subtitle?: string;
   center?: boolean;
+  titleClassName?: string;
 }
 
-export default function SectionTitle({ title, subtitle, center = true }: SectionTitleProps) {
+export default function SectionTitle({
+  title,
+  subtitle,
+  center = true,
+  titleClassName = "",
+}: SectionTitleProps) {
   return (
     <div className={`mb-8 ${center ? "text-center" : ""}`}>
       {subtitle && (
@@ -12,7 +18,9 @@ export default function SectionTitle({ title, subtitle, center = true }: Section
           {subtitle}
         </p>
       )}
-      <h2 className="font-serif text-2xl sm:text-3xl text-foreground leading-snug whitespace-pre-line">
+      <h2
+        className={`font-serif text-2xl sm:text-3xl text-foreground leading-snug whitespace-pre-line ${titleClassName}`}
+      >
         {title}
       </h2>
       <div

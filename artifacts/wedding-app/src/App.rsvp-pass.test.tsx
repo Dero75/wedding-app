@@ -20,10 +20,10 @@ describe("RSVP confirm-only flow and pass gating", () => {
     expect(screen.queryByTestId("radio-attending-no")).not.toBeInTheDocument();
 
     fireEvent.change(screen.getByTestId("input-first-name"), {
-      target: { value: "Mario" },
+      target: { value: "mario" },
     });
     fireEvent.change(screen.getByTestId("input-last-name"), {
-      target: { value: "Rossi" },
+      target: { value: "de rose" },
     });
     fireEvent.change(screen.getByTestId("select-guest-count"), {
       target: { value: "2" },
@@ -32,12 +32,15 @@ describe("RSVP confirm-only flow and pass gating", () => {
       target: { value: "1" },
     });
     fireEvent.click(screen.getByTestId("button-submit-rsvp"));
+    expect(await screen.findByTestId("modal-submit-confirm-rsvp")).toBeInTheDocument();
+    fireEvent.click(screen.getByTestId("button-confirm-submit-rsvp"));
 
-    expect(await screen.findByText("Grazie, Mario Rossi!")).toBeInTheDocument();
-    expect(screen.getByText("Conferma")).toBeInTheDocument();
-    expect(screen.getByText("Registrata ✓")).toBeInTheDocument();
-    expect(screen.getByText(/Celiaci/)).toBeInTheDocument();
-    fireEvent.click(screen.getByLabelText("Chiudi finestra"));
+    expect(await screen.findByText("Presenza Confermata!")).toBeInTheDocument();
+    expect(await screen.findByText("Grazie, Mario De Rose!")).toBeInTheDocument();
+    expect(
+      screen.getByText("Con gioia confermiamo la registrazione di Mario De Rose, per 2 persone."),
+    ).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("dialog").parentElement as HTMLElement);
 
     fireEvent.click(screen.getByTestId("button-edit-rsvp"));
     expect(screen.getByTestId("input-first-name")).toBeInTheDocument();
@@ -59,6 +62,7 @@ describe("RSVP confirm-only flow and pass gating", () => {
         id: "ok-1",
         firstName: "Giulia",
         lastName: "Verdi",
+        attending: true,
         guestCount: 2,
         childrenCount: 0,
         dietaryCounts: { vegetarian: 1, celiac: 0 },
@@ -72,6 +76,7 @@ describe("RSVP confirm-only flow and pass gating", () => {
           id: "ok-1",
           firstName: "Giulia",
           lastName: "Verdi",
+          attending: true,
           guestCount: 2,
           childrenCount: 0,
           dietaryCounts: { vegetarian: 1, celiac: 0 },

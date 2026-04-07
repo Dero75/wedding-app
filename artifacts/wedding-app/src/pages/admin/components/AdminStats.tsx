@@ -1,24 +1,32 @@
-import { CheckCircle } from "lucide-react";
-
 interface AdminStatsProps {
-  confirmedAdults: number;
+  adultsCount: number;
+  under18Count: number;
 }
 
-export default function AdminStats({ confirmedAdults }: AdminStatsProps) {
+export default function AdminStats({ adultsCount, under18Count }: AdminStatsProps) {
   return (
-    <div className="grid grid-cols-3 gap-3 mb-6">
-      <div className="col-start-2 bg-card border border-border rounded-xl p-3 text-center">
-        <div className="flex justify-center mb-1" style={{ color: "hsl(var(--accent))" }}>
-          <CheckCircle size={16} />
-        </div>
-        <p className="font-sans text-xl" style={{ color: "hsl(var(--foreground))" }}>
-          {confirmedAdults}
+    <div className="grid grid-cols-2 gap-3 mb-6">
+      <div className="bg-card border border-border rounded-xl p-3 text-center">
+        <p className="font-sans text-xl" style={{ color: "#6f8f4a" }}>
+          {adultsCount}
         </p>
         <p
           className="text-[10px] uppercase tracking-wider"
-          style={{ color: "hsl(var(--muted-foreground))" }}
+          style={{ color: "#6f8f4a" }}
         >
-          Confermati
+          Adulti
+        </p>
+      </div>
+
+      <div className="bg-card border border-border rounded-xl p-3 text-center">
+        <p className="font-sans text-xl" style={{ color: "#6f8f4a" }}>
+          {under18Count}
+        </p>
+        <p
+          className="text-[10px] uppercase tracking-wider"
+          style={{ color: "#6f8f4a" }}
+        >
+          Under 18
         </p>
       </div>
     </div>

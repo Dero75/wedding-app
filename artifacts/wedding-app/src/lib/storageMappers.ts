@@ -1,3 +1,4 @@
+import { formatIban } from "@/lib/iban";
 import { sanitizeRsvpEntry } from "@/lib/storageRsvpSanitizer";
 import type { DbContentRow, DbRsvpRow, EditableContent, RSVPEntry } from "@/lib/storageTypes";
 import { DEFAULT_CONTENT } from "@/lib/storageTypes";
@@ -40,7 +41,11 @@ export function mapDbContentRow(row: DbContentRow): EditableContent {
     const value = mapped[key];
     if (typeof value === "string") safe[key] = value;
   }
-  return { ...DEFAULT_CONTENT, ...safe };
+  const normalized = { ...DEFAULT_CONTENT, ...safe };
+  return {
+    ...normalized,
+    giftIBAN: formatIban(normalized.giftIBAN),
+  };
 }
 
 export function toDbContentRow(content: EditableContent): Record<string, unknown> {
@@ -86,6 +91,7 @@ export function mapDbRsvpRows(rows: DbRsvpRow[], generateId: () => string): RSVP
           id: source.id,
           firstName: source.first_name,
           lastName: source.last_name,
+          attending: source.attending,
           guestCount: source.guest_count,
           childrenCount: source.children_count,
           dietaryCounts: source.dietary_counts,
@@ -102,6 +108,7 @@ export function toDbRsvpRow(entry: RSVPEntry): Record<string, unknown> {
     id: entry.id,
     first_name: entry.firstName,
     last_name: entry.lastName,
+    attending: entry.attending,
     guest_count: entry.guestCount,
     children_count: entry.childrenCount,
     dietary_counts: entry.dietaryCounts,

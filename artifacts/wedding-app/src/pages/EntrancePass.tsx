@@ -1,14 +1,20 @@
 import { Link } from "wouter";
-import { Heart, Lock, Star } from "lucide-react";
+import { Lock } from "lucide-react";
 import Layout from "@/components/Layout";
 import PageContainer from "@/components/PageContainer";
 import SectionTitle from "@/components/SectionTitle";
 import WeddingButton from "@/components/WeddingButton";
 import { getMyRSVP, getContent } from "@/lib/storage";
-import { FIXED_BRIDE_NAME, FIXED_GROOM_NAME, FIXED_WEDDING_DATE_LABEL } from "@/config/event";
+import {
+  FIXED_BRIDE_NAME,
+  FIXED_GROOM_NAME,
+  FIXED_WEDDING_CITY,
+  FIXED_WEDDING_DATE_LABEL,
+} from "@/config/event";
 
 export default function EntrancePass() {
   const rsvp = getMyRSVP();
+  const hasConfirmedAttendance = rsvp?.attending === true;
   const c = getContent();
 
   return (
@@ -16,8 +22,7 @@ export default function EntrancePass() {
       <PageContainer>
         <SectionTitle title={c.passTitle} subtitle="Ingresso" />
 
-        {/* ─── Locked state (no confirmation yet) ─── */}
-        {!rsvp && (
+        {!hasConfirmedAttendance && (
           <div className="text-center py-4">
             <div
               className="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 border-2"
@@ -40,7 +45,6 @@ export default function EntrancePass() {
               <WeddingButton data-testid="button-go-rsvp">Conferma la presenza</WeddingButton>
             </Link>
 
-            {/* Decorative locked card preview */}
             <div
               className="relative mt-10 rounded-3xl overflow-hidden opacity-30 pointer-events-none"
               aria-hidden="true"
@@ -59,186 +63,61 @@ export default function EntrancePass() {
           </div>
         )}
 
-        {/* ─── Active pass ─── */}
-        {rsvp && (
+        {hasConfirmedAttendance && rsvp && (
           <>
-            <p className="text-center text-sm text-muted-foreground mb-8 whitespace-pre-line">
-              {c.passSubtitle}
-            </p>
-
-            {/* Pass card */}
             <div
-              className="relative overflow-hidden rounded-3xl shadow-2xl mb-8"
+              className="relative overflow-hidden rounded-3xl shadow-2xl mb-8 min-h-[27rem] flex items-center justify-center"
               data-testid="card-entrance-pass"
               style={{
-                background: `linear-gradient(135deg, var(--p-pass-bg-from, #4A3728) 0%, var(--p-pass-bg-to, #6B4C3B) 100%)`,
+                background: `var(--p-intro-bg, #3D2B1F)`,
               }}
             >
-              {/* Decorative bubbles */}
-              <div className="absolute -top-16 -right-16 w-48 h-48 rounded-full opacity-10 bg-white" />
-              <div className="absolute -bottom-10 -left-10 w-36 h-36 rounded-full opacity-10 bg-white" />
-              <div className="absolute top-1/2 right-4 w-24 h-24 rounded-full opacity-5 bg-white" />
+              <div
+                className="absolute inset-0 opacity-80"
+                style={{
+                  background:
+                    "radial-gradient(ellipse at center, var(--p-intro-radial, #6B4C3B) 0%, var(--p-intro-bg, #3D2B1F) 70%)",
+                }}
+              />
 
-              <div className="relative z-10 px-7 py-8">
-                {/* Header row */}
-                <div className="flex items-center justify-between mb-7">
-                  <div className="flex items-center gap-1.5">
-                    <Star size={10} style={{ fill: "rgba(201,185,154,0.5)", stroke: "none" }} />
-                    <p
-                      className="text-[10px] uppercase tracking-wider"
-                      style={{ color: "rgba(201,185,154,0.75)" }}
-                    >
-                      Invito Digitale
-                    </p>
-                    <Star size={10} style={{ fill: "rgba(201,185,154,0.5)", stroke: "none" }} />
-                  </div>
-                  <Heart size={14} style={{ fill: "#C2878A", stroke: "none" }} />
+              <div className="relative z-10 flex flex-col items-center gap-6 text-center px-6 py-10">
+                <div className="flex items-center gap-3" style={{ color: "rgba(201,185,154,0.6)" }}>
+                  <div className="h-px w-12 bg-current" />
+                  <span className="text-xs tracking-wider uppercase">{FIXED_WEDDING_DATE_LABEL}</span>
+                  <div className="h-px w-12 bg-current" />
                 </div>
 
-                {/* Couple */}
-                <div className="text-center mb-7">
-                  <p
-                    className="text-xs uppercase tracking-wider mb-2"
-                    style={{ color: "rgba(201,185,154,0.65)" }}
-                  >
-                    al matrimonio di
-                  </p>
+                <div className="text-center">
                   <h2
-                    className="font-serif text-3xl leading-snug"
-                    style={{ color: "hsl(38 60% 95%)" }}
+                    className="font-serif text-5xl sm:text-6xl leading-tight"
+                    style={{ color: "hsl(38 50% 97%)" }}
                   >
                     {FIXED_BRIDE_NAME}
                   </h2>
-                  <p className="font-serif text-lg my-1" style={{ color: "rgba(201,185,154,0.7)" }}>
+                  <p className="font-serif text-2xl my-2" style={{ color: "rgba(201,185,154,0.8)" }}>
                     &
                   </p>
                   <h2
-                    className="font-serif text-3xl leading-snug"
-                    style={{ color: "hsl(38 60% 95%)" }}
+                    className="font-serif text-5xl sm:text-6xl leading-tight"
+                    style={{ color: "hsl(38 50% 97%)" }}
                   >
                     {FIXED_GROOM_NAME}
                   </h2>
                 </div>
 
-                {/* Ornament */}
-                <div className="flex items-center gap-3 mb-7">
-                  <div className="h-px flex-1" style={{ background: "rgba(201,185,154,0.25)" }} />
-                  <div className="flex gap-1.5">
-                    {[0, 1, 2].map((i) => (
-                      <div
-                        key={i}
-                        className="rounded-full"
-                        style={{
-                          width: i === 1 ? 6 : 4,
-                          height: i === 1 ? 6 : 4,
-                          background: i === 1 ? "rgba(201,185,154,0.7)" : "rgba(201,185,154,0.35)",
-                        }}
-                      />
-                    ))}
-                  </div>
-                  <div className="h-px flex-1" style={{ background: "rgba(201,185,154,0.25)" }} />
-                </div>
-
-                {/* Guest block */}
-                <div
-                  className="rounded-2xl px-5 py-4 mb-7"
-                  style={{ background: "rgba(255,255,255,0.08)" }}
-                >
-                  <p
-                    className="text-[10px] uppercase tracking-wider mb-1"
-                    style={{ color: "rgba(201,185,154,0.55)" }}
-                  >
-                    Ospite
-                  </p>
-                  <p
-                    className="font-sans text-xl leading-snug"
-                    style={{ color: "hsl(38 60% 95%)" }}
-                  >
-                    {`${rsvp.firstName} ${rsvp.lastName}`.trim()}
-                  </p>
-                  <p className="text-xs mt-0.5" style={{ color: "rgba(201,185,154,0.55)" }}>
-                    {rsvp.guestCount} {rsvp.guestCount === 1 ? "adulto" : "adulti"}
-                    {rsvp.childrenCount > 0
-                      ? ` · ${rsvp.childrenCount} ${
-                          rsvp.childrenCount === 1
-                            ? "persona sotto i 18 anni"
-                            : "persone sotto i 18 anni"
-                        }`
-                      : ""}
-                  </p>
-                </div>
-
-                {/* Event details grid */}
-                <div
-                  className="grid grid-cols-2 gap-4 rounded-2xl px-5 py-4 mb-7"
-                  style={{ background: "rgba(255,255,255,0.08)" }}
-                >
-                  <div>
-                    <p
-                      className="text-[10px] uppercase tracking-wider mb-1"
-                      style={{ color: "rgba(201,185,154,0.55)" }}
-                    >
-                      Data
-                    </p>
-                    <p className="text-sm" style={{ color: "hsl(38 60% 95%)" }}>
-                      {FIXED_WEDDING_DATE_LABEL}
-                    </p>
-                  </div>
-                  <div>
-                    <p
-                      className="text-[10px] uppercase tracking-wider mb-1"
-                      style={{ color: "rgba(201,185,154,0.55)" }}
-                    >
-                      Ore
-                    </p>
-                    <p className="text-sm whitespace-pre-line" style={{ color: "hsl(38 60% 95%)" }}>
-                      {c.weddingTime}
-                    </p>
-                  </div>
-                  <div className="col-span-2">
-                    <p
-                      className="text-[10px] uppercase tracking-wider mb-1"
-                      style={{ color: "rgba(201,185,154,0.55)" }}
-                    >
-                      Luogo
-                    </p>
-                    <p className="text-sm whitespace-pre-line" style={{ color: "hsl(38 60% 95%)" }}>
-                      {c.weddingLocation}
-                    </p>
-                    <p className="text-xs mt-0.5 whitespace-pre-line" style={{ color: "rgba(201,185,154,0.55)" }}>
-                      {c.weddingAddress}
-                    </p>
-                  </div>
-                </div>
-
-                {/* QR placeholder */}
-                <div className="flex flex-col items-center pt-1">
-                  <div
-                    className="rounded-2xl p-3.5 mb-2"
-                    style={{ background: "rgba(255,255,255,0.10)" }}
-                  >
-                    <div className="w-12 h-12 grid grid-cols-3 gap-0.5">
-                      {Array.from({ length: 9 }).map((_, i) => (
-                        <div
-                          key={i}
-                          className="rounded-sm"
-                          style={{
-                            background: [0, 2, 4, 6, 8].includes(i)
-                              ? "rgba(201,185,154,0.65)"
-                              : "rgba(201,185,154,0.15)",
-                          }}
-                        />
-                      ))}
-                    </div>
-                  </div>
-                  <p
-                    className="text-[10px] tracking-wider uppercase"
-                    style={{ color: "rgba(201,185,154,0.40)" }}
-                  >
-                    Mostra all'ingresso
-                  </p>
+                <div className="flex items-center gap-3" style={{ color: "rgba(201,185,154,0.6)" }}>
+                  <div className="h-px w-12 bg-current" />
+                  <span className="text-xs tracking-wider uppercase">{FIXED_WEDDING_CITY}</span>
+                  <div className="h-px w-12 bg-current" />
                 </div>
               </div>
+
+              <p
+                className="absolute bottom-5 left-1/2 -translate-x-1/2 text-[10px] tracking-wider uppercase text-center px-6"
+                style={{ color: "rgba(201,185,154,0.75)" }}
+              >
+                Invito da mostrare all&apos;ingresso di Palazzo Isolani
+              </p>
             </div>
 
             <Link href="/rsvp">

@@ -1,53 +1,216 @@
+import { useMemo, useState } from "react";
+import { AlertTriangle, Trash2, X } from "lucide-react";
 import { DIETARY_FLAG_LABELS, DIETARY_FLAG_VALUES } from "@/config/rsvp";
 import type { RSVPEntry } from "@/lib/storage";
 
 interface AdminRsvpSectionProps {
   rsvps: RSVPEntry[];
+  onDeleteRsvp: (id: string) => Promise<void>;
 }
 
-export default function AdminRsvpSection({ rsvps }: AdminRsvpSectionProps) {
+export default function AdminRsvpSection({ rsvps, onDeleteRsvp }: AdminRsvpSectionProps) {
+  const [selectedRsvpId, setSelectedRsvpId] = useState<string | null>(null);
+  const [deleteStep, setDeleteStep] = useState<1 | 2 | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
+
+  const selectedRsvp = useMemo(
+    () => (selectedRsvpId ? rsvps.find((rsvp) => rsvp.id === selectedRsvpId) ?? null : null),
+    [rsvps, selectedRsvpId],
+  );
+
+  const selectedName = selectedRsvp ? `${selectedRsvp.firstName} ${selectedRsvp.lastName}`.trim() : "";
+
+  const resetDeleteState = () => {
+    setDeleteStep(null);
+    setSelectedRsvpId(null);
+    setDeleteError(null);
+  };
+
+  const closeDeleteModal = () => {
+    if (isDeleting) return;
+    resetDeleteState();
+  };
+
+  const startDeleteFlow = (id: string) => {
+    setSelectedRsvpId(id);
+    setDeleteStep(1);
+    setDeleteError(null);
+  };
+
+  const continueDeleteFlow = () => {
+    setDeleteStep(2);
+    setDeleteError(null);
+  };
+
+  const handleDelete = async () => {
+    if (!selectedRsvpId) return;
+    setIsDeleting(true);
+    setDeleteError(null);
+    try {
+      await onDeleteRsvp(selectedRsvpId);
+      resetDeleteState();
+    } catch {
+      setDeleteError("Eliminazione non riuscita. Riprova tra pochi secondi.");
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
   return (
-    <div className="h-full min-h-0 overflow-y-auto pr-0.5 space-y-2.5">
-      {rsvps.length === 0 ? (
-        <p className="text-center text-sm text-muted-foreground py-6">Nessuna risposta ancora.</p>
-      ) : (
-        rsvps.map((rsvp) => (
-          <div
-            key={rsvp.id}
-            className="p-3 rounded-xl border border-border bg-white"
-          >
-            <div className="min-w-0">
-              <p
-                className="font-sans text-[0.98rem] leading-snug"
-                style={{ color: "hsl(var(--foreground))" }}
-                data-testid={`rsvp-name-${rsvp.id}`}
-              >
-                {`${rsvp.firstName} ${rsvp.lastName}`.trim()}
-              </p>
-              <p className="font-sans text-xs text-muted-foreground mt-0.5">
-                Confermato · {rsvp.guestCount} {rsvp.guestCount === 1 ? "adulto" : "adulti"}
-                {rsvp.childrenCount > 0
-                  ? ` · ${rsvp.childrenCount} ${
-                      rsvp.childrenCount === 1 ? "persona sotto i 18 anni" : "persone sotto i 18 anni"
-                    }`
-                  : ""}
-              </p>
-              {DIETARY_FLAG_VALUES.some((flag) => rsvp.dietaryCounts[flag] > 0) && (
-                <div className="mt-1.5 flex flex-wrap gap-1.5">
-                  {DIETARY_FLAG_VALUES.filter((flag) => rsvp.dietaryCounts[flag] > 0).map((flag) => (
-                    <span
-                      key={flag}
-                      className="inline-flex items-center rounded-full border border-border px-2 py-0.5 text-[10px] uppercase tracking-wider text-muted-foreground"
-                    >
-                      {DIETARY_FLAG_LABELS[flag]}: {rsvp.dietaryCounts[flag]}
-                    </span>
-                  ))}
+    <>
+      <div className="h-full min-h-0 overflow-y-auto pr-0.5 space-y-2.5">
+        {rsvps.length === 0 ? (
+          <p className="text-center text-sm text-muted-foreground py-6">Nessuna risposta ancora.</p>
+        ) : (
+          rsvps.map((rsvp) => (
+            <div
+              key={rsvp.id}
+              className="p-3 rounded-xl border bg-white"
+              style={
+                rsvp.attending
+                  ? undefined
+                  : { borderColor: "hsl(0 70% 82%)", background: "hsl(0 80% 98%)" }
+              }
+            >
+              <div className="min-w-0 flex items-start justify-between gap-3">
+                <div className="min-w-0 flex-1">
+                  <p
+                    className="font-sans text-[0.98rem] leading-snug"
+                    style={{ color: "hsl(var(--foreground))" }}
+                    data-testid={`rsvp-name-${rsvp.id}`}
+                  >
+                    {`${rsvp.firstName} ${rsvp.lastName}`.trim()}
+                  </p>
+                  <p className="font-sans text-xs text-muted-foreground mt-0.5">
+                    {rsvp.attending
+                      ? `Confermato · ${rsvp.guestCount} ${rsvp.guestCount === 1 ? "adulto" : "adulti"}${
+                          rsvp.childrenCount > 0
+                            ? ` · ${rsvp.childrenCount} ${
+                                rsvp.childrenCount === 1
+                                  ? "persona sotto i 18 anni"
+                                  : "persone sotto i 18 anni"
+                              }`
+                            : ""
+                        }`
+                      : "Non partecipa"}
+                  </p>
+                  {rsvp.attending && DIETARY_FLAG_VALUES.some((flag) => rsvp.dietaryCounts[flag] > 0) && (
+                    <div className="mt-1.5 flex flex-wrap gap-1.5">
+                      {DIETARY_FLAG_VALUES.filter((flag) => rsvp.dietaryCounts[flag] > 0).map((flag) => (
+                        <span
+                          key={flag}
+                          className="inline-flex items-center rounded-full border border-border px-2 py-0.5 text-[10px] uppercase tracking-wider text-muted-foreground"
+                        >
+                          {DIETARY_FLAG_LABELS[flag]}: {rsvp.dietaryCounts[flag]}
+                        </span>
+                      ))}
+                    </div>
+                  )}
                 </div>
-              )}
+
+                <button
+                  type="button"
+                  onClick={() => startDeleteFlow(rsvp.id)}
+                  data-testid={`button-delete-rsvp-${rsvp.id}`}
+                  className="inline-flex items-center justify-center p-1 text-[#b74a4a] hover:text-[#a53f3f] transition-colors shrink-0"
+                  aria-label={`Elimina invitato ${`${rsvp.firstName} ${rsvp.lastName}`.trim()}`}
+                >
+                  <Trash2 size={16} />
+                </button>
+              </div>
             </div>
+          ))
+        )}
+      </div>
+
+      {deleteStep && selectedRsvp && (
+        <div
+          className="fixed inset-0 z-[80] bg-foreground/30 backdrop-blur-sm px-5 flex items-center justify-center"
+          onClick={closeDeleteModal}
+        >
+          <div
+            className="w-full max-w-md rounded-2xl border border-border bg-card p-5 shadow-xl"
+            onClick={(event) => event.stopPropagation()}
+            role="dialog"
+            aria-modal="true"
+            data-testid={deleteStep === 1 ? "modal-delete-rsvp-step-1" : "modal-delete-rsvp-step-2"}
+          >
+            <div className="flex items-start justify-between gap-3 mb-3">
+              <div className="inline-flex items-center justify-center rounded-full p-2 bg-accent/10 text-accent">
+                <AlertTriangle size={16} />
+              </div>
+              <button
+                type="button"
+                onClick={closeDeleteModal}
+                className="p-1.5 rounded-full text-muted-foreground hover:text-foreground transition-colors"
+                aria-label="Chiudi conferma eliminazione"
+              >
+                <X size={16} />
+              </button>
+            </div>
+
+            {deleteStep === 1 ? (
+              <>
+                <h3 className="font-serif text-2xl mb-2" style={{ color: "hsl(var(--foreground))" }}>
+                  Eliminare invitato?
+                </h3>
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  Stai per rimuovere <strong>{selectedName}</strong> dalla lista dei confermati.
+                </p>
+
+                <div className="mt-5 flex gap-2.5">
+                  <button
+                    type="button"
+                    onClick={closeDeleteModal}
+                    className="flex-1 inline-flex items-center justify-center rounded-full border border-border px-4 py-2.5 text-xs uppercase tracking-wider text-muted-foreground hover:text-foreground hover:border-muted-foreground/40 transition-colors"
+                  >
+                    Annulla
+                  </button>
+                  <button
+                    type="button"
+                    onClick={continueDeleteFlow}
+                    data-testid="button-delete-rsvp-continue"
+                    className="flex-1 inline-flex items-center justify-center rounded-full border border-primary-border bg-primary px-4 py-2.5 text-xs uppercase tracking-wider text-primary-foreground hover:opacity-95 transition-opacity"
+                  >
+                    Continua
+                  </button>
+                </div>
+              </>
+            ) : (
+              <>
+                <h3 className="font-serif text-2xl mb-2" style={{ color: "hsl(var(--foreground))" }}>
+                  Conferma definitiva
+                </h3>
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  Questa azione elimina in modo permanente <strong>{selectedName}</strong>.
+                </p>
+                {deleteError && <p className="mt-2 text-xs text-destructive">{deleteError}</p>}
+
+                <div className="mt-5 flex gap-2.5">
+                  <button
+                    type="button"
+                    onClick={closeDeleteModal}
+                    disabled={isDeleting}
+                    className="flex-1 inline-flex items-center justify-center rounded-full border border-border px-4 py-2.5 text-xs uppercase tracking-wider text-muted-foreground hover:text-foreground hover:border-muted-foreground/40 transition-colors disabled:opacity-60"
+                  >
+                    Annulla
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleDelete}
+                    disabled={isDeleting}
+                    data-testid="button-delete-rsvp-confirm"
+                    className="flex-1 inline-flex items-center justify-center rounded-full border border-primary-border bg-primary px-4 py-2.5 text-xs uppercase tracking-wider text-primary-foreground hover:opacity-95 transition-opacity disabled:opacity-60"
+                  >
+                    {isDeleting ? "Elimino..." : "Elimina invitato"}
+                  </button>
+                </div>
+              </>
+            )}
           </div>
-        ))
+        </div>
       )}
-    </div>
+    </>
   );
 }

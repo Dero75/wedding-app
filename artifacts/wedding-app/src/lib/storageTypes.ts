@@ -61,7 +61,7 @@ export const DEFAULT_CONTENT: EditableContent = {
   giftTitle: "Un pensiero per noi",
   giftText:
     "La vostra presenza è il regalo più bello che potessimo ricevere. Per chi volesse farci un pensiero, vi lasciamo i nostri riferimenti bancari.",
-  giftIBAN: "IT60 X054 2811 1010 0000 0123 456",
+  giftIBAN: "IT60X0542811101000000123456",
   giftBIC: "BLOPIT22",
   giftHolder: "Davide Rossi",
   passTitle: "Il vostro invito",
@@ -72,6 +72,7 @@ export interface RSVPEntry {
   id: string;
   firstName: string;
   lastName: string;
+  attending: boolean;
   guestCount: number;
   childrenCount: number;
   dietaryCounts: DietaryCounts;
