@@ -1,82 +1,276 @@
-# 05 — Future Supabase Plan
+# 05 — Future Supabase Plan (Aggiornato 2026-04-07)
 
-## Why Supabase
+## Stato reale verificato dal codice
 
-The current app uses localStorage only. This is intentional for the first version — it keeps the app simple, offline-capable, and portable. However, for real wedding use, a shared backend is needed so the couple can see all RSVPs in the admin panel, regardless of which device guests use.
+Analisi completa eseguita su runtime attuale:
 
-## What to keep
+- App principale: `artifacts/wedding-app`
+- API server: `artifacts/api-server` (oggi solo `/api/healthz`)
+- Persistenza runtime: **solo localStorage** via `src/lib/storage.ts`
 
-- All pages and components stay exactly the same
-- The `RSVPEntry` TypeScript type stays the same
-- The routing and UX flow stays the same
+Logiche oggi attive:
 
-## What to replace
+- RSVP confirm-only (`firstName`, `lastName`, `guestCount`, `childrenCount`, `dietaryCounts`)
+- Admin diviso in:
+  - `/admin` (stats + lista RSVP)
+  - `/admin/settings` (editor contenuti)
+- Pass (`/pass`) disponibile solo se `getMyRSVP()` esiste
+- Contenuti editabili (`EditableContent`) salvati in `wedding_content`
+- Sanitizzazione legacy già implementata in `storage.ts`
 
-The only file that needs to change is `src/lib/storage.ts`. Replace the localStorage functions with Supabase client calls:
+## Obiettivo migrazione Supabase
 
-### Database tables needed
+Portare su Supabase i dati condivisi tra dispositivi, mantenendo invariata UX:
+
+- `wedding_rsvps` -> tabella `public.rsvps`
+- `wedding_content` -> tabella `public.wedding_content`
+- `wedding_my_rsvp` resta locale (identità ospite device-based)
+
+## Script SQL completi (Supabase SQL Editor)
+
+Eseguire in ordine.
+
+### 01) Estensioni + funzione trigger `updated_at`
 
 ```sql
-CREATE TABLE rsvps (
-  id TEXT PRIMARY KEY,
-  first_name TEXT NOT NULL,
-  last_name TEXT NOT NULL,
-  guest_count INTEGER NOT NULL,
-  children_count INTEGER NOT NULL DEFAULT 0,
-  dietary_counts JSONB NOT NULL DEFAULT '{"vegetarian":0,"celiac":0}',
-  submitted_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+create extension if not exists pgcrypto;
+
+create or replace function public.set_updated_at()
+returns trigger
+language plpgsql
+as $$
+begin
+  new.updated_at = now();
+  return new;
+end;
+$$;
+```
+
+### 02) Tabella RSVP
+
+```sql
+create table if not exists public.rsvps (
+  id text primary key,
+  first_name text not null check (char_length(trim(first_name)) >= 2),
+  last_name text not null check (char_length(trim(last_name)) >= 2),
+  guest_count integer not null check (guest_count between 1 and 10),
+  children_count integer not null default 0 check (children_count between 0 and 10),
+  dietary_counts jsonb not null default '{"vegetarian":0,"celiac":0}'::jsonb,
+  submitted_at timestamptz not null default now(),
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  constraint rsvps_dietary_counts_shape check (
+    jsonb_typeof(dietary_counts) = 'object'
+    and (dietary_counts ? 'vegetarian')
+    and (dietary_counts ? 'celiac')
+    and ((dietary_counts->>'vegetarian')::int between 0 and 10)
+    and ((dietary_counts->>'celiac')::int between 0 and 10)
+  )
 );
+
+drop trigger if exists trg_rsvps_set_updated_at on public.rsvps;
+create trigger trg_rsvps_set_updated_at
+before update on public.rsvps
+for each row
+execute function public.set_updated_at();
+
+create index if not exists idx_rsvps_submitted_at on public.rsvps (submitted_at desc);
+create index if not exists idx_rsvps_last_name on public.rsvps (lower(last_name), lower(first_name));
 ```
 
-### API surface to implement
+### 03) Tabella contenuti Admin (`EditableContent`)
 
-```typescript
-// Replace these with Supabase calls:
-getRSVPs(): Promise<RSVPEntry[]>
-saveRSVP(entry: RSVPEntry): Promise<void>
+```sql
+create table if not exists public.wedding_content (
+  id integer primary key check (id = 1),
+  intro_tagline text not null,
+  hero_subtitle text not null,
+  wedding_time text not null,
+  wedding_location text not null,
+  wedding_address text not null,
+  welcome_title text not null,
+  welcome_text text not null,
+  cta_rsvp text not null,
+  cta_details text not null,
+  ceremony_place text not null,
+  ceremony_time text not null,
+  ceremony_address text not null,
+  ceremony_note text not null,
+  reception_place text not null,
+  reception_time text not null,
+  reception_address text not null,
+  reception_note text not null,
+  gift_title text not null,
+  gift_text text not null,
+  gift_iban text not null,
+  gift_bic text not null,
+  gift_holder text not null,
+  pass_title text not null,
+  pass_subtitle text not null,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+drop trigger if exists trg_wedding_content_set_updated_at on public.wedding_content;
+create trigger trg_wedding_content_set_updated_at
+before update on public.wedding_content
+for each row
+execute function public.set_updated_at();
 ```
 
-### Steps
+### 04) Seed contenuto iniziale (coerente con `DEFAULT_CONTENT`)
 
-1. Install `@supabase/supabase-js`
-2. Create local env from template:
-   - copy `artifacts/wedding-app/.env.example` to `artifacts/wedding-app/.env.local`
-   - keep `.env.local` untracked (already covered by root `.gitignore`)
-3. Create `src/lib/supabaseClient.ts` with the Supabase client
-4. Rewrite `src/lib/storage.ts` to be async, using Supabase instead of localStorage
-5. Update all callers in pages to `await` the async calls
-6. Add Row Level Security to allow public inserts but admin-only reads
+```sql
+insert into public.wedding_content (
+  id,
+  intro_tagline,
+  hero_subtitle,
+  wedding_time,
+  wedding_location,
+  wedding_address,
+  welcome_title,
+  welcome_text,
+  cta_rsvp,
+  cta_details,
+  ceremony_place,
+  ceremony_time,
+  ceremony_address,
+  ceremony_note,
+  reception_place,
+  reception_time,
+  reception_address,
+  reception_note,
+  gift_title,
+  gift_text,
+  gift_iban,
+  gift_bic,
+  gift_holder,
+  pass_title,
+  pass_subtitle
+)
+values (
+  1,
+  'il matrimonio di',
+  'il matrimonio di',
+  '16:00',
+  'Villa Borgonuovo',
+  'Via Borgonuovo 12, 40125 Bologna',
+  'Siete i benvenuti',
+  'Con immensa gioia vi invitiamo a celebrare con noi il giorno più bello della nostra vita. La vostra presenza renderà questo momento ancora più indimenticabile.',
+  'Conferma la tua presenza',
+  'Il programma',
+  'Villa Borgonuovo — Cappella',
+  '16:00',
+  'Via Borgonuovo 12, 40125 Bologna',
+  'Vi chiediamo di arrivare 15 minuti prima della cerimonia.',
+  'Villa Borgonuovo — Cortile interno',
+  '18:30',
+  'Via Borgonuovo 12, 40125 Bologna',
+  'Ci uniamo nel cortile per il ricevimento all''aperto.',
+  'Un pensiero per noi',
+  'La vostra presenza è il regalo più bello che potessimo ricevere. Per chi volesse farci un pensiero, vi lasciamo i nostri riferimenti bancari.',
+  'IT60 X054 2811 1010 0000 0123 456',
+  'BLOPIT22',
+  'Davide Rossi',
+  'Il vostro invito',
+  'Lasciate questo pass all''ingresso della villa'
+)
+on conflict (id) do nothing;
+```
 
-## Project credentials registered (future sync)
+### 05) RLS/POLICY
 
-- `VITE_SUPABASE_URL`: `https://hrwkrytcmehswbhwvdpi.supabase.co`
-- `VITE_SUPABASE_ANON_KEY`: configured in `artifacts/wedding-app/.env.example`
+Due profili possibili:
 
-Current status: credentials are stored for future migration planning only. Supabase is not wired into runtime yet.
+- **Profilo A (parità runtime attuale)**: nessuna protezione reale, utile per partire subito.
+- **Profilo B (consigliato produzione)**: usare API server con service role per letture admin e update contenuti.
 
-### Notes
+#### Profilo A — parità runtime locale
 
-- Keep localStorage as a fallback for offline scenarios or use it for caching
-- The admin page should use Supabase Auth/roles to protect sensitive RSVP data
-- The `my_rsvp` identity should remain in localStorage so guests can identify themselves
+```sql
+alter table public.rsvps enable row level security;
+alter table public.wedding_content enable row level security;
 
-## Aggiornamento Allineamento Finale (2026-04-04)
+drop policy if exists "rsvps_public_rw" on public.rsvps;
+create policy "rsvps_public_rw"
+on public.rsvps
+for all
+to anon, authenticated
+using (true)
+with check (true);
 
-- Verificata coerenza runtime/documentazione con stato codice corrente.
-- Admin: in area `/admin*` hamburger nascosto; su `/admin` resta shortcut impostazioni.
-- Admin home: KPI unico `Confermati`.
-- Admin settings: editor contenuti in box bianchi separati per sezione frontend.
-- RSVP: header ridotto al solo titolo; select `Minorenni` con label `minorenne/minorenni`.
-- Tipografia canonica confermata: titoli serif, UI/testi sans.
-- Nessuna nuova logica business introdotta in questo allineamento documentale.
+drop policy if exists "content_public_rw" on public.wedding_content;
+create policy "content_public_rw"
+on public.wedding_content
+for all
+to anon, authenticated
+using (true)
+with check (true);
+```
 
-## Aggiornamento Operativo Finale (2026-04-04)
+#### Profilo B — consigliato produzione
 
-- Verifiche complete rieseguite: install/ typecheck/ lint/ build/ test tutti OK.
-- Rimozione completa logica `vegano` dal runtime RSVP (config, schema, form, storage, test).
-- Etichette alimentari aggiornate: `Vegetariani`, `Celiaci`.
-- Home ottimizzata: data fissa `Venerdi 11 Settembre 2026`, nome coppia e città centrati con interspazi ridotti; separatore senza icona cuore.
-- Dettagli (`Cerimonia`/`Ricevimento`) compattati ~20% mantenendo stile/layout canonico.
-- Header admin consolidato: `Home` a sinistra, switch USER/ADMIN centrato, hamburger assente in `/admin*`.
-- Stabilità dev server migliorata: avvio detached affidabile in `scripts/wedding-app-dev-server.sh` per evitare stop intermittenti su `5001`.
-- Nessuna modifica di business logic; solo consolidamento tecnico e coerenza runtime/documentazione.
+```sql
+alter table public.rsvps enable row level security;
+alter table public.wedding_content enable row level security;
+
+revoke all on table public.rsvps from anon, authenticated;
+revoke all on table public.wedding_content from anon, authenticated;
+
+drop policy if exists "content_public_read" on public.wedding_content;
+create policy "content_public_read"
+on public.wedding_content
+for select
+to anon, authenticated
+using (true);
+```
+
+In profilo B:
+
+- insert/update RSVP e update contenuti vanno fatti da API server con **service role key**
+- lato frontend anon mantenere solo letture pubbliche necessarie
+
+## Mapping TypeScript -> DB
+
+`RSVPEntry` -> `rsvps`:
+
+- `firstName` -> `first_name`
+- `lastName` -> `last_name`
+- `guestCount` -> `guest_count`
+- `childrenCount` -> `children_count`
+- `dietaryCounts` -> `dietary_counts`
+- `submittedAt` -> `submitted_at`
+
+`EditableContent` -> `wedding_content` (snake_case equivalente)
+
+## Note implementative per codice
+
+Per migrazione reale:
+
+1. creare `src/lib/supabaseClient.ts`
+2. convertire `storage.ts` in async per `getRSVPs`, `saveMyRSVP`, `getContent`, `saveContent`
+3. mantenere `my_rsvp` in localStorage
+4. mantenere sanitizzazione legacy anche lato client prima delle write
+5. se profilo B: aggiungere endpoint API server per admin read/list RSVP e update contenuti
+
+## Variabili ambiente già presenti
+
+- `VITE_SUPABASE_URL`: `https://hbmccalscnescpvomrjo.supabase.co`
+- `VITE_SUPABASE_ANON_KEY`: già presente in `artifacts/wedding-app/.env.example`
+
+Stato attuale: Supabase non è ancora collegato al runtime, solo pianificato.
+
+## Aggiornamento Enterprise Finale (2026-04-07)
+
+- Eseguito hardening completo runtime con qualità verde (`typecheck`, `lint`, `test`, `build`, `deadcode`).
+- Confermata assenza di file funzionali oltre soglia 350 righe.
+- Deploy Cloudflare Pages validato (build monorepo `@wedding-app/wedding-app`, output `artifacts/wedding-app/dist/public`).
+- Variabili Supabase aggiornate ai nuovi valori progetto (`hbmccalscnescpvomrjo`).
+- Intro aggiornata: rimossi i testi "il matrimonio di" e "tocca per entrare"; durata auto a 4.5s.
+- Header home aggiornato: pulsante/label `Home` non mostrato su route `/home`.
+- Switch `USER/ADMIN` reso visibile anche in deploy (non solo DEV) su `/home` e `/admin*`.
+- Home aggiornata senza cambiare business logic: pulsanti CTA ridotti al 70% larghezza; blocco testi principale aumentato del 25%; data/città uniformate a 10px.
+- Tipografia UI uniforme: tracking caratteri standardizzato a `tracking-wider` dove applicabile.
+- Testi da Admin ora rispettano i ritorni a capo in rendering (`whitespace-pre-line`) mantenendo allineamenti correnti.
+- Pagina Programma estesa con sezione contributo + modale IBAN (copia/intestatario) mantenendo coerenza visiva.
+- Nessuna modifica alle logiche di business (RSVP confirm-only, pass gating, flussi admin).

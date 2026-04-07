@@ -8,7 +8,7 @@ interface RsvpInputFieldProps {
 export default function RsvpInputField({ label, error, hint, children }: RsvpInputFieldProps) {
   return (
     <div>
-      <label className="block text-xs text-muted-foreground uppercase tracking-widest mb-1.5">
+      <label className="block text-xs text-muted-foreground uppercase tracking-wider mb-1.5">
         {label}
       </label>
       {children}

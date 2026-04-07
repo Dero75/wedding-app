@@ -16,7 +16,7 @@ export default function AdminContentSection({
       {CONTENT_SECTIONS.map((section) => (
         <section key={section.title} className="rounded-2xl border border-border bg-white px-4 py-4">
           <p
-            className="text-xs mb-1 font-sans font-medium uppercase tracking-widest"
+            className="text-xs mb-1 font-sans font-medium uppercase tracking-wider"
             style={{ color: "hsl(var(--foreground))" }}
           >
             {section.title}

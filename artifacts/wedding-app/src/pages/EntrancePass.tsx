@@ -62,7 +62,9 @@ export default function EntrancePass() {
         {/* ─── Active pass ─── */}
         {rsvp && (
           <>
-            <p className="text-center text-sm text-muted-foreground mb-8">{c.passSubtitle}</p>
+            <p className="text-center text-sm text-muted-foreground mb-8 whitespace-pre-line">
+              {c.passSubtitle}
+            </p>
 
             {/* Pass card */}
             <div
@@ -83,7 +85,7 @@ export default function EntrancePass() {
                   <div className="flex items-center gap-1.5">
                     <Star size={10} style={{ fill: "rgba(201,185,154,0.5)", stroke: "none" }} />
                     <p
-                      className="text-[10px] uppercase tracking-[0.28em]"
+                      className="text-[10px] uppercase tracking-wider"
                       style={{ color: "rgba(201,185,154,0.75)" }}
                     >
                       Invito Digitale
@@ -96,7 +98,7 @@ export default function EntrancePass() {
                 {/* Couple */}
                 <div className="text-center mb-7">
                   <p
-                    className="text-xs uppercase tracking-[0.22em] mb-2"
+                    className="text-xs uppercase tracking-wider mb-2"
                     style={{ color: "rgba(201,185,154,0.65)" }}
                   >
                     al matrimonio di
@@ -143,7 +145,7 @@ export default function EntrancePass() {
                   style={{ background: "rgba(255,255,255,0.08)" }}
                 >
                   <p
-                    className="text-[10px] uppercase tracking-[0.22em] mb-1"
+                    className="text-[10px] uppercase tracking-wider mb-1"
                     style={{ color: "rgba(201,185,154,0.55)" }}
                   >
                     Ospite
@@ -173,7 +175,7 @@ export default function EntrancePass() {
                 >
                   <div>
                     <p
-                      className="text-[10px] uppercase tracking-widest mb-1"
+                      className="text-[10px] uppercase tracking-wider mb-1"
                       style={{ color: "rgba(201,185,154,0.55)" }}
                     >
                       Data
@@ -184,26 +186,26 @@ export default function EntrancePass() {
                   </div>
                   <div>
                     <p
-                      className="text-[10px] uppercase tracking-widest mb-1"
+                      className="text-[10px] uppercase tracking-wider mb-1"
                       style={{ color: "rgba(201,185,154,0.55)" }}
                     >
                       Ore
                     </p>
-                    <p className="text-sm" style={{ color: "hsl(38 60% 95%)" }}>
+                    <p className="text-sm whitespace-pre-line" style={{ color: "hsl(38 60% 95%)" }}>
                       {c.weddingTime}
                     </p>
                   </div>
                   <div className="col-span-2">
                     <p
-                      className="text-[10px] uppercase tracking-widest mb-1"
+                      className="text-[10px] uppercase tracking-wider mb-1"
                       style={{ color: "rgba(201,185,154,0.55)" }}
                     >
                       Luogo
                     </p>
-                    <p className="text-sm" style={{ color: "hsl(38 60% 95%)" }}>
+                    <p className="text-sm whitespace-pre-line" style={{ color: "hsl(38 60% 95%)" }}>
                       {c.weddingLocation}
                     </p>
-                    <p className="text-xs mt-0.5" style={{ color: "rgba(201,185,154,0.55)" }}>
+                    <p className="text-xs mt-0.5 whitespace-pre-line" style={{ color: "rgba(201,185,154,0.55)" }}>
                       {c.weddingAddress}
                     </p>
                   </div>
@@ -230,7 +232,7 @@ export default function EntrancePass() {
                     </div>
                   </div>
                   <p
-                    className="text-[10px] tracking-[0.2em] uppercase"
+                    className="text-[10px] tracking-wider uppercase"
                     style={{ color: "rgba(201,185,154,0.40)" }}
                   >
                     Mostra all'ingresso

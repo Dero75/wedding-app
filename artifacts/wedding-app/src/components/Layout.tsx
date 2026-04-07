@@ -14,10 +14,10 @@ const NAV_ITEMS = [
 export default function Layout({ children }: { children: React.ReactNode }) {
   const [open, setOpen] = useState(false);
   const [location] = useLocation();
-  const showCenteredDevRoleSwitch =
-    import.meta.env.DEV && (location === "/home" || location.startsWith("/admin"));
+  const showCenteredDevRoleSwitch = location === "/home" || location.startsWith("/admin");
   const isAdminRoute = location.startsWith("/admin");
   const isAdminHome = location === "/admin";
+  const isHomeRoute = location === "/home";
 
   useEffect(() => {
     if (isAdminRoute) {
@@ -34,14 +34,16 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             <Link
               href="/admin"
               data-testid="button-admin-home-topbar"
-              className="font-sans text-foreground text-[11px] tracking-[0.2em] uppercase px-2.5 py-1.5 rounded-full border border-border hover:text-accent transition-colors"
+              className="font-sans text-foreground text-[11px] tracking-wider uppercase px-2.5 py-1.5 rounded-full border border-border hover:text-accent transition-colors"
             >
               Home
             </Link>
+          ) : isHomeRoute ? (
+            <div className="w-[74px] h-8" aria-hidden="true" />
           ) : (
             <Link
               href="/home"
-              className="font-sans text-foreground text-base tracking-[0.2em] uppercase"
+              className="font-sans text-foreground text-base tracking-wider uppercase"
             >
               Home
             </Link>
@@ -92,7 +94,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         }`}
       >
         <div className="flex items-center justify-between px-6 h-14 border-b border-border">
-          <span className="font-sans text-foreground text-sm tracking-[0.2em] uppercase">
+          <span className="font-sans text-foreground text-sm tracking-wider uppercase">
             Menu
           </span>
           <button
@@ -110,7 +112,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               href={item.href}
               data-testid={`link-nav-${item.label.toLowerCase()}`}
               onClick={() => setOpen(false)}
-              className={`py-3.5 text-base font-sans tracking-wide border-b border-border/50 transition-colors ${
+              className={`py-3.5 text-base font-sans tracking-wider border-b border-border/50 transition-colors ${
                 location === item.href ? "text-accent" : "text-foreground hover:text-accent"
               }`}
             >
@@ -122,7 +124,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             <Link
               href="/admin"
               onClick={() => setOpen(false)}
-              className="text-xs text-muted-foreground hover:text-foreground transition-colors tracking-widest uppercase"
+              className="text-xs text-muted-foreground hover:text-foreground transition-colors tracking-wider uppercase"
             >
               Pannello Admin
             </Link>

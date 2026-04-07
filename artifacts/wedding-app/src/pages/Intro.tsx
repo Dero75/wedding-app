@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { useLocation } from "wouter";
-import { getContent } from "@/lib/storage";
 import {
   FIXED_BRIDE_NAME,
   FIXED_GROOM_NAME,
@@ -12,11 +11,10 @@ export default function Intro() {
   const [, setLocation] = useLocation();
   const [visible, setVisible] = useState(false);
   const [leaving, setLeaving] = useState(false);
-  const c = getContent();
 
   useEffect(() => {
     const t1 = setTimeout(() => setVisible(true), 100);
-    const t2 = setTimeout(() => handleLeave(), 3800);
+    const t2 = setTimeout(() => handleLeave(), 4500);
     return () => {
       clearTimeout(t1);
       clearTimeout(t2);
@@ -52,15 +50,12 @@ export default function Intro() {
         {/* Date row */}
         <div className="flex items-center gap-3" style={{ color: "rgba(201,185,154,0.6)" }}>
           <div className="h-px w-12 bg-current" />
-          <span className="text-xs tracking-[0.3em] uppercase">{FIXED_WEDDING_DATE_LABEL}</span>
+          <span className="text-xs tracking-wider uppercase">{FIXED_WEDDING_DATE_LABEL}</span>
           <div className="h-px w-12 bg-current" />
         </div>
 
         {/* Names */}
         <div className="text-center">
-          <p className="text-sm tracking-[0.3em] uppercase mb-3" style={{ color: "rgba(240,230,211,0.75)" }}>
-            {c.introTagline}
-          </p>
           <h1
             className="font-serif text-5xl sm:text-6xl leading-tight"
             style={{ color: "hsl(38 50% 97%)" }}
@@ -81,18 +76,9 @@ export default function Intro() {
         {/* Location row */}
         <div className="flex items-center gap-3" style={{ color: "rgba(201,185,154,0.6)" }}>
           <div className="h-px w-12 bg-current" />
-          <span className="text-xs tracking-[0.3em] uppercase">{FIXED_WEDDING_CITY}</span>
+          <span className="text-xs tracking-wider uppercase">{FIXED_WEDDING_CITY}</span>
           <div className="h-px w-12 bg-current" />
         </div>
-      </div>
-
-      <div
-        className={`absolute bottom-12 text-xs tracking-[0.2em] uppercase transition-all duration-1000 delay-500 ${
-          visible ? "opacity-100" : "opacity-0"
-        }`}
-        style={{ color: "rgba(201,185,154,0.45)" }}
-      >
-        tocca per entrare
       </div>
     </div>
   );

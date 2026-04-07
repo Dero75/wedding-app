@@ -16,7 +16,7 @@ export default function AdminTextField({
 }: AdminTextFieldProps) {
   return (
     <div className="mt-4">
-      <label className="block text-xs uppercase tracking-widest mb-1.5 text-muted-foreground">
+      <label className="block text-xs uppercase tracking-wider mb-1.5 text-muted-foreground">
         {label}
       </label>
       {multiline ? (

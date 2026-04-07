@@ -44,7 +44,7 @@ export default function RsvpConfirmationView({ submitted, onEdit }: RsvpConfirma
           { label: "Under 18", value: submitted.childrenCount },
         ].map((item) => (
           <div key={item.label} className="bg-white border border-border rounded-xl p-4 text-center">
-            <p className="text-[10px] text-muted-foreground uppercase tracking-widest mb-1.5">
+            <p className="text-[10px] text-muted-foreground uppercase tracking-wider mb-1.5">
               {item.label}
             </p>
             <p className="font-sans text-base" style={{ color: "hsl(var(--foreground))" }}>
@@ -56,14 +56,14 @@ export default function RsvpConfirmationView({ submitted, onEdit }: RsvpConfirma
 
       {selectedDietary.length > 0 && (
         <div className="mt-3 rounded-xl border border-border bg-white px-4 py-3">
-          <p className="text-[10px] text-muted-foreground uppercase tracking-widest mb-2">
+          <p className="text-[10px] text-muted-foreground uppercase tracking-wider mb-2">
             Esigenze alimentari
           </p>
           <div className="flex flex-wrap gap-2">
             {selectedDietary.map((flag) => (
               <span
                 key={flag}
-                className="inline-flex items-center rounded-full border border-border px-2.5 py-1 text-[11px] uppercase tracking-wide"
+                className="inline-flex items-center rounded-full border border-border px-2.5 py-1 text-[11px] uppercase tracking-wider"
               >
                 {DIETARY_FLAG_LABELS[flag]}: {submitted.dietaryCounts[flag]}
               </span>

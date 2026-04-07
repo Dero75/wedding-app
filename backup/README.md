@@ -20,3 +20,8 @@ corepack pnpm run backup:new
 ## Note Git
 
 I file di backup in questa cartella sono ignorati da Git e non devono essere committati.
+
+## Aggiornamento Operativo (2026-04-07)
+
+- Policy backup confermata invariata.
+- Eseguito nuovo ciclo operativo con backup incrementale non distruttivo richiesto a fine attività.

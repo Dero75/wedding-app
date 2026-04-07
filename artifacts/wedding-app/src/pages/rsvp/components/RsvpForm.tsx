@@ -100,7 +100,7 @@ export default function RsvpForm({ form, editing, onCancelEdit, onSubmit }: Rsvp
             >
               <span className="flex items-center gap-2.5 min-w-0">
                 <Icon size={16} style={{ color: dietaryIconColor[flag] }} />
-                <span className="font-sans text-xs tracking-wide uppercase text-foreground">
+                <span className="font-sans text-xs tracking-wider uppercase text-foreground">
                   {DIETARY_FLAG_LABELS[flag]}
                 </span>
               </span>

@@ -16,7 +16,7 @@ export default function DevRoleSwitch() {
         type="button"
         aria-pressed={!isAdminView}
         onClick={() => setLocation("/home")}
-        className={`min-h-8 px-3 rounded-full text-[10px] tracking-widest uppercase transition-colors ${!isAdminView ? activeClass : inactiveClass}`}
+        className={`min-h-8 px-3 rounded-full text-[10px] tracking-wider uppercase transition-colors ${!isAdminView ? activeClass : inactiveClass}`}
       >
         User
       </button>
@@ -24,7 +24,7 @@ export default function DevRoleSwitch() {
         type="button"
         aria-pressed={isAdminView}
         onClick={() => setLocation("/admin")}
-        className={`min-h-8 px-3 rounded-full text-[10px] tracking-widest uppercase transition-colors ${isAdminView ? activeClass : inactiveClass}`}
+        className={`min-h-8 px-3 rounded-full text-[10px] tracking-wider uppercase transition-colors ${isAdminView ? activeClass : inactiveClass}`}
       >
         Admin
       </button>

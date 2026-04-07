@@ -15,7 +15,7 @@ export default function AdminStats({ confirmedAdults }: AdminStatsProps) {
           {confirmedAdults}
         </p>
         <p
-          className="text-[10px] uppercase tracking-widest"
+          className="text-[10px] uppercase tracking-wider"
           style={{ color: "hsl(var(--muted-foreground))" }}
         >
           Confermati

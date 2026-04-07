@@ -7,7 +7,7 @@ export default function NotFound() {
   return (
     <Layout>
       <PageContainer className="text-center py-20">
-        <p className="text-xs text-[#9CAF88] uppercase tracking-widest mb-3">404</p>
+        <p className="text-xs text-[#9CAF88] uppercase tracking-wider mb-3">404</p>
         <h1 className="font-serif text-2xl text-[#4A3728] mb-4">Pagina non trovata</h1>
         <p className="text-sm text-[#8B6F5E] mb-8">La pagina che cerchi non esiste.</p>
         <Link href="/">

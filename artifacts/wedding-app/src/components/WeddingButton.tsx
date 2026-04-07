@@ -13,7 +13,7 @@ export default function WeddingButton({
   ...props
 }: WeddingButtonProps) {
   const base =
-    "inline-flex items-center justify-center px-6 py-3.5 font-sans text-xs tracking-[0.12em] uppercase rounded-full transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring active:scale-[0.97] select-none";
+    "inline-flex items-center justify-center px-6 py-3.5 font-sans text-xs tracking-wider uppercase rounded-full transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring active:scale-[0.97] select-none";
 
   const variants = {
     primary: "bg-primary text-primary-foreground hover:opacity-90 shadow-md hover:shadow-lg",

@@ -37,7 +37,7 @@ export default function AdminRsvpSection({ rsvps }: AdminRsvpSectionProps) {
                   {DIETARY_FLAG_VALUES.filter((flag) => rsvp.dietaryCounts[flag] > 0).map((flag) => (
                     <span
                       key={flag}
-                      className="inline-flex items-center rounded-full border border-border px-2 py-0.5 text-[10px] uppercase tracking-wide text-muted-foreground"
+                      className="inline-flex items-center rounded-full border border-border px-2 py-0.5 text-[10px] uppercase tracking-wider text-muted-foreground"
                     >
                       {DIETARY_FLAG_LABELS[flag]}: {rsvp.dietaryCounts[flag]}
                     </span>
