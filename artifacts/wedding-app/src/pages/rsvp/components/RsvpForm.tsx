@@ -33,6 +33,11 @@ const dietaryIconColor: Record<DietaryFlag, string> = {
 
 export default function RsvpForm({ form, editing, onCancelEdit, onSubmit, onDecline }: RsvpFormProps) {
   const [declineMode, setDeclineMode] = useState(false);
+  const dietaryCountsError = form.formState.errors.dietaryCounts;
+  const dietaryCountsErrorMessage =
+    dietaryCountsError && "message" in dietaryCountsError && typeof dietaryCountsError.message === "string"
+      ? dietaryCountsError.message
+      : undefined;
   const firstNameField = form.register("firstName");
   const lastNameField = form.register("lastName");
   const handleSubmitForm = form.handleSubmit((data) => {
@@ -124,7 +129,7 @@ export default function RsvpForm({ form, editing, onCancelEdit, onSubmit, onDecl
             </RsvpInputField>
           </div>
 
-          <RsvpInputField label="Esigenze alimentari">
+          <RsvpInputField label="Esigenze alimentari" error={dietaryCountsErrorMessage}>
             <div className="space-y-2.5">
               {dietaryOptions.map(({ flag, Icon }) => (
                 <div
@@ -174,7 +179,7 @@ export default function RsvpForm({ form, editing, onCancelEdit, onSubmit, onDecl
           </WeddingButton>
         )}
         <WeddingButton type="submit" fullWidth data-testid="button-submit-rsvp">
-          {editing ? "Aggiorna risposta" : declineMode ? "Invia non partecipazione" : "Invia conferma"}
+          {editing ? "Aggiorna risposta" : declineMode ? "Conferma la tua assenza" : "Invia conferma"}
         </WeddingButton>
       </div>
 

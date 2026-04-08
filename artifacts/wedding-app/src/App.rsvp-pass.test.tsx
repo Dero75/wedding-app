@@ -38,13 +38,43 @@ describe("RSVP confirm-only flow and pass gating", () => {
     expect(await screen.findByText("Presenza Confermata!")).toBeInTheDocument();
     expect(await screen.findByText("Grazie, Mario De Rose!")).toBeInTheDocument();
     expect(
-      screen.getByText("Con gioia confermiamo la registrazione di Mario De Rose, per 2 persone."),
+      screen.getByText("Con gioia confermiamo la registrazione per 2 persone (totale adulti+minorenni)."),
     ).toBeInTheDocument();
     fireEvent.click(screen.getByRole("dialog").parentElement as HTMLElement);
 
     fireEvent.click(screen.getByTestId("button-edit-rsvp"));
     expect(screen.getByTestId("input-first-name")).toBeInTheDocument();
     expect(screen.getByTestId("input-last-name")).toBeInTheDocument();
+  });
+
+  it("blocks submit when dietary totals exceed guests total", async () => {
+    window.history.pushState({}, "", "/rsvp");
+    render(<App />);
+
+    fireEvent.change(screen.getByTestId("input-first-name"), {
+      target: { value: "anna" },
+    });
+    fireEvent.change(screen.getByTestId("input-last-name"), {
+      target: { value: "rossi" },
+    });
+
+    fireEvent.change(screen.getByTestId("select-guest-count"), {
+      target: { value: "1" },
+    });
+    fireEvent.change(screen.getByTestId("select-children-count"), {
+      target: { value: "0" },
+    });
+    fireEvent.change(screen.getByTestId("select-dietary-vegetarian"), {
+      target: { value: "1" },
+    });
+    fireEvent.change(screen.getByTestId("select-dietary-celiac"), {
+      target: { value: "1" },
+    });
+
+    fireEvent.click(screen.getByTestId("button-submit-rsvp"));
+
+    expect(screen.queryByTestId("modal-submit-confirm-rsvp")).not.toBeInTheDocument();
+    expect(screen.queryByText("Presenza Confermata!")).not.toBeInTheDocument();
   });
 
   it("shows pass only when a confirmation exists", () => {

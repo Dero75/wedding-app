@@ -105,6 +105,26 @@ function sanitizeDietaryCounts(
   return counts;
 }
 
+function normalizeDietaryCountsToGuests(dietaryCounts: DietaryCounts, maxGuests: number): DietaryCounts {
+  if (maxGuests <= 0) return createDefaultDietaryCounts();
+
+  const totalDietary = dietaryCounts.vegetarian + dietaryCounts.celiac;
+  if (totalDietary <= maxGuests) return dietaryCounts;
+
+  const normalized = { ...dietaryCounts };
+  let overflow = totalDietary - maxGuests;
+
+  const reducibleFlags: DietaryFlag[] = ["celiac", "vegetarian"];
+  for (const flag of reducibleFlags) {
+    if (overflow <= 0) break;
+    const reducible = Math.min(normalized[flag], overflow);
+    normalized[flag] -= reducible;
+    overflow -= reducible;
+  }
+
+  return normalized;
+}
+
 function hasExactDietaryCountsSnapshot(value: unknown, counts: DietaryCounts): boolean {
   if (!value || typeof value !== "object" || Array.isArray(value)) return false;
   const source = value as Record<string, unknown>;
@@ -140,7 +160,9 @@ export function sanitizeRsvpEntry(
       ? Math.max(0, Math.floor(childrenCountRaw))
       : 0;
 
-  const dietaryCounts = sanitizeDietaryCounts(item.dietaryCounts, item.dietaryFlags, item.dietaryNotes);
+  const rawDietaryCounts = sanitizeDietaryCounts(item.dietaryCounts, item.dietaryFlags, item.dietaryNotes);
+  const maxGuests = attending ? guestCount + childrenCount : 0;
+  const dietaryCounts = normalizeDietaryCountsToGuests(rawDietaryCounts, maxGuests);
 
   const mutated =
     names.mutated ||

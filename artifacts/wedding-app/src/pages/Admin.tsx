@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { RefreshCcw } from "lucide-react";
 import Layout from "@/components/Layout";
 import PageContainer from "@/components/PageContainer";
 import SectionTitle from "@/components/SectionTitle";
@@ -16,6 +17,7 @@ export default function Admin() {
   const [rsvps, setRsvps] = useState<RSVPEntry[]>(() => getRSVPs());
   const [nameOrder, setNameOrder] = useState<"az" | "za">("az");
   const [statusFilter, setStatusFilter] = useState<"all" | "confirmed" | "declined">("all");
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
   const adultsCount = useMemo(
     () => rsvps.reduce((acc, rsvp) => acc + (rsvp.attending ? rsvp.guestCount : 0), 0),
@@ -57,6 +59,17 @@ export default function Admin() {
     setRsvps(getRSVPs());
   };
 
+  const handleRefreshRsvps = async () => {
+    if (isRefreshing) return;
+    setIsRefreshing(true);
+    try {
+      await refreshRsvpsFromDb();
+      setRsvps(getRSVPs());
+    } finally {
+      setIsRefreshing(false);
+    }
+  };
+
   useEffect(() => {
     if (!hasSupabaseConfig || !supabase) return;
     const realtimeClient = supabase;
@@ -82,7 +95,20 @@ export default function Admin() {
   }, []);
 
   return (
-    <Layout>
+    <Layout
+      adminTopbarActions={
+        <button
+          type="button"
+          onClick={() => void handleRefreshRsvps()}
+          disabled={isRefreshing}
+          data-testid="button-admin-refresh-topbar"
+          aria-label="Aggiorna adesioni"
+          className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-border text-foreground transition-colors hover:text-foreground/80 hover:bg-card disabled:opacity-60 disabled:cursor-not-allowed"
+        >
+          <RefreshCcw size={20} className={isRefreshing ? "animate-spin" : undefined} />
+        </button>
+      }
+    >
       <PageContainer className="h-[calc(100dvh-3.5rem)] max-h-[calc(100dvh-3.5rem)] overflow-hidden flex flex-col pt-8 pb-4">
         <SectionTitle title="Gestione Invitati" />
 
@@ -152,7 +178,7 @@ export default function Admin() {
                   : "text-muted-foreground hover:text-foreground"
               }`}
             >
-              Eliminati
+              Assenti
             </button>
           </div>
         </div>

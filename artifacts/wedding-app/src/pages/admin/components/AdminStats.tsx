@@ -16,7 +16,7 @@ export default function AdminStats({
   return (
     <div className="grid grid-cols-5 gap-2 mb-6">
       <div className="bg-card border border-border rounded-xl p-3 text-center">
-        <p className="font-sans text-xl" style={{ color: "#6f8f4a" }}>
+        <p className="font-sans text-xl" style={{ color: "#7f604d" }}>
           {adultsCount}
         </p>
         <p
@@ -28,7 +28,7 @@ export default function AdminStats({
       </div>
 
       <div className="bg-card border border-border rounded-xl p-3 text-center">
-        <p className="font-sans text-xl" style={{ color: "#6f8f4a" }}>
+        <p className="font-sans text-xl" style={{ color: "#7f604d" }}>
           {under18Count}
         </p>
         <p
@@ -40,7 +40,7 @@ export default function AdminStats({
       </div>
 
       <div className="bg-card border border-border rounded-xl p-3 text-center">
-        <p className="font-sans text-xl" style={{ color: "#6f8f4a" }}>
+        <p className="font-sans text-xl" style={{ color: "#7f604d" }}>
           {vegetarianCount}
         </p>
         <p
@@ -52,7 +52,7 @@ export default function AdminStats({
       </div>
 
       <div className="bg-card border border-border rounded-xl p-3 text-center">
-        <p className="font-sans text-xl" style={{ color: "#6f8f4a" }}>
+        <p className="font-sans text-xl" style={{ color: "#7f604d" }}>
           {celiacCount}
         </p>
         <p
@@ -64,7 +64,7 @@ export default function AdminStats({
       </div>
 
       <div className="bg-card border border-border rounded-xl p-3 text-center">
-        <p className="font-sans text-xl" style={{ color: "#a35b5b" }}>
+        <p className="font-sans text-xl" style={{ color: "#7f604d" }}>
           {notConfirmedCount}
         </p>
         <p

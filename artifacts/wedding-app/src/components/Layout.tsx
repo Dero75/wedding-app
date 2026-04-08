@@ -2,7 +2,12 @@ import { Link, useLocation } from "wouter";
 import { Settings } from "lucide-react";
 import DevRoleSwitch from "@/components/dev/DevRoleSwitch";
 
-export default function Layout({ children }: { children: React.ReactNode }) {
+interface LayoutProps {
+  children: React.ReactNode;
+  adminTopbarActions?: React.ReactNode;
+}
+
+export default function Layout({ children, adminTopbarActions }: LayoutProps) {
   const [location] = useLocation();
   const isAdminRoute = location.startsWith("/admin");
   const isAdminHome = location === "/admin";
@@ -29,14 +34,17 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           </div>
 
           {isAdminHome ? (
-            <Link
-              href="/admin/settings"
-              data-testid="button-admin-settings-topbar"
-              className="p-2 -mr-2 text-foreground hover:text-accent transition-colors"
-              aria-label="Apri impostazioni admin"
-            >
-              <Settings size={20} />
-            </Link>
+            <div className="flex items-center gap-2 -mr-2">
+              {adminTopbarActions}
+              <Link
+                href="/admin/settings"
+                data-testid="button-admin-settings-topbar"
+                className="p-2 text-foreground hover:text-foreground/80 transition-colors"
+                aria-label="Apri impostazioni admin"
+              >
+                <Settings size={20} strokeWidth={1.5} />
+              </Link>
+            </div>
           ) : isAdminRoute ? (
             <div className="w-8 h-8 -mr-2" aria-hidden="true" />
           ) : (

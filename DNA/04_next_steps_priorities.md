@@ -126,3 +126,24 @@
 - Etichette riepilogo aggiornate: `Under 18` -> `Minorenni`, `Non confermati` -> `Assenti`.
 - Pagina `Il Programma`: titolo blocco regalo (`Il regalo piu bello sara condividere con voi questo giorno.`) allineato a colore e dimensione dei titoli `Cerimonia`/`Ricevimento`.
 - SQL/Supabase: nessuna nuova modifica schema richiesta in questo incremento.
+
+## Aggiornamento Incrementale (2026-04-08 - enterprise refresh finale)
+
+- Audit tecnico completo eseguito con esito verde: `lint`, `typecheck`, `test`, `build` OK.
+- Confermata soglia file funzionali <= 350 righe (max runtime: `RSVP.tsx` 344 righe).
+- Admin topbar: aggiunto pulsante refresh adesioni accanto alle impostazioni con reload reale tabella RSVP (`refreshRsvpsFromDb`).
+- Admin KPI: riepilogo consolidato a 5 box (`Adulti`, `Minorenni`, `Vegetariani`, `Celiaci`, `Assenti`) sulla stessa riga.
+- Admin filtri: voce stato aggiornata da `Eliminati` a `Assenti`.
+- Admin lista invitati: naming minori uniformato globalmente a `minorenne/minorenni`.
+- Admin stile controlli: ingranaggio e icona refresh allineati al marrone UI; bordo refresh invariato e sottile.
+- Programma/Regalo: titolo regalo allineato a colore/dimensione dei titoli sezione Programma.
+- RSVP conferma: rimosso container di riepilogo e icona conferma; mantenuto solo pulsante con contorno.
+- RSVP copy conferma aggiornato: "Con gioia confermiamo la registrazione per X persone (totale adulti+minorenni)".
+- RSVP form: titolo/divider `Conferma la tua presenza` nascosti nella fase form; pulsante assenza aggiornato in `Conferma la tua assenza`.
+- Invito scaricato: rendering canvas riallineato alla Intro (proporzioni linee/testi/font), e chiusura automatica modale su click `SCARICA INVITO`.
+- Regole dati RSVP rafforzate senza cambiare business logic:
+  - obbligo almeno 1 adulto per conferma;
+  - vincolo `vegetariani + celiaci <= adulti + minorenni` su validazione form + controllo difensivo pre-save;
+  - sanitizzazione storage per normalizzare eventuali record legacy non conformi.
+- Qualita runtime confermata: nessun blocco, nessun conflitto, nessuna regressione sui test core.
+- SQL/Supabase: nessuna nuova modifica schema necessaria in questo ciclo.

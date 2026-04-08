@@ -88,8 +88,8 @@ export default function AdminRsvpSection({ rsvps, onDeleteRsvp }: AdminRsvpSecti
                           rsvp.childrenCount > 0
                             ? ` · ${rsvp.childrenCount} ${
                                 rsvp.childrenCount === 1
-                                  ? "persona sotto i 18 anni"
-                                  : "persone sotto i 18 anni"
+                                  ? "minorenne"
+                                  : "minorenni"
                               }`
                             : ""
                         }`

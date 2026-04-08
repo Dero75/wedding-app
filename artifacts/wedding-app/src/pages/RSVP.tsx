@@ -49,6 +49,23 @@ export default function RSVP() {
   }, [editing, submitted, form]);
 
   const confirmAttendanceSubmit = (data: RSVPFormData) => {
+    if (data.guestCount < 1) {
+      form.setError("guestCount", {
+        type: "manual",
+        message: "Inserisci almeno 1 adulto",
+      });
+      return;
+    }
+    const totalGuests = data.guestCount + data.childrenCount;
+    const totalDietary = data.dietaryCounts.vegetarian + data.dietaryCounts.celiac;
+    if (totalDietary > totalGuests) {
+      form.setError("dietaryCounts", {
+        type: "manual",
+        message: "Vegetariani + Celiaci non puo superare il totale invitati",
+      });
+      return;
+    }
+
     const entry: RSVPEntry = {
       id: submitted?.id ?? generateId(),
       firstName: data.firstName,
@@ -105,84 +122,95 @@ export default function RSVP() {
   };
 
   const handleDownloadInvite = async () => {
+    setShowInviteModal(false);
     if (!submitted) return;
     setIsDownloadingInvite(true);
 
     try {
+      if (document.fonts?.ready) {
+        await document.fonts.ready;
+      }
+
       const canvas = document.createElement("canvas");
       canvas.width = 1080;
-      canvas.height = 1920;
+      canvas.height = 2340;
       const ctx = canvas.getContext("2d");
       if (!ctx) return;
 
-      // Intro-like background
+      // Intro-identical background
       ctx.fillStyle = "#3D2B1F";
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
       const radial = ctx.createRadialGradient(
         canvas.width / 2,
         canvas.height / 2,
-        120,
+        0,
         canvas.width / 2,
         canvas.height / 2,
-        canvas.height * 0.58,
+        canvas.height * 0.7,
       );
-      radial.addColorStop(0, "rgba(107,76,59,0.82)");
-      radial.addColorStop(1, "rgba(61,43,31,0)");
+      radial.addColorStop(0, "#6B4C3B");
+      radial.addColorStop(1, "#3D2B1F");
       ctx.fillStyle = radial;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
       ctx.textAlign = "center";
       const centerX = canvas.width / 2;
-      const dateY = 520;
-      const cityY = 1260;
+      const dateY = Math.round(canvas.height * 0.355);
+      const brideY = Math.round(canvas.height * 0.455);
+      const andY = Math.round(canvas.height * 0.52);
+      const groomY = Math.round(canvas.height * 0.615);
+      const cityY = Math.round(canvas.height * 0.69);
+      const footerY = Math.round(canvas.height * 0.93);
+      const rowLineWidth = 132;
+      const rowGap = 34;
 
       // Date row
       ctx.strokeStyle = "rgba(201,185,154,0.6)";
-      ctx.lineWidth = 3;
+      ctx.lineWidth = 2.5;
       ctx.beginPath();
-      ctx.moveTo(centerX - 360, dateY - 12);
-      ctx.lineTo(centerX - 170, dateY - 12);
+      ctx.moveTo(centerX - rowGap - rowLineWidth, dateY - 11);
+      ctx.lineTo(centerX - rowGap, dateY - 11);
       ctx.stroke();
       ctx.beginPath();
-      ctx.moveTo(centerX + 170, dateY - 12);
-      ctx.lineTo(centerX + 360, dateY - 12);
+      ctx.moveTo(centerX + rowGap, dateY - 11);
+      ctx.lineTo(centerX + rowGap + rowLineWidth, dateY - 11);
       ctx.stroke();
 
       ctx.fillStyle = "rgba(201,185,154,0.6)";
-      ctx.font = '500 38px "Jost", sans-serif';
+      ctx.font = '500 34px "Jost", sans-serif';
       ctx.fillText(FIXED_WEDDING_DATE_LABEL.toUpperCase(), centerX, dateY);
 
       // Names block
       ctx.fillStyle = "#F8EFE3";
-      ctx.font = '500 96px "Cormorant Garamond", serif';
-      ctx.fillText(FIXED_BRIDE_NAME, centerX, 760);
-      ctx.font = '500 56px "Cormorant Garamond", serif';
+      ctx.font = '500 126px "Cormorant Garamond", serif';
+      ctx.fillText(FIXED_BRIDE_NAME, centerX, brideY);
+      ctx.font = '500 62px "Cormorant Garamond", serif';
       ctx.fillStyle = "rgba(201,185,154,0.85)";
-      ctx.fillText("&", centerX, 870);
-      ctx.font = '500 96px "Cormorant Garamond", serif';
+      ctx.fillText("&", centerX, andY);
+      ctx.font = '500 126px "Cormorant Garamond", serif';
       ctx.fillStyle = "#F8EFE3";
-      ctx.fillText(FIXED_GROOM_NAME, centerX, 980);
+      ctx.fillText(FIXED_GROOM_NAME, centerX, groomY);
 
       // City row
       ctx.strokeStyle = "rgba(201,185,154,0.6)";
-      ctx.lineWidth = 3;
+      ctx.lineWidth = 2.5;
       ctx.beginPath();
-      ctx.moveTo(centerX - 300, cityY - 12);
-      ctx.lineTo(centerX - 110, cityY - 12);
+      ctx.moveTo(centerX - rowGap - rowLineWidth, cityY - 11);
+      ctx.lineTo(centerX - rowGap, cityY - 11);
       ctx.stroke();
       ctx.beginPath();
-      ctx.moveTo(centerX + 110, cityY - 12);
-      ctx.lineTo(centerX + 300, cityY - 12);
+      ctx.moveTo(centerX + rowGap, cityY - 11);
+      ctx.lineTo(centerX + rowGap + rowLineWidth, cityY - 11);
       ctx.stroke();
 
       ctx.fillStyle = "rgba(201,185,154,0.6)";
-      ctx.font = '500 38px "Jost", sans-serif';
+      ctx.font = '500 34px "Jost", sans-serif';
       ctx.fillText(FIXED_WEDDING_CITY.toUpperCase(), centerX, cityY);
 
       ctx.fillStyle = "rgba(201,185,154,0.65)";
-      ctx.font = '400 30px "Jost", sans-serif';
-      ctx.fillText("Invito da presentare a Palazzo Isolani.", centerX, 1740);
+      ctx.font = '400 28px "Jost", sans-serif';
+      ctx.fillText("Invito da presentare a Palazzo Isolani.", centerX, footerY);
 
       const blob = await new Promise<Blob | null>((resolve) => {
         canvas.toBlob(resolve, "image/png", 1);
@@ -208,16 +236,11 @@ export default function RSVP() {
   return (
     <Layout>
       <PageContainer>
-        <SectionTitle
-          title={
-            showForm
-              ? "Conferma la tua presenza"
-              : submitted?.attending === false
-                ? "Risposta registrata"
-                : "Presenza Confermata!"
-          }
-          titleClassName={showForm ? "text-[#6f8f4a]" : ""}
-        />
+        {!showForm && (
+          <SectionTitle
+            title={submitted?.attending === false ? "Risposta registrata" : "Presenza Confermata!"}
+          />
+        )}
 
         {!showForm && submitted && (
           <RsvpConfirmationView submitted={submitted} onEdit={() => setEditing(true)} />
