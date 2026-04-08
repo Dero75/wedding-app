@@ -25,6 +25,18 @@ export default function Admin() {
     () => rsvps.reduce((acc, rsvp) => acc + (rsvp.attending ? rsvp.childrenCount : 0), 0),
     [rsvps],
   );
+  const notConfirmedCount = useMemo(
+    () => rsvps.reduce((acc, rsvp) => acc + (rsvp.attending ? 0 : 1), 0),
+    [rsvps],
+  );
+  const vegetarianCount = useMemo(
+    () => rsvps.reduce((acc, rsvp) => acc + (rsvp.attending ? rsvp.dietaryCounts.vegetarian : 0), 0),
+    [rsvps],
+  );
+  const celiacCount = useMemo(
+    () => rsvps.reduce((acc, rsvp) => acc + (rsvp.attending ? rsvp.dietaryCounts.celiac : 0), 0),
+    [rsvps],
+  );
   const filteredAndSortedRsvps = useMemo(() => {
     const filtered = rsvps.filter((rsvp) => {
       if (statusFilter === "confirmed") return rsvp.attending;
@@ -74,7 +86,13 @@ export default function Admin() {
       <PageContainer className="h-[calc(100dvh-3.5rem)] max-h-[calc(100dvh-3.5rem)] overflow-hidden flex flex-col pt-8 pb-4">
         <SectionTitle title="Gestione Invitati" />
 
-        <AdminStats adultsCount={adultsCount} under18Count={under18Count} />
+        <AdminStats
+          adultsCount={adultsCount}
+          under18Count={under18Count}
+          notConfirmedCount={notConfirmedCount}
+          vegetarianCount={vegetarianCount}
+          celiacCount={celiacCount}
+        />
 
         <div className="mb-3.5 flex flex-wrap items-center justify-center gap-2.5">
           <div className="inline-flex rounded-full border border-border bg-card p-1">

@@ -1,11 +1,20 @@
 interface AdminStatsProps {
   adultsCount: number;
   under18Count: number;
+  notConfirmedCount: number;
+  vegetarianCount: number;
+  celiacCount: number;
 }
 
-export default function AdminStats({ adultsCount, under18Count }: AdminStatsProps) {
+export default function AdminStats({
+  adultsCount,
+  under18Count,
+  notConfirmedCount,
+  vegetarianCount,
+  celiacCount,
+}: AdminStatsProps) {
   return (
-    <div className="grid grid-cols-2 gap-3 mb-6">
+    <div className="grid grid-cols-5 gap-2 mb-6">
       <div className="bg-card border border-border rounded-xl p-3 text-center">
         <p className="font-sans text-xl" style={{ color: "#6f8f4a" }}>
           {adultsCount}
@@ -26,7 +35,43 @@ export default function AdminStats({ adultsCount, under18Count }: AdminStatsProp
           className="text-[10px] uppercase tracking-wider"
           style={{ color: "#6f8f4a" }}
         >
-          Under 18
+          Minorenni
+        </p>
+      </div>
+
+      <div className="bg-card border border-border rounded-xl p-3 text-center">
+        <p className="font-sans text-xl" style={{ color: "#6f8f4a" }}>
+          {vegetarianCount}
+        </p>
+        <p
+          className="text-[10px] uppercase tracking-wider"
+          style={{ color: "#6f8f4a" }}
+        >
+          Vegetariani
+        </p>
+      </div>
+
+      <div className="bg-card border border-border rounded-xl p-3 text-center">
+        <p className="font-sans text-xl" style={{ color: "#6f8f4a" }}>
+          {celiacCount}
+        </p>
+        <p
+          className="text-[10px] uppercase tracking-wider"
+          style={{ color: "#6f8f4a" }}
+        >
+          Celiaci
+        </p>
+      </div>
+
+      <div className="bg-card border border-border rounded-xl p-3 text-center">
+        <p className="font-sans text-xl" style={{ color: "#a35b5b" }}>
+          {notConfirmedCount}
+        </p>
+        <p
+          className="text-[10px] uppercase tracking-wider"
+          style={{ color: "#a35b5b" }}
+        >
+          Assenti
         </p>
       </div>
     </div>

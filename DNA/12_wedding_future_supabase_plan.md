@@ -1,4 +1,4 @@
-# 05 — Future Supabase Plan (Aggiornato 2026-04-07)
+# 05     Future Supabase Plan (Aggiornato 2026-04-07)
 
 ## Stato reale verificato dal codice
 
@@ -16,7 +16,7 @@ Logiche oggi attive:
   - `/admin/settings` (editor contenuti)
 - Pass (`/pass`) disponibile solo se `getMyRSVP()` esiste
 - Contenuti editabili (`EditableContent`) salvati in `wedding_content`
-- Sanitizzazione legacy già implementata in `storage.ts`
+- Sanitizzazione legacy gi   implementata in `storage.ts`
 
 ## Obiettivo migrazione Supabase
 
@@ -24,7 +24,7 @@ Portare su Supabase i dati condivisi tra dispositivi, mantenendo invariata UX:
 
 - `wedding_rsvps` -> tabella `public.rsvps`
 - `wedding_content` -> tabella `public.wedding_content`
-- `wedding_my_rsvp` resta locale (identità ospite device-based)
+- `wedding_my_rsvp` resta locale (identit   ospite device-based)
 
 ## Script SQL completi (Supabase SQL Editor)
 
@@ -156,19 +156,19 @@ values (
   'Villa Borgonuovo',
   'Via Borgonuovo 12, 40125 Bologna',
   'Siete i benvenuti',
-  'Con immensa gioia vi invitiamo a celebrare con noi il giorno più bello della nostra vita. La vostra presenza renderà questo momento ancora più indimenticabile.',
+  'Con immensa gioia vi invitiamo a celebrare con noi il giorno pi   bello della nostra vita. La vostra presenza render   questo momento ancora pi   indimenticabile.',
   'Conferma la tua presenza',
   'Il programma',
-  'Villa Borgonuovo — Cappella',
+  'Villa Borgonuovo     Cappella',
   '16:00',
   'Via Borgonuovo 12, 40125 Bologna',
   'Vi chiediamo di arrivare 15 minuti prima della cerimonia.',
-  'Villa Borgonuovo — Cortile interno',
+  'Villa Borgonuovo     Cortile interno',
   '18:30',
   'Via Borgonuovo 12, 40125 Bologna',
   'Ci uniamo nel cortile per il ricevimento all''aperto.',
   'Un pensiero per noi',
-  'La vostra presenza è il regalo più bello che potessimo ricevere. Per chi volesse farci un pensiero, vi lasciamo i nostri riferimenti bancari.',
+  'La vostra presenza    il regalo pi   bello che potessimo ricevere. Per chi volesse farci un pensiero, vi lasciamo i nostri riferimenti bancari.',
   'IT60 X054 2811 1010 0000 0123 456',
   'BLOPIT22',
   'Davide Rossi',
@@ -182,10 +182,10 @@ on conflict (id) do nothing;
 
 Due profili possibili:
 
-- **Profilo A (parità runtime attuale)**: nessuna protezione reale, utile per partire subito.
+- **Profilo A (parit   runtime attuale)**: nessuna protezione reale, utile per partire subito.
 - **Profilo B (consigliato produzione)**: usare API server con service role per letture admin e update contenuti.
 
-#### Profilo A — parità runtime locale
+#### Profilo A     parit   runtime locale
 
 ```sql
 alter table public.rsvps enable row level security;
@@ -208,7 +208,7 @@ using (true)
 with check (true);
 ```
 
-#### Profilo B — consigliato produzione
+#### Profilo B     consigliato produzione
 
 ```sql
 alter table public.rsvps enable row level security;
@@ -253,23 +253,23 @@ Per migrazione reale:
 4. mantenere sanitizzazione legacy anche lato client prima delle write
 5. se profilo B: aggiungere endpoint API server per admin read/list RSVP e update contenuti
 
-## Variabili ambiente già presenti
+## Variabili ambiente gi   presenti
 
 - `VITE_SUPABASE_URL`: `https://hbmccalscnescpvomrjo.supabase.co`
-- `VITE_SUPABASE_ANON_KEY`: già presente in `artifacts/wedding-app/.env.example`
+- `VITE_SUPABASE_ANON_KEY`: gi   presente in `artifacts/wedding-app/.env.example`
 
-Stato attuale: Supabase non è ancora collegato al runtime, solo pianificato.
+Stato attuale: Supabase non    ancora collegato al runtime, solo pianificato.
 
 ## Aggiornamento Enterprise Finale (2026-04-07)
 
-- Eseguito hardening completo runtime con qualità verde (`typecheck`, `lint`, `test`, `build`, `deadcode`).
+- Eseguito hardening completo runtime con qualit   verde (`typecheck`, `lint`, `test`, `build`, `deadcode`).
 - Confermata assenza di file funzionali oltre soglia 350 righe.
 - Deploy Cloudflare Pages validato (build monorepo `@wedding-app/wedding-app`, output `artifacts/wedding-app/dist/public`).
 - Variabili Supabase aggiornate ai nuovi valori progetto (`hbmccalscnescpvomrjo`).
 - Intro aggiornata: rimossi i testi "il matrimonio di" e "tocca per entrare"; durata auto a 4.5s.
 - Header home aggiornato: pulsante/label `Home` non mostrato su route `/home`.
 - Switch `USER/ADMIN` reso visibile anche in deploy (non solo DEV) su `/home` e `/admin*`.
-- Home aggiornata senza cambiare business logic: pulsanti CTA ridotti al 70% larghezza; blocco testi principale aumentato del 25%; data/città uniformate a 10px.
+- Home aggiornata senza cambiare business logic: pulsanti CTA ridotti al 70% larghezza; blocco testi principale aumentato del 25%; data/citt   uniformate a 10px.
 - Tipografia UI uniforme: tracking caratteri standardizzato a `tracking-wider` dove applicabile.
 - Testi da Admin ora rispettano i ritorni a capo in rendering (`whitespace-pre-line`) mantenendo allineamenti correnti.
 - Pagina Programma estesa con sezione contributo + modale IBAN (copia/intestatario) mantenendo coerenza visiva.
@@ -293,16 +293,16 @@ Stato attuale: Supabase non è ancora collegato al runtime, solo pianificato.
 - Tipografia uniformata: solo `Cormorant Garamond` per heading/titoli e `Jost` per il resto.
 - Home: testo di benvenuto impostato a `15px`.
 - Test suite riallineata alle nuove regole runtime/UI (nessuna logica business alterata).
-- Verifiche qualità complete eseguite con esito verde:
+- Verifiche qualit   complete eseguite con esito verde:
   - `typecheck` OK
   - `lint` OK
   - `test` OK (13/13)
   - `build` OK
 - SQL/Supabase: in questo ciclo non sono stati introdotti cambi schema DB; quindi nessun nuovo script SQL necessario.
 
-## Aggiornamento Enterprise Finale (2026-04-08 — ciclo finale realtime + RSVP)
+## Aggiornamento Enterprise Finale (2026-04-08     ciclo finale realtime + RSVP)
 
-- Audit completo rieseguito con qualità verde: `lint`, `typecheck`, `test`, `build` OK.
+- Audit completo rieseguito con qualit   verde: `lint`, `typecheck`, `test`, `build` OK.
 - Verificata soglia file funzionali: nessun file oltre 350 righe (`RSVP.tsx` 321, `storage.ts` 310).
 - Abilitata sincronizzazione realtime in Admin (`Gestione Invitati`) via subscription Supabase su `public.rsvps`.
 - Corretto errore TypeScript nel cleanup channel realtime (`supabase` nullable guard).
@@ -315,7 +315,7 @@ Stato attuale: Supabase non è ancora collegato al runtime, solo pianificato.
   - doppia conferma modale prima dell'eliminazione,
   - filtri smart tra riepilogo e cards (`A-Z/Z-A`, `Tutti/Confermati/Eliminati`),
   - pulsante elimina ridotto a sola icona cestino rossa senza bordo/testo.
-- Riepilogo Admin aggiornato a due box (`Adulti`, `Under 18`) senza icone.
+- Riepilogo Admin aggiornato a cinque box in una sola riga (`Adulti`, `Minorenni`, `Vegetariani`, `Celiaci`, `Assenti`) senza icone; `Assenti`   in ultima posizione a destra con colore rosso naturale.
 - Intro aggiornata: switch `USER/ADMIN` non visualizzato nella schermata intro.
 - Invito scaricato da RSVP allineato alla intro in versione standard generica:
   - nessun nominativo ospite,
@@ -329,3 +329,10 @@ Stato attuale: Supabase non è ancora collegato al runtime, solo pianificato.
 - SQL necessario introdotto in questo ciclo:
   - `ALTER TABLE public.rsvps ADD COLUMN attending boolean not null default true;`
   - `ALTER PUBLICATION supabase_realtime ADD TABLE public.rsvps;`
+
+## Aggiornamento Incrementale (2026-04-08 - fine tuning UI admin/programma)
+
+- Admin `Gestione Invitati`: riepilogo ora a 5 box in una riga (`Adulti`, `Minorenni`, `Vegetariani`, `Celiaci`, `Assenti`), con `Assenti` in ultima posizione a destra (rosso naturale).
+- Etichette riepilogo aggiornate: `Under 18` -> `Minorenni`, `Non confermati` -> `Assenti`.
+- Pagina `Il Programma`: titolo blocco regalo (`Il regalo piu bello sara condividere con voi questo giorno.`) allineato a colore e dimensione dei titoli `Cerimonia`/`Ricevimento`.
+- SQL/Supabase: nessuna nuova modifica schema richiesta in questo incremento.

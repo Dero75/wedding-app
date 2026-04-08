@@ -48,7 +48,7 @@ export default function Details() {
         </p>
 
         {/* Cerimonia card */}
-        <div className="bg-card border border-border rounded-2xl px-5 py-6 text-center mb-3.5">
+        <div className="bg-card border border-border rounded-2xl px-5 py-6 text-center mb-6">
           <p
             className="text-[14px] uppercase tracking-wider mb-2.5"
             style={{ color: "hsl(var(--muted-foreground))" }}
@@ -78,7 +78,7 @@ export default function Details() {
         </div>
 
         {/* Divider ornament */}
-        <div className="flex items-center justify-center gap-3 my-4">
+        <div className="flex items-center justify-center gap-3 my-6">
           <div className="h-px w-16" style={{ background: "hsl(var(--border))" }} />
           <div className="w-1.5 h-1.5 rotate-45" style={{ background: "hsl(var(--accent))" }} />
           <div className="h-px w-16" style={{ background: "hsl(var(--border))" }} />
@@ -121,10 +121,13 @@ export default function Details() {
         </div>
 
         <div className="bg-card border border-border rounded-2xl px-5 py-6 text-center">
-          <p className="font-serif text-lg leading-relaxed mb-3" style={{ color: "hsl(var(--foreground))" }}>
+          <p
+            className="font-sans text-[14px] leading-relaxed mb-3"
+            style={{ color: "hsl(var(--muted-foreground))" }}
+          >
             {c.detailsGiftTitle}
           </p>
-          <p className="text-sm text-muted-foreground leading-relaxed mb-5">
+          <p className="font-serif text-sm text-muted-foreground leading-relaxed mb-5">
             {c.detailsGiftSubtitle}
           </p>
           <button

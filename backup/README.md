@@ -24,7 +24,7 @@ I file di backup in questa cartella sono ignorati da Git e non devono essere com
 ## Aggiornamento Operativo (2026-04-07)
 
 - Policy backup confermata invariata.
-- Eseguito nuovo ciclo operativo con backup incrementale non distruttivo richiesto a fine attività.
+- Eseguito nuovo ciclo operativo con backup incrementale non distruttivo richiesto a fine attivit  .
 
 ## Aggiornamento Enterprise (2026-04-08)
 
@@ -44,7 +44,7 @@ I file di backup in questa cartella sono ignorati da Git e non devono essere com
 - Tipografia uniformata: solo `Cormorant Garamond` per heading/titoli e `Jost` per il resto.
 - Home: testo di benvenuto impostato a `15px`.
 - Test suite riallineata alle nuove regole runtime/UI (nessuna logica business alterata).
-- Verifiche qualità complete eseguite con esito verde:
+- Verifiche qualit   complete eseguite con esito verde:
   - `typecheck` OK
   - `lint` OK
   - `test` OK (13/13)
@@ -52,9 +52,9 @@ I file di backup in questa cartella sono ignorati da Git e non devono essere com
 - SQL/Supabase: in questo ciclo non sono stati introdotti cambi schema DB; quindi nessun nuovo script SQL necessario.
 - Nuovo backup eseguito correttamente: `Backup_8 Aprile_00.26.tar.gz`.
 
-## Aggiornamento Enterprise Finale (2026-04-08 — ciclo finale realtime + RSVP)
+## Aggiornamento Enterprise Finale (2026-04-08     ciclo finale realtime + RSVP)
 
-- Audit completo rieseguito con qualità verde: `lint`, `typecheck`, `test`, `build` OK.
+- Audit completo rieseguito con qualit   verde: `lint`, `typecheck`, `test`, `build` OK.
 - Verificata soglia file funzionali: nessun file oltre 350 righe (`RSVP.tsx` 321, `storage.ts` 310).
 - Abilitata sincronizzazione realtime in Admin (`Gestione Invitati`) via subscription Supabase su `public.rsvps`.
 - Corretto errore TypeScript nel cleanup channel realtime (`supabase` nullable guard).
@@ -67,7 +67,7 @@ I file di backup in questa cartella sono ignorati da Git e non devono essere com
   - doppia conferma modale prima dell'eliminazione,
   - filtri smart tra riepilogo e cards (`A-Z/Z-A`, `Tutti/Confermati/Eliminati`),
   - pulsante elimina ridotto a sola icona cestino rossa senza bordo/testo.
-- Riepilogo Admin aggiornato a due box (`Adulti`, `Under 18`) senza icone.
+- Riepilogo Admin aggiornato a cinque box in una sola riga (`Adulti`, `Minorenni`, `Vegetariani`, `Celiaci`, `Assenti`) senza icone; `Assenti`   in ultima posizione a destra con colore rosso naturale.
 - Intro aggiornata: switch `USER/ADMIN` non visualizzato nella schermata intro.
 - Invito scaricato da RSVP allineato alla intro in versione standard generica:
   - nessun nominativo ospite,
@@ -82,3 +82,11 @@ I file di backup in questa cartella sono ignorati da Git e non devono essere com
   - `ALTER TABLE public.rsvps ADD COLUMN attending boolean not null default true;`
   - `ALTER PUBLICATION supabase_realtime ADD TABLE public.rsvps;`
 - Nuovo backup eseguito correttamente: `Backup_8 Aprile_01.44.tar.gz`.
+
+## Aggiornamento Incrementale (2026-04-08 - fine tuning UI admin/programma)
+
+- Admin `Gestione Invitati`: riepilogo ora a 5 box in una riga (`Adulti`, `Minorenni`, `Vegetariani`, `Celiaci`, `Assenti`), con `Assenti` in ultima posizione a destra (rosso naturale).
+- Etichette riepilogo aggiornate: `Under 18` -> `Minorenni`, `Non confermati` -> `Assenti`.
+- Pagina `Il Programma`: titolo blocco regalo (`Il regalo piu bello sara condividere con voi questo giorno.`) allineato a colore e dimensione dei titoli `Cerimonia`/`Ricevimento`.
+- SQL/Supabase: nessuna nuova modifica schema richiesta in questo incremento.
+- Nuovo backup incrementale creato: `Backup_8 Aprile_01.58.tar.gz`.
