@@ -8,12 +8,6 @@ import SectionTitle from "@/components/SectionTitle";
 import { createDefaultDietaryCounts } from "@/config/rsvp";
 import { generateId, getMyRSVP, saveMyRSVP, type RSVPEntry } from "@/lib/storage";
 import { normalizePersonName } from "@/lib/personName";
-import {
-  FIXED_BRIDE_NAME,
-  FIXED_GROOM_NAME,
-  FIXED_WEDDING_CITY,
-  FIXED_WEDDING_DATE_LABEL,
-} from "@/config/event";
 import RsvpConfirmationView from "@/pages/rsvp/components/RsvpConfirmationView";
 import RsvpForm from "@/pages/rsvp/components/RsvpForm";
 import { rsvpSchema, type RSVPFormData } from "@/pages/rsvp/schema";
@@ -128,99 +122,14 @@ export default function RSVP() {
     setIsDownloadingInvite(true);
 
     try {
-      if (document.fonts?.ready) {
-        await document.fonts.ready;
-      }
-
-      const canvas = document.createElement("canvas");
-      canvas.width = 1080;
-      canvas.height = 2340;
-      const ctx = canvas.getContext("2d");
-      if (!ctx) return;
-
-      // Intro-identical background
-      ctx.fillStyle = "#3D2B1F";
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-      const radial = ctx.createRadialGradient(
-        canvas.width / 2,
-        canvas.height / 2,
-        0,
-        canvas.width / 2,
-        canvas.height / 2,
-        canvas.height * 0.7,
-      );
-      radial.addColorStop(0, "#6B4C3B");
-      radial.addColorStop(1, "#3D2B1F");
-      ctx.fillStyle = radial;
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-      ctx.textAlign = "center";
-      const centerX = canvas.width / 2;
-      const dateY = Math.round(canvas.height * 0.355);
-      const brideY = Math.round(canvas.height * 0.455);
-      const andY = Math.round(canvas.height * 0.52);
-      const groomY = Math.round(canvas.height * 0.615);
-      const cityY = Math.round(canvas.height * 0.69);
-      const footerY = Math.round(canvas.height * 0.93);
-      const rowLineWidth = 132;
-      const rowGap = 34;
-
-      // Date row
-      ctx.strokeStyle = "rgba(201,185,154,0.6)";
-      ctx.lineWidth = 2.5;
-      ctx.beginPath();
-      ctx.moveTo(centerX - rowGap - rowLineWidth, dateY - 11);
-      ctx.lineTo(centerX - rowGap, dateY - 11);
-      ctx.stroke();
-      ctx.beginPath();
-      ctx.moveTo(centerX + rowGap, dateY - 11);
-      ctx.lineTo(centerX + rowGap + rowLineWidth, dateY - 11);
-      ctx.stroke();
-
-      ctx.fillStyle = "rgba(201,185,154,0.6)";
-      ctx.font = '500 34px "Jost", sans-serif';
-      ctx.fillText(FIXED_WEDDING_DATE_LABEL.toUpperCase(), centerX, dateY);
-
-      // Names block
-      ctx.fillStyle = "#F8EFE3";
-      ctx.font = '500 126px "Cormorant Garamond", serif';
-      ctx.fillText(FIXED_BRIDE_NAME, centerX, brideY);
-      ctx.font = '500 62px "Cormorant Garamond", serif';
-      ctx.fillStyle = "rgba(201,185,154,0.85)";
-      ctx.fillText("&", centerX, andY);
-      ctx.font = '500 126px "Cormorant Garamond", serif';
-      ctx.fillStyle = "#F8EFE3";
-      ctx.fillText(FIXED_GROOM_NAME, centerX, groomY);
-
-      // City row
-      ctx.strokeStyle = "rgba(201,185,154,0.6)";
-      ctx.lineWidth = 2.5;
-      ctx.beginPath();
-      ctx.moveTo(centerX - rowGap - rowLineWidth, cityY - 11);
-      ctx.lineTo(centerX - rowGap, cityY - 11);
-      ctx.stroke();
-      ctx.beginPath();
-      ctx.moveTo(centerX + rowGap, cityY - 11);
-      ctx.lineTo(centerX + rowGap + rowLineWidth, cityY - 11);
-      ctx.stroke();
-
-      ctx.fillStyle = "rgba(201,185,154,0.6)";
-      ctx.font = '500 34px "Jost", sans-serif';
-      ctx.fillText(FIXED_WEDDING_CITY.toUpperCase(), centerX, cityY);
-
-      ctx.fillStyle = "rgba(201,185,154,0.65)";
-      ctx.font = '400 28px "Jost", sans-serif';
-      ctx.fillText("Invito da presentare a Palazzo Isolani.", centerX, footerY);
-
-      const blob = await new Promise<Blob | null>((resolve) => {
-        canvas.toBlob(resolve, "image/png", 1);
-      });
-      if (!blob) return;
-
       const fileName = "invito-palazzo-isolani";
+      const response = await fetch("/assets/pass-palazzo-isolani.jpg", { cache: "no-store" });
+      if (!response.ok) {
+        throw new Error("Impossibile caricare il pass.");
+      }
+      const blob = await response.blob();
+      const inviteFile = new File([blob], `${fileName}.jpg`, { type: blob.type || "image/jpeg" });
 
-      const inviteFile = new File([blob], `${fileName}.png`, { type: "image/png" });
       const supportsFileShare =
         typeof navigator.share === "function" &&
         (typeof navigator.canShare !== "function" || navigator.canShare({ files: [inviteFile] }));
@@ -247,7 +156,7 @@ export default function RSVP() {
       const url = URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.href = url;
-      link.download = `${fileName}.png`;
+      link.download = `${fileName}.jpg`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
@@ -256,6 +165,11 @@ export default function RSVP() {
       toast({
         title: "Invito scaricato",
         description: "Download completato sul dispositivo.",
+      });
+    } catch {
+      toast({
+        title: "Errore download",
+        description: "Non siamo riusciti a preparare il pass. Riprova.",
       });
     } finally {
       setIsDownloadingInvite(false);

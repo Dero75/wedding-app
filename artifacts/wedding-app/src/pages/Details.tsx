@@ -47,10 +47,10 @@ export default function Details() {
         </p>
 
         {/* Cerimonia card */}
-        <div className="bg-card border border-border rounded-2xl px-5 py-6 text-center mb-6">
+        <div className="bg-card border border-border rounded-2xl px-5 py-6 text-center mb-4">
           <p
-            className="font-serif text-[14px] uppercase tracking-wider mb-2.5"
-            style={{ color: "hsl(var(--muted-foreground))" }}
+            className="font-serif text-[16px] uppercase tracking-wider mb-2.5"
+            style={{ color: "hsl(var(--accent))" }}
           >
             Cerimonia
           </p>
@@ -58,10 +58,16 @@ export default function Details() {
             ore {c.ceremonyTime}
           </p>
           <div className="h-px w-9 mx-auto mb-3.5" style={{ background: "hsl(var(--border))" }} />
-          <p className="font-serif text-[0.95rem] text-muted-foreground mb-1 whitespace-pre-line">
+          <p
+            className="font-serif text-[15.5px] leading-relaxed mb-1 whitespace-pre-line"
+            style={{ color: "hsl(var(--muted-foreground))" }}
+          >
             {c.ceremonyPlace}
           </p>
-          <p className="font-serif text-[14px] text-muted-foreground mb-5 whitespace-pre-line">
+          <p
+            className="font-serif text-[15.5px] leading-relaxed mb-5 whitespace-pre-line"
+            style={{ color: "hsl(var(--muted-foreground))" }}
+          >
             {c.ceremonyAddress}
           </p>
           {c.ceremonyNote && (
@@ -72,17 +78,17 @@ export default function Details() {
         </div>
 
         {/* Divider ornament */}
-        <div className="flex items-center justify-center gap-3 my-6">
+        <div className="flex items-center justify-center gap-3 my-4">
           <div className="h-px w-16" style={{ background: "hsl(var(--border))" }} />
           <div className="w-1.5 h-1.5 rotate-45" style={{ background: "hsl(var(--accent))" }} />
           <div className="h-px w-16" style={{ background: "hsl(var(--border))" }} />
         </div>
 
         {/* Ricevimento card */}
-        <div className="bg-card border border-border rounded-2xl px-5 py-6 text-center mb-6">
+        <div className="bg-card border border-border rounded-2xl px-5 py-6 text-center mb-4">
           <p
-            className="font-serif text-[14px] uppercase tracking-wider mb-2.5"
-            style={{ color: "hsl(var(--muted-foreground))" }}
+            className="font-serif text-[16px] uppercase tracking-wider mb-2.5"
+            style={{ color: "hsl(var(--accent))" }}
           >
             Ricevimento
           </p>
@@ -90,10 +96,16 @@ export default function Details() {
             ore {c.receptionTime}
           </p>
           <div className="h-px w-9 mx-auto mb-3.5" style={{ background: "hsl(var(--border))" }} />
-          <p className="font-serif text-[0.95rem] text-muted-foreground mb-1 whitespace-pre-line">
+          <p
+            className="font-serif text-[15.5px] leading-relaxed mb-1 whitespace-pre-line"
+            style={{ color: "hsl(var(--muted-foreground))" }}
+          >
             {c.receptionPlace}
           </p>
-          <p className="font-serif text-[14px] text-muted-foreground mb-5 whitespace-pre-line">
+          <p
+            className="font-serif text-[15.5px] leading-relaxed mb-5 whitespace-pre-line"
+            style={{ color: "hsl(var(--muted-foreground))" }}
+          >
             {c.receptionAddress}
           </p>
           {c.receptionNote && (
@@ -112,16 +124,16 @@ export default function Details() {
           </a>
         </div>
 
-        <div className="flex items-center justify-center gap-3 my-6">
+        <div className="flex items-center justify-center gap-3 my-4">
           <div className="h-px w-16" style={{ background: "hsl(var(--border))" }} />
           <div className="w-1.5 h-1.5 rotate-45" style={{ background: "hsl(var(--accent))" }} />
           <div className="h-px w-16" style={{ background: "hsl(var(--border))" }} />
         </div>
 
-        <div className="bg-card border border-border rounded-2xl px-5 py-6 text-center mb-6">
+        <div className="bg-card border border-border rounded-2xl px-5 py-6 text-center mb-4">
           <p
-            className="font-serif text-[14px] uppercase tracking-wider mb-3"
-            style={{ color: "hsl(var(--muted-foreground))" }}
+            className="font-serif text-[16px] uppercase tracking-wider mb-3"
+            style={{ color: "hsl(var(--accent))" }}
           >
             {c.outfitTitle}
           </p>
@@ -149,12 +161,15 @@ export default function Details() {
             />
           </div>
 
-          <p className="font-serif text-[0.925rem] leading-relaxed text-muted-foreground whitespace-pre-line max-w-[21rem] mx-auto">
+          <p
+            className="font-serif text-[15.5px] leading-relaxed whitespace-pre-line max-w-[21rem] mx-auto"
+            style={{ color: "hsl(var(--muted-foreground))" }}
+          >
             {c.outfitText}
           </p>
         </div>
 
-        <div className="flex items-center justify-center gap-3 my-6">
+        <div className="flex items-center justify-center gap-3 my-4">
           <div className="h-px w-16" style={{ background: "hsl(var(--border))" }} />
           <div className="w-1.5 h-1.5 rotate-45" style={{ background: "hsl(var(--accent))" }} />
           <div className="h-px w-16" style={{ background: "hsl(var(--border))" }} />
@@ -174,12 +189,15 @@ export default function Details() {
           aria-label="Apri dettagli regalo"
         >
           <p
-            className="font-serif text-[14px] leading-relaxed mb-3 whitespace-pre-line"
+            className="font-serif text-[15.5px] leading-relaxed mb-3 whitespace-pre-line"
             style={{ color: "hsl(var(--muted-foreground))" }}
           >
             {c.detailsGiftTitle}
           </p>
-          <p className="font-serif text-sm text-muted-foreground leading-relaxed mb-5 whitespace-pre-line">
+          <p
+            className="font-serif text-[15.5px] leading-relaxed mb-3 whitespace-pre-line"
+            style={{ color: "hsl(var(--muted-foreground))" }}
+          >
             {c.detailsGiftSubtitle}
           </p>
           <button

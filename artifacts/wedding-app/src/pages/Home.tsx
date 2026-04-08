@@ -5,7 +5,6 @@ import { getContent } from "@/lib/storage";
 import {
   FIXED_BRIDE_NAME,
   FIXED_GROOM_NAME,
-  FIXED_WEDDING_CITY,
   FIXED_WEDDING_DATE_LABEL,
 } from "@/config/event";
 import coupleVenueImg from "@assets/Evento_serale_elegante_nel_cortile_storico_1775302758542.png";
@@ -44,30 +43,30 @@ export default function Home() {
             >
               {FIXED_BRIDE_NAME} & {FIXED_GROOM_NAME}
             </h1>
-            <div
-              className="home-meta flex items-center justify-center gap-2"
-              style={{ color: "hsl(var(--muted-foreground))" }}
-            >
-              <span className="text-[12.5px] tracking-wider">{FIXED_WEDDING_CITY}</span>
-            </div>
           </div>
 
           <div className="flex-1 min-h-0 flex flex-col justify-start mt-2.5">
             <div className="home-welcome text-center mb-3">
-              <div className="flex items-center justify-center gap-3 mb-1.5">
-                <div className="h-px w-[9.375rem] bg-border" />
+              <div
+                className="mx-auto h-px w-44 mt-2 mb-2 translate-y-1.5"
+                style={{
+                  background: "linear-gradient(to right, transparent, hsl(var(--border)), transparent)",
+                }}
+              />
+              <div className="translate-y-3">
+                <h2
+                  className="home-welcome-title font-serif text-[1.3125rem] mb-1 whitespace-pre-line"
+                  style={{ color: "hsl(var(--foreground))" }}
+                >
+                  {c.welcomeTitle}
+                </h2>
+                <p
+                  className="home-welcome-text font-serif text-[15.5px] leading-relaxed whitespace-pre-line text-center"
+                  style={{ color: "hsl(var(--muted-foreground))" }}
+                >
+                  {c.welcomeText}
+                </p>
               </div>
-              <h2
-                className="home-welcome-title font-serif text-[1.3125rem] mb-1 whitespace-pre-line"
-                style={{ color: "hsl(var(--foreground))" }}
-              >
-                {c.welcomeTitle}
-              </h2>
-              <p
-                className="home-welcome-text font-serif text-muted-foreground text-[15px] leading-[1.35] whitespace-pre-line text-center"
-              >
-                {c.welcomeText}
-              </p>
             </div>
 
             <div className="home-actions flex flex-col gap-2.5 flex-shrink-0 mt-10">
