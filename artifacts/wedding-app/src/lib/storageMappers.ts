@@ -70,6 +70,8 @@ export function toDbContentRow(content: EditableContent): Record<string, unknown
     reception_time: content.receptionTime,
     reception_address: content.receptionAddress,
     reception_note: content.receptionNote,
+    outfit_title: content.outfitTitle,
+    outfit_text: content.outfitText,
     details_gift_title: content.detailsGiftTitle,
     details_gift_subtitle: content.detailsGiftSubtitle,
     details_gift_button_label: content.detailsGiftButtonLabel,

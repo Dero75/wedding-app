@@ -2,23 +2,21 @@ interface AdminTextFieldProps {
   label: string;
   value: string;
   onChange: (value: string) => void;
-  onBlur?: () => void;
   multiline?: boolean;
 }
 
 const sharedInputClass =
-  "w-full border border-border rounded-xl px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-ring/40 focus:border-accent transition-all bg-white text-foreground placeholder:text-muted-foreground";
+  "w-full border border-border rounded-xl px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-ring/40 focus:border-accent transition-all bg-white text-foreground placeholder:text-muted-foreground text-center";
 
 export default function AdminTextField({
   label,
   value,
   onChange,
-  onBlur,
   multiline = false,
 }: AdminTextFieldProps) {
   return (
     <div className="mt-4">
-      <label className="block text-xs uppercase tracking-wider mb-1.5 text-muted-foreground">
+      <label className="block text-xs uppercase tracking-wider mb-1.5 text-muted-foreground text-center">
         {label}
       </label>
       {multiline ? (
@@ -26,7 +24,6 @@ export default function AdminTextField({
           rows={3}
           value={value}
           onChange={(event) => onChange(event.target.value)}
-          onBlur={onBlur}
           className={`${sharedInputClass} resize-none`}
         />
       ) : (
@@ -34,7 +31,6 @@ export default function AdminTextField({
           type="text"
           value={value}
           onChange={(event) => onChange(event.target.value)}
-          onBlur={onBlur}
           className={sharedInputClass}
         />
       )}

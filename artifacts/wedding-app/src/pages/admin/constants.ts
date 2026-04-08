@@ -15,8 +15,8 @@ export const CONTENT_SECTIONS: ContentSection[] = [
   {
     title: "Benvenuto",
     fields: [
-      { key: "welcomeTitle", label: "Titolo benvenuto" },
-      { key: "welcomeText", label: "Testo benvenuto", multiline: true },
+      { key: "welcomeTitle", label: "Titolo" },
+      { key: "welcomeText", label: "Sottotitolo", multiline: true },
     ],
   },
   {
@@ -27,26 +27,41 @@ export const CONTENT_SECTIONS: ContentSection[] = [
     ],
   },
   {
-    title: "Programma",
+    title: "Cerimonia",
     fields: [
       { key: "ceremonyTime", label: "Ora cerimonia" },
       { key: "ceremonyPlace", label: "Luogo cerimonia" },
       { key: "ceremonyAddress", label: "Indirizzo cerimonia" },
       { key: "ceremonyNote", label: "Note cerimonia" },
+    ],
+  },
+  {
+    title: "Ricevimento",
+    fields: [
       { key: "receptionTime", label: "Ora ricevimento" },
       { key: "receptionPlace", label: "Luogo ricevimento" },
       { key: "receptionAddress", label: "Indirizzo ricevimento" },
       { key: "receptionNote", label: "Note ricevimento" },
-      { key: "outfitTitle", label: "Titolo box outfit" },
-      { key: "outfitText", label: "Testo box outfit", multiline: true },
     ],
   },
   {
-    title: "Regalo",
+    title: "Outfit",
     fields: [
-      { key: "detailsGiftTitle", label: "Titolo box programma", multiline: true },
-      { key: "detailsGiftSubtitle", label: "Sottotitolo box programma", multiline: true },
-      { key: "detailsGiftButtonLabel", label: "Testo pulsante box programma" },
+      { key: "outfitTitle", label: "Titolo" },
+      { key: "outfitText", label: "Testo", multiline: true },
+    ],
+  },
+  {
+    title: "Regalo - Box Programma",
+    fields: [
+      { key: "detailsGiftTitle", label: "Titolo", multiline: true },
+      { key: "detailsGiftSubtitle", label: "Sottotitolo", multiline: true },
+      { key: "detailsGiftButtonLabel", label: "Testo pulsante" },
+    ],
+  },
+  {
+    title: "Regalo - Sezione",
+    fields: [
       { key: "giftTitle", label: "Titolo sezione" },
       { key: "giftIBAN", label: "IBAN" },
       { key: "giftHolder", label: "Intestatario" },
