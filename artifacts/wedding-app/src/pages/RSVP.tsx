@@ -17,6 +17,7 @@ import {
 import RsvpConfirmationView from "@/pages/rsvp/components/RsvpConfirmationView";
 import RsvpForm from "@/pages/rsvp/components/RsvpForm";
 import { rsvpSchema, type RSVPFormData } from "@/pages/rsvp/schema";
+import { toast } from "@/hooks/use-toast";
 
 export default function RSVP() {
   const [submitted, setSubmitted] = useState<RSVPEntry | null>(() => getMyRSVP());
@@ -218,6 +219,31 @@ export default function RSVP() {
       if (!blob) return;
 
       const fileName = "invito-palazzo-isolani";
+
+      const inviteFile = new File([blob], `${fileName}.png`, { type: "image/png" });
+      const supportsFileShare =
+        typeof navigator.share === "function" &&
+        (typeof navigator.canShare !== "function" || navigator.canShare({ files: [inviteFile] }));
+
+      if (supportsFileShare) {
+        try {
+          await navigator.share({
+            files: [inviteFile],
+            title: "Invito Palazzo Isolani",
+            text: "Invito da presentare a Palazzo Isolani.",
+          });
+          toast({
+            title: "Invito pronto",
+            description: "Azione completata. Puoi trovarlo nella galleria foto se hai scelto Salva immagine.",
+          });
+          return;
+        } catch (error) {
+          if (error instanceof DOMException && error.name === "AbortError") {
+            return;
+          }
+        }
+      }
+
       const url = URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.href = url;
@@ -226,6 +252,11 @@ export default function RSVP() {
       link.click();
       document.body.removeChild(link);
       URL.revokeObjectURL(url);
+
+      toast({
+        title: "Invito scaricato",
+        description: "Download completato sul dispositivo.",
+      });
     } finally {
       setIsDownloadingInvite(false);
     }

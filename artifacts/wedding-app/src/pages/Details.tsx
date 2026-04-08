@@ -120,7 +120,7 @@ export default function Details() {
 
         <div className="bg-card border border-border rounded-2xl px-5 py-6 text-center mb-6">
           <p
-            className="text-[14px] uppercase tracking-wider mb-3"
+            className="font-serif text-[14px] uppercase tracking-wider mb-3"
             style={{ color: "hsl(var(--muted-foreground))" }}
           >
             {c.outfitTitle}
@@ -139,8 +139,13 @@ export default function Details() {
             />
             <span
               className="h-6 w-6 rounded-sm border border-border"
-              style={{ background: "#7A3E4B" }}
+              style={{ background: "#A9B995" }}
               aria-label="Palette outfit 3"
+            />
+            <span
+              className="h-6 w-6 rounded-sm border border-border"
+              style={{ background: "#7A3E4B" }}
+              aria-label="Palette outfit 4"
             />
           </div>
 
@@ -155,14 +160,26 @@ export default function Details() {
           <div className="h-px w-16" style={{ background: "hsl(var(--border))" }} />
         </div>
 
-        <div className="bg-card border border-border rounded-2xl px-5 py-6 text-center">
+        <div
+          className="bg-card border border-border rounded-2xl px-5 py-6 text-center cursor-pointer"
+          onClick={() => setIsGiftModalOpen(true)}
+          onKeyDown={(event) => {
+            if (event.key === "Enter" || event.key === " ") {
+              event.preventDefault();
+              setIsGiftModalOpen(true);
+            }
+          }}
+          role="button"
+          tabIndex={0}
+          aria-label="Apri dettagli regalo"
+        >
           <p
-            className="font-sans text-[14px] leading-relaxed mb-3"
+            className="font-serif text-[14px] leading-relaxed mb-3 whitespace-pre-line"
             style={{ color: "hsl(var(--muted-foreground))" }}
           >
             {c.detailsGiftTitle}
           </p>
-          <p className="font-serif text-sm text-muted-foreground leading-relaxed mb-5">
+          <p className="font-serif text-sm text-muted-foreground leading-relaxed mb-5 whitespace-pre-line">
             {c.detailsGiftSubtitle}
           </p>
           <button
@@ -170,7 +187,7 @@ export default function Details() {
             onClick={() => setIsGiftModalOpen(true)}
             className="inline-flex items-center gap-2 border border-border rounded-full px-5 py-2.5 text-[11px] uppercase tracking-wider text-foreground hover:text-accent hover:border-muted-foreground/40 transition-all"
           >
-            {c.detailsGiftButtonLabel}
+            <span className="whitespace-pre-line text-center">{c.detailsGiftButtonLabel}</span>
           </button>
         </div>
 
