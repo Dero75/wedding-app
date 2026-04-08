@@ -112,6 +112,12 @@ export default function Details() {
           </a>
         </div>
 
+        <div className="flex items-center justify-center gap-3 my-6">
+          <div className="h-px w-16" style={{ background: "hsl(var(--border))" }} />
+          <div className="w-1.5 h-1.5 rotate-45" style={{ background: "hsl(var(--accent))" }} />
+          <div className="h-px w-16" style={{ background: "hsl(var(--border))" }} />
+        </div>
+
         <div className="bg-card border border-border rounded-2xl px-5 py-6 text-center mb-6">
           <p
             className="text-[14px] uppercase tracking-wider mb-3"
