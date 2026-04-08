@@ -38,7 +38,7 @@ describe("RSVP confirm-only flow and pass gating", () => {
     expect(await screen.findByText("Presenza Confermata!")).toBeInTheDocument();
     expect(await screen.findByText("Grazie, Mario De Rose!")).toBeInTheDocument();
     expect(
-      screen.getByText("Con gioia confermiamo la registrazione per 2 persone (totale adulti+minorenni)."),
+      screen.getByText("Con gioia confermiamo la registrazione per 2 persone (totale adulti+under)."),
     ).toBeInTheDocument();
     fireEvent.click(screen.getByRole("dialog").parentElement as HTMLElement);
 

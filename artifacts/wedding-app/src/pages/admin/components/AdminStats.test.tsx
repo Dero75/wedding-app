@@ -15,9 +15,9 @@ describe("AdminStats", () => {
     );
 
     expect(screen.getByText("Adulti")).toBeInTheDocument();
-    expect(screen.getByText("Minorenni")).toBeInTheDocument();
+    expect(screen.getByText("Under")).toBeInTheDocument();
     expect(screen.getByText("Assenti")).toBeInTheDocument();
-    expect(screen.getByText("Vegetariani")).toBeInTheDocument();
+    expect(screen.getByText("Veg")).toBeInTheDocument();
     expect(screen.getByText("Celiaci")).toBeInTheDocument();
     expect(screen.getByText("96")).toBeInTheDocument();
     expect(screen.getByText("14")).toBeInTheDocument();

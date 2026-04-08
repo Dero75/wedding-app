@@ -114,7 +114,7 @@ export default function RsvpForm({ form, editing, onCancelEdit, onSubmit, onDecl
               </select>
             </RsvpInputField>
 
-            <RsvpInputField label="Minorenni" error={form.formState.errors.childrenCount?.message}>
+            <RsvpInputField label="Under" error={form.formState.errors.childrenCount?.message}>
               <select
                 {...form.register("childrenCount", { valueAsNumber: true })}
                 data-testid="select-children-count"
@@ -122,7 +122,7 @@ export default function RsvpForm({ form, editing, onCancelEdit, onSubmit, onDecl
               >
                 {[0, 1, 2, 3, 4, 5, 6].map((count) => (
                   <option key={count} value={count}>
-                    {count} {count === 1 ? "minorenne" : "minorenni"}
+                    {count} under
                   </option>
                 ))}
               </select>

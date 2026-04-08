@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { AlertTriangle, Trash2, X } from "lucide-react";
+import { AlertTriangle, Leaf, Trash2, WheatOff, X } from "lucide-react";
 import { DIETARY_FLAG_LABELS, DIETARY_FLAG_VALUES } from "@/config/rsvp";
 import type { RSVPEntry } from "@/lib/storage";
 
@@ -73,7 +73,7 @@ export default function AdminRsvpSection({ rsvps, onDeleteRsvp }: AdminRsvpSecti
                   : { borderColor: "hsl(0 70% 82%)", background: "hsl(0 80% 98%)" }
               }
             >
-              <div className="min-w-0 flex items-start justify-between gap-3">
+              <div className="min-w-0 flex items-center justify-between gap-3">
                 <div className="min-w-0 flex-1">
                   <p
                     className="font-sans text-[0.98rem] leading-snug"
@@ -82,31 +82,33 @@ export default function AdminRsvpSection({ rsvps, onDeleteRsvp }: AdminRsvpSecti
                   >
                     {`${rsvp.firstName} ${rsvp.lastName}`.trim()}
                   </p>
-                  <p className="font-sans text-xs text-muted-foreground mt-0.5">
-                    {rsvp.attending
-                      ? `Confermato · ${rsvp.guestCount} ${rsvp.guestCount === 1 ? "adulto" : "adulti"}${
-                          rsvp.childrenCount > 0
-                            ? ` · ${rsvp.childrenCount} ${
-                                rsvp.childrenCount === 1
-                                  ? "minorenne"
-                                  : "minorenni"
-                              }`
-                            : ""
-                        }`
-                      : "Non partecipa"}
-                  </p>
-                  {rsvp.attending && DIETARY_FLAG_VALUES.some((flag) => rsvp.dietaryCounts[flag] > 0) && (
-                    <div className="mt-1.5 flex flex-wrap gap-1.5">
-                      {DIETARY_FLAG_VALUES.filter((flag) => rsvp.dietaryCounts[flag] > 0).map((flag) => (
-                        <span
-                          key={flag}
-                          className="inline-flex items-center rounded-full border border-border px-2 py-0.5 text-[10px] uppercase tracking-wider text-muted-foreground"
-                        >
-                          {DIETARY_FLAG_LABELS[flag]}: {rsvp.dietaryCounts[flag]}
-                        </span>
-                      ))}
-                    </div>
-                  )}
+                  <div className="mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-1 font-sans text-xs text-muted-foreground">
+                    <span>
+                      {rsvp.attending
+                        ? `Confermato · ${rsvp.guestCount} ${rsvp.guestCount === 1 ? "adulto" : "adulti"}${
+                            rsvp.childrenCount > 0 ? ` · ${rsvp.childrenCount} under` : ""
+                          }`
+                        : "Non partecipa"}
+                    </span>
+
+                    {rsvp.attending &&
+                      DIETARY_FLAG_VALUES.filter((flag) => rsvp.dietaryCounts[flag] > 0).map((flag) => {
+                        const isVegetarian = flag === "vegetarian";
+                        const DietaryIcon = isVegetarian ? Leaf : WheatOff;
+                        const iconColor = isVegetarian ? "#6f8f4a" : "#b38a63";
+
+                        return (
+                          <span
+                            key={flag}
+                            className="inline-flex items-center gap-1"
+                            aria-label={`${DIETARY_FLAG_LABELS[flag]} ${rsvp.dietaryCounts[flag]}`}
+                          >
+                            <DietaryIcon size={12} style={{ color: iconColor }} />
+                            <span>{rsvp.dietaryCounts[flag]}</span>
+                          </span>
+                        );
+                      })}
+                  </div>
                 </div>
 
                 <button
