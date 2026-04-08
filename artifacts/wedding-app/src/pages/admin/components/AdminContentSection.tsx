@@ -5,11 +5,13 @@ import { CONTENT_SECTIONS } from "../constants";
 interface AdminContentSectionProps {
   content: EditableContent;
   onContentChange: (key: keyof EditableContent, value: string) => void;
+  onContentBlur: (key: keyof EditableContent, value: string) => void;
 }
 
 export default function AdminContentSection({
   content,
   onContentChange,
+  onContentBlur,
 }: AdminContentSectionProps) {
   return (
     <div className="space-y-4">
@@ -28,6 +30,7 @@ export default function AdminContentSection({
               value={content[field.key]}
               multiline={field.multiline}
               onChange={(value) => onContentChange(field.key, value)}
+              onBlur={() => onContentBlur(field.key, content[field.key])}
             />
           ))}
         </section>

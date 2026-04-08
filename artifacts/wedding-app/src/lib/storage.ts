@@ -13,7 +13,6 @@ import {
 const PREFIX = "wedding_";
 const STORAGE_KEYS = {
   content: "content",
-  contentOverrides: "content_overrides",
   rsvps: "rsvps",
   myRsvp: "my_rsvp",
   myRsvpId: "my_rsvp_id",
@@ -56,10 +55,7 @@ function storageRemove(key: string): void {
 
 function clearLocalWeddingRecords(opts?: { preserveMyRsvpId?: boolean }): void {
   const preserveMyRsvpId = opts?.preserveMyRsvpId ?? false;
-  const protectedKeys = new Set<string>([
-    PREFIX + STORAGE_KEYS.contentOverrides,
-    ...(preserveMyRsvpId ? [PREFIX + STORAGE_KEYS.myRsvpId] : []),
-  ]);
+  const protectedKeys = new Set<string>(preserveMyRsvpId ? [PREFIX + STORAGE_KEYS.myRsvpId] : []);
 
   try {
     for (let i = localStorage.length - 1; i >= 0; i -= 1) {
@@ -82,21 +78,6 @@ function readLocalMyRsvpId(): string | null {
   return typeof id === "string" && id.trim() ? id : null;
 }
 
-function readContentOverrides(): Partial<EditableContent> {
-  const raw = storageGet<Record<string, unknown>>(STORAGE_KEYS.contentOverrides, {});
-  const overrides: Partial<EditableContent> = {};
-  if (typeof raw.outfitTitle === "string") overrides.outfitTitle = raw.outfitTitle;
-  if (typeof raw.outfitText === "string") overrides.outfitText = raw.outfitText;
-  return overrides;
-}
-
-function saveContentOverrides(content: EditableContent): void {
-  storageSet(STORAGE_KEYS.contentOverrides, {
-    outfitTitle: content.outfitTitle,
-    outfitText: content.outfitText,
-  });
-}
-
 async function bootstrapFromDb(): Promise<void> {
   if (!USE_DB_SOURCE) return;
 
@@ -115,10 +96,7 @@ async function bootstrapFromDb(): Promise<void> {
       supabase!.from("rsvps").select("*").order("submitted_at", { ascending: false }),
     ]);
 
-    contentCache = {
-      ...mapDbContentRow(contentRow ?? null),
-      ...readContentOverrides(),
-    };
+    contentCache = mapDbContentRow(contentRow ?? null);
     rsvpsCache = mapDbRsvpRows((rsvpRows ?? []) as DbRsvpRow[], generateId);
   } catch {
     contentCache = DEFAULT_CONTENT;
@@ -223,7 +201,6 @@ export function saveContent(content: EditableContent): void {
   contentCache = normalizedContent;
 
   if (USE_DB_SOURCE) {
-    saveContentOverrides(normalizedContent);
     void supabase!
       .from("wedding_content")
       .upsert(toDbContentRow(normalizedContent), { onConflict: "id" })
@@ -326,7 +303,6 @@ export function generateId(): string {
 
 export function clearAllLocalWeddingRecordsForSupabaseMigration(): void {
   clearLocalWeddingRecords();
-  storageRemove(STORAGE_KEYS.contentOverrides);
   storageRemove(DEV_RESET_MARKER_KEY);
   clearLegacyAdminSettingsSnapshot();
 }

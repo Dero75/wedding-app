@@ -2,6 +2,7 @@ interface AdminTextFieldProps {
   label: string;
   value: string;
   onChange: (value: string) => void;
+  onBlur?: () => void;
   multiline?: boolean;
 }
 
@@ -12,6 +13,7 @@ export default function AdminTextField({
   label,
   value,
   onChange,
+  onBlur,
   multiline = false,
 }: AdminTextFieldProps) {
   return (
@@ -24,6 +26,7 @@ export default function AdminTextField({
           rows={3}
           value={value}
           onChange={(event) => onChange(event.target.value)}
+          onBlur={onBlur}
           className={`${sharedInputClass} resize-none`}
         />
       ) : (
@@ -31,6 +34,7 @@ export default function AdminTextField({
           type="text"
           value={value}
           onChange={(event) => onChange(event.target.value)}
+          onBlur={onBlur}
           className={sharedInputClass}
         />
       )}
