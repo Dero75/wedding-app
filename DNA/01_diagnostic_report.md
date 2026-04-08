@@ -167,3 +167,28 @@
   - sanitizzazione storage per normalizzare eventuali record legacy non conformi.
 - Qualita runtime confermata: nessun blocco, nessun conflitto, nessuna regressione sui test core.
 - SQL/Supabase: nessuna nuova modifica schema necessaria in questo ciclo.
+
+## Aggiornamento Enterprise (2026-04-09 - consolidamento post-chat)
+
+- Rieseguito audit tecnico completo con approccio enterprise su runtime e workspace (senza alterare business logic).
+- Quality gates confermati verdi sullo stato corrente: `typecheck`, `lint`, `test`, `build`, `deadcode`.
+- Verificata assenza di file funzionali oltre soglia 350 righe.
+- Verificato il delta rispetto all'ultimo aggiornamento documentale (2026-04-08) e allineato il runtime alle modifiche richieste in chat.
+- Programma (`Details`) aggiornato mantenendo layout/UX canonici:
+  - aggiunto box `Outfit consigliato` in stile coerente con le card esistenti;
+  - introdotta palette visuale a 3 quadrati (bianco, beige, bordeaux) senza etichette testuali;
+  - testo outfit aggiornato e gestito con font titolo (no corsivo) con dimensionamento finale richiesto;
+  - rimosso `Apri mappa` nella sezione `Cerimonia` (mantenuto su `Ricevimento`);
+  - `Cerimonia` / `Ricevimento` e testi indirizzo riallineati a tipografia titolo; indirizzi portati a dimensione finale `14px`;
+  - rimosso corsivo dalle note `ceremonyNote`/`receptionNote`.
+- Admin contenuti esteso con gestione esplicita del box outfit:
+  - nuovi campi `outfitTitle` e `outfitText` in `EditableContent` e `Admin Settings`.
+- Persistenza contenuti consolidata senza cambio logica business:
+  - mapping storage aggiornato per i nuovi campi outfit;
+  - in modalità DB-first i campi outfit vengono conservati tramite override locale dedicato, evitando regressioni con schema DB invariato.
+- Admin RSVP consolidato nelle iterazioni precedenti del ciclo chat e mantenuto stabile in questo pass:
+  - naming `under` uniformato;
+  - KPI con label ridotte e allineate;
+  - badge dieta in linea con riga stato tramite icone + valore;
+  - icona cestino centrata verticalmente a destra nella card.
+

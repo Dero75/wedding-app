@@ -37,6 +37,8 @@ export const CONTENT_SECTIONS: ContentSection[] = [
       { key: "receptionPlace", label: "Luogo ricevimento" },
       { key: "receptionAddress", label: "Indirizzo ricevimento" },
       { key: "receptionNote", label: "Note ricevimento" },
+      { key: "outfitTitle", label: "Titolo box outfit" },
+      { key: "outfitText", label: "Testo box outfit", multiline: true },
     ],
   },
   {

@@ -112,3 +112,11 @@ I file di backup in questa cartella sono ignorati da Git e non devono essere com
 - Qualita runtime confermata: nessun blocco, nessun conflitto, nessuna regressione sui test core.
 - SQL/Supabase: nessuna nuova modifica schema necessaria in questo ciclo.
 - Nuovo backup incrementale creato: `Backup_8 Aprile_02.27.tar.gz`.
+
+## Aggiornamento Enterprise (2026-04-09 - consolidamento post-chat)
+
+- Rieseguito audit tecnico completo (`typecheck`, `lint`, `test`, `build`, `deadcode`) con esito verde.
+- Verificato e documentato il delta modifiche rispetto all'ultimo aggiornamento `.md` (2026-04-08).
+- Allineata la documentazione informativa a tutte le modifiche runtime introdotte nel ciclo chat del 2026-04-09.
+- Nuovo backup incrementale creato: `Backup_9 Aprile_00.04.tar.gz`.
+

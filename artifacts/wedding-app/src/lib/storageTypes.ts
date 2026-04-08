@@ -22,6 +22,8 @@ export interface EditableContent {
   receptionTime: string;
   receptionAddress: string;
   receptionNote: string;
+  outfitTitle: string;
+  outfitText: string;
   detailsGiftTitle: string;
   detailsGiftSubtitle: string;
   detailsGiftButtonLabel: string;
@@ -55,6 +57,9 @@ export const DEFAULT_CONTENT: EditableContent = {
   receptionTime: "18:30",
   receptionAddress: "Via Borgonuovo 12, 40125 Bologna",
   receptionNote: "Ci uniamo nel cortile per il ricevimento all'aperto.",
+  outfitTitle: "Outfit consigliato",
+  outfitText:
+    "Vi immaginiamo con un’eleganza naturale e rilassata,\nmagari in lino... la cravatta non è fondamerntale.",
   detailsGiftTitle: "Il regalo più bello sarà condividere con voi questo giorno.",
   detailsGiftSubtitle: "Se desiderate accompagnarci anche con un pensiero, potete farlo qui.",
   detailsGiftButtonLabel: "Contributo IBAN",

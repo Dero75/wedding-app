@@ -11,7 +11,6 @@ export default function Details() {
   const [ibanCopied, setIbanCopied] = useState(false);
   const c = getContent();
 
-  const ceremonyMapsUrl = `https://maps.google.com/?q=${encodeURIComponent(c.ceremonyAddress)}`;
   const receptionMapsUrl = `https://maps.google.com/?q=${encodeURIComponent(c.receptionAddress)}`;
 
   useEffect(() => {
@@ -50,7 +49,7 @@ export default function Details() {
         {/* Cerimonia card */}
         <div className="bg-card border border-border rounded-2xl px-5 py-6 text-center mb-6">
           <p
-            className="text-[14px] uppercase tracking-wider mb-2.5"
+            className="font-serif text-[14px] uppercase tracking-wider mb-2.5"
             style={{ color: "hsl(var(--muted-foreground))" }}
           >
             Cerimonia
@@ -59,22 +58,17 @@ export default function Details() {
             ore {c.ceremonyTime}
           </p>
           <div className="h-px w-9 mx-auto mb-3.5" style={{ background: "hsl(var(--border))" }} />
-          <p className="text-[0.95rem] text-muted-foreground mb-1 whitespace-pre-line">{c.ceremonyPlace}</p>
-          <p className="text-[11px] text-muted-foreground mb-5 whitespace-pre-line">{c.ceremonyAddress}</p>
+          <p className="font-serif text-[0.95rem] text-muted-foreground mb-1 whitespace-pre-line">
+            {c.ceremonyPlace}
+          </p>
+          <p className="font-serif text-[14px] text-muted-foreground mb-5 whitespace-pre-line">
+            {c.ceremonyAddress}
+          </p>
           {c.ceremonyNote && (
-            <p className="text-[11px] italic text-muted-foreground mb-5 whitespace-pre-line text-center">
+            <p className="text-[11px] text-muted-foreground mb-5 whitespace-pre-line text-center">
               {c.ceremonyNote}
             </p>
           )}
-          <a
-            href={ceremonyMapsUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 border border-border rounded-full px-4 py-2 text-[11px] text-muted-foreground hover:text-foreground hover:border-muted-foreground/40 transition-all"
-          >
-            <MapPin size={12} style={{ color: "hsl(var(--accent))" }} />
-            Apri mappa
-          </a>
         </div>
 
         {/* Divider ornament */}
@@ -87,7 +81,7 @@ export default function Details() {
         {/* Ricevimento card */}
         <div className="bg-card border border-border rounded-2xl px-5 py-6 text-center mb-6">
           <p
-            className="text-[14px] uppercase tracking-wider mb-2.5"
+            className="font-serif text-[14px] uppercase tracking-wider mb-2.5"
             style={{ color: "hsl(var(--muted-foreground))" }}
           >
             Ricevimento
@@ -96,10 +90,14 @@ export default function Details() {
             ore {c.receptionTime}
           </p>
           <div className="h-px w-9 mx-auto mb-3.5" style={{ background: "hsl(var(--border))" }} />
-          <p className="text-[0.95rem] text-muted-foreground mb-1 whitespace-pre-line">{c.receptionPlace}</p>
-          <p className="text-[11px] text-muted-foreground mb-5 whitespace-pre-line">{c.receptionAddress}</p>
+          <p className="font-serif text-[0.95rem] text-muted-foreground mb-1 whitespace-pre-line">
+            {c.receptionPlace}
+          </p>
+          <p className="font-serif text-[14px] text-muted-foreground mb-5 whitespace-pre-line">
+            {c.receptionAddress}
+          </p>
           {c.receptionNote && (
-            <p className="text-[11px] italic text-muted-foreground mb-5 whitespace-pre-line text-center">
+            <p className="text-[11px] text-muted-foreground mb-5 whitespace-pre-line text-center">
               {c.receptionNote}
             </p>
           )}
@@ -112,6 +110,37 @@ export default function Details() {
             <MapPin size={12} style={{ color: "hsl(var(--accent))" }} />
             Apri mappa
           </a>
+        </div>
+
+        <div className="bg-card border border-border rounded-2xl px-5 py-6 text-center mb-6">
+          <p
+            className="text-[14px] uppercase tracking-wider mb-3"
+            style={{ color: "hsl(var(--muted-foreground))" }}
+          >
+            {c.outfitTitle}
+          </p>
+
+          <div className="flex items-center justify-center gap-3 mb-4">
+            <span
+              className="h-6 w-6 rounded-sm border border-border"
+              style={{ background: "#F8F5EE" }}
+              aria-label="Palette outfit 1"
+            />
+            <span
+              className="h-6 w-6 rounded-sm border border-border"
+              style={{ background: "#DCC8A9" }}
+              aria-label="Palette outfit 2"
+            />
+            <span
+              className="h-6 w-6 rounded-sm border border-border"
+              style={{ background: "#7A3E4B" }}
+              aria-label="Palette outfit 3"
+            />
+          </div>
+
+          <p className="font-serif text-[0.925rem] leading-relaxed text-muted-foreground whitespace-pre-line max-w-[21rem] mx-auto">
+            {c.outfitText}
+          </p>
         </div>
 
         <div className="flex items-center justify-center gap-3 my-6">

@@ -24,6 +24,8 @@ export function mapDbContentRow(row: DbContentRow): EditableContent {
     receptionTime: source.reception_time,
     receptionAddress: source.reception_address,
     receptionNote: source.reception_note,
+    outfitTitle: source.outfit_title,
+    outfitText: source.outfit_text,
     detailsGiftTitle: source.details_gift_title,
     detailsGiftSubtitle: source.details_gift_subtitle,
     detailsGiftButtonLabel: source.details_gift_button_label,
