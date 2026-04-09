@@ -50,7 +50,10 @@ function BackgroundMusicPlayer() {
   const [location] = useLocation();
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const unlockedRef = useRef(false);
+  const locationRef = useRef(location);
   const src = `${import.meta.env.BASE_URL}audio/piano.mp3`;
+
+  const isPlayableRoute = (path: string) => !path.startsWith("/admin");
 
   const safePlay = () => {
     const audio = audioRef.current;
@@ -66,31 +69,40 @@ function BackgroundMusicPlayer() {
   };
 
   useEffect(() => {
+    locationRef.current = location;
+  }, [location]);
+
+  useEffect(() => {
     const audio = audioRef.current;
     if (!audio) return;
     audio.volume = 0.35;
 
     const unlockAndPlay = () => {
       unlockedRef.current = true;
-      if (!location.startsWith("/admin")) {
+      if (!document.hidden && isPlayableRoute(locationRef.current)) {
         safePlay();
       }
     };
 
-    window.addEventListener("pointerdown", unlockAndPlay, { once: true });
+    const pointerOptions: AddEventListenerOptions = { once: true, passive: true };
+    window.addEventListener("pointerdown", unlockAndPlay, pointerOptions);
+    window.addEventListener("touchstart", unlockAndPlay, pointerOptions);
+    window.addEventListener("click", unlockAndPlay, pointerOptions);
     window.addEventListener("keydown", unlockAndPlay, { once: true });
     safePlay();
 
     return () => {
       window.removeEventListener("pointerdown", unlockAndPlay);
+      window.removeEventListener("touchstart", unlockAndPlay);
+      window.removeEventListener("click", unlockAndPlay);
       window.removeEventListener("keydown", unlockAndPlay);
     };
-  }, [location]);
+  }, []);
 
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio) return;
-    if (location.startsWith("/admin")) {
+    if (location.startsWith("/admin") || document.hidden) {
       audio.pause();
       return;
     }
@@ -98,6 +110,33 @@ function BackgroundMusicPlayer() {
       safePlay();
     }
   }, [location]);
+
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        audio.pause();
+        return;
+      }
+      if (unlockedRef.current && isPlayableRoute(locationRef.current)) {
+        safePlay();
+      }
+    };
+
+    const handlePageHide = () => {
+      audio.pause();
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    window.addEventListener("pagehide", handlePageHide);
+
+    return () => {
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+      window.removeEventListener("pagehide", handlePageHide);
+    };
+  }, []);
 
   return <audio ref={audioRef} src={src} loop preload="metadata" playsInline aria-hidden="true" />;
 }
