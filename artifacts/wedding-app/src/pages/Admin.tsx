@@ -109,16 +109,18 @@ export default function Admin() {
         </button>
       }
     >
-      <PageContainer className="box-border h-[calc(100dvh-3.5rem)] max-h-[calc(100dvh-3.5rem)] overflow-hidden flex flex-col pt-8 pb-4">
+      <PageContainer className="box-border h-[calc(100dvh-3.5rem)] max-h-[calc(100dvh-3.5rem)] overflow-hidden flex flex-col pt-5 pb-4">
         <SectionTitle title="Gestione Invitati" />
 
-        <AdminStats
-          adultsCount={adultsCount}
-          under18Count={under18Count}
-          notConfirmedCount={notConfirmedCount}
-          vegetarianCount={vegetarianCount}
-          celiacCount={celiacCount}
-        />
+        <div className="-mt-4">
+          <AdminStats
+            adultsCount={adultsCount}
+            under18Count={under18Count}
+            notConfirmedCount={notConfirmedCount}
+            vegetarianCount={vegetarianCount}
+            celiacCount={celiacCount}
+          />
+        </div>
 
         <div className="mb-3.5 flex flex-wrap items-center justify-center gap-2.5">
           <div className="inline-flex rounded-full border border-border bg-card p-1">
