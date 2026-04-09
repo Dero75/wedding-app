@@ -7,7 +7,7 @@ describe("runtime sections are always active", () => {
     localStorage.clear();
   });
 
-  it("keeps user topbar minimal without dropdown menu", () => {
+  it("keeps user topbar minimal without dropdown menu and hides redundant home label", () => {
     localStorage.setItem(
       "wedding_admin_settings",
       JSON.stringify({
@@ -21,7 +21,7 @@ describe("runtime sections are always active", () => {
     render(<App />);
 
     expect(screen.queryByTestId("button-menu-toggle")).not.toBeInTheDocument();
-    expect(screen.getAllByText("Home").length).toBeGreaterThan(0);
+    expect(screen.queryByText("Home")).not.toBeInTheDocument();
   });
 
   it("keeps /gift route available even with legacy disabled flags in storage", () => {

@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { Link } from "wouter";
 import Layout from "@/components/Layout";
 import WeddingButton from "@/components/WeddingButton";
@@ -9,12 +10,42 @@ import {
 } from "@/config/event";
 import coupleVenueImg from "@assets/Evento_serale_elegante_nel_cortile_storico_1775302758542.png";
 
+const INTRO_HOME_TRANSITION_KEY = "wedding_intro_home_white_fade";
+const HOME_WHITE_REVEAL_DURATION_MS = 980;
+
 export default function Home() {
   const c = getContent();
+  const [showWhiteReveal, setShowWhiteReveal] = useState(false);
+
+  useEffect(() => {
+    let timer: ReturnType<typeof setTimeout> | null = null;
+    try {
+      const shouldAnimate = sessionStorage.getItem(INTRO_HOME_TRANSITION_KEY) === "1";
+      if (shouldAnimate) {
+        sessionStorage.removeItem(INTRO_HOME_TRANSITION_KEY);
+        setShowWhiteReveal(true);
+        timer = setTimeout(() => setShowWhiteReveal(false), HOME_WHITE_REVEAL_DURATION_MS);
+      }
+    } catch {
+      // ignore
+    }
+
+    return () => {
+      if (timer) clearTimeout(timer);
+    };
+  }, []);
 
   return (
     <Layout>
-      <div className="home-screen flex flex-col overflow-x-hidden overflow-y-auto">
+      {showWhiteReveal && (
+        <div
+          className="fixed inset-0 z-[60] pointer-events-none home-white-reveal-overlay"
+          aria-hidden="true"
+        />
+      )}
+      <div
+        className={`home-screen flex flex-col overflow-x-hidden overflow-y-auto ${showWhiteReveal ? "home-content-reveal" : ""}`}
+      >
         <div className="home-photo relative flex-shrink-0 overflow-hidden">
           <div
             className="absolute inset-0 bg-cover bg-center bg-no-repeat"

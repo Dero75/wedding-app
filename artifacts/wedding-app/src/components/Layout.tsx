@@ -11,6 +11,7 @@ export default function Layout({ children, adminTopbarActions }: LayoutProps) {
   const [location] = useLocation();
   const isAdminRoute = location.startsWith("/admin");
   const isAdminHome = location === "/admin";
+  const isPublicHome = location === "/home";
 
   return (
     <div className="min-h-screen bg-background font-sans">
@@ -47,6 +48,8 @@ export default function Layout({ children, adminTopbarActions }: LayoutProps) {
             </div>
           ) : isAdminRoute ? (
             <div className="w-8 h-8 -mr-2" aria-hidden="true" />
+          ) : isPublicHome ? (
+            <div className="w-[74px] h-8" aria-hidden="true" />
           ) : (
             <Link
               href="/home"

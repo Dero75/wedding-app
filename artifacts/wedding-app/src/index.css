@@ -328,3 +328,123 @@
 .home-photo {
   height: 41.25%;
 }
+
+@keyframes enterBreath {
+  0%,
+  100% {
+    opacity: 0.9;
+    transform: translateY(0);
+    box-shadow: 0 0 0 0 rgba(74, 55, 40, 0);
+  }
+
+  50% {
+    opacity: 1;
+    transform: translateY(-1px);
+    box-shadow: 0 0 0 7px rgba(74, 55, 40, 0.07);
+  }
+}
+
+.intro-enter-button {
+  animation: enterBreath 2.8s ease-in-out infinite;
+}
+
+@keyframes introEnterVanish {
+  0% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+    filter: blur(0);
+    box-shadow: 0 0 0 0 rgba(201, 185, 154, 0.2);
+  }
+
+  55% {
+    opacity: 1;
+    transform: scale(1.06) translateY(-1px);
+    filter: blur(0);
+    box-shadow: 0 0 0 12px rgba(201, 185, 154, 0.14);
+  }
+
+  100% {
+    opacity: 0;
+    transform: scale(0.9) translateY(-7px);
+    filter: blur(1.8px);
+    box-shadow: 0 0 0 26px rgba(201, 185, 154, 0);
+  }
+}
+
+@keyframes introMagicHold {
+  0% {
+    filter: brightness(1) saturate(1);
+    transform: translateY(0) scale(1);
+  }
+
+  35% {
+    filter: brightness(1.06) saturate(1.03);
+    transform: translateY(-1px) scale(1.005);
+  }
+
+  100% {
+    filter: brightness(1.02) saturate(1.01);
+    transform: translateY(0) scale(1);
+  }
+}
+
+.intro-enter-button--vanish {
+  animation: introEnterVanish 900ms ease forwards;
+}
+
+.intro-content-entering {
+  animation: introMagicHold 4.5s ease forwards;
+}
+
+@keyframes introToWhite {
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+
+.intro-white-overlay {
+  background: #ffffff;
+  opacity: 0;
+  z-index: 8;
+}
+
+.intro-white-overlay--active {
+  animation: introToWhite 900ms ease forwards;
+}
+
+@keyframes homeWhiteRevealOut {
+  0% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes homeContentRevealIn {
+  0% {
+    opacity: 0.15;
+    filter: blur(2.2px) saturate(0.98);
+    transform: translateY(2px);
+  }
+
+  100% {
+    opacity: 1;
+    filter: blur(0) saturate(1);
+    transform: translateY(0);
+  }
+}
+
+.home-white-reveal-overlay {
+  background: #ffffff;
+  animation: homeWhiteRevealOut 980ms ease forwards;
+}
+
+.home-content-reveal {
+  animation: homeContentRevealIn 980ms ease forwards;
+}

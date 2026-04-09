@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useLocation } from "wouter";
 import {
   FIXED_BRIDE_NAME,
@@ -7,29 +7,51 @@ import {
   FIXED_WEDDING_DATE_LABEL,
 } from "@/config/event";
 
+const INTRO_ENTER_DELAY_MS = 4500;
+const INTRO_WHITE_FADE_DURATION_MS = 900;
+const INTRO_WHITE_FADE_START_MS = INTRO_ENTER_DELAY_MS - INTRO_WHITE_FADE_DURATION_MS;
+const INTRO_HOME_TRANSITION_KEY = "wedding_intro_home_white_fade";
+
 export default function Intro() {
   const [, setLocation] = useLocation();
   const [visible, setVisible] = useState(false);
-  const [leaving, setLeaving] = useState(false);
+  const [isEntering, setIsEntering] = useState(false);
+  const [isFadingToWhite, setIsFadingToWhite] = useState(false);
+  const navigationTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const whiteFadeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     const t1 = setTimeout(() => setVisible(true), 100);
-    const t2 = setTimeout(() => handleLeave(), 4500);
     return () => {
       clearTimeout(t1);
-      clearTimeout(t2);
+      if (navigationTimerRef.current) {
+        clearTimeout(navigationTimerRef.current);
+      }
+      if (whiteFadeTimerRef.current) {
+        clearTimeout(whiteFadeTimerRef.current);
+      }
     };
   }, []);
 
-  const handleLeave = () => {
-    setLeaving(true);
-    setTimeout(() => setLocation("/home"), 700);
+  const handleEnter = () => {
+    if (isEntering) return;
+    setIsEntering(true);
+    whiteFadeTimerRef.current = setTimeout(() => {
+      setIsFadingToWhite(true);
+    }, INTRO_WHITE_FADE_START_MS);
+    navigationTimerRef.current = setTimeout(() => {
+      try {
+        sessionStorage.setItem(INTRO_HOME_TRANSITION_KEY, "1");
+      } catch {
+        // ignore
+      }
+      setLocation("/home");
+    }, INTRO_ENTER_DELAY_MS);
   };
 
   return (
     <div
-      className={`fixed inset-0 flex flex-col items-center justify-center cursor-pointer transition-opacity duration-700 ${leaving ? "opacity-0" : "opacity-100"}`}
-      onClick={handleLeave}
+      className="fixed inset-0 flex flex-col items-center justify-center transition-opacity duration-700 opacity-100"
       data-testid="screen-intro"
       style={{
         background: `var(--p-intro-bg, #3D2B1F)`,
@@ -41,11 +63,14 @@ export default function Intro() {
           background: `radial-gradient(ellipse at center, var(--p-intro-radial, #6B4C3B) 0%, var(--p-intro-bg, #3D2B1F) 70%)`,
         }}
       />
+      <div
+        className={`absolute inset-0 pointer-events-none intro-white-overlay ${isFadingToWhite ? "intro-white-overlay--active" : ""}`}
+      />
 
       <div
         className={`relative z-10 flex flex-col items-center gap-6 transition-all duration-1000 ${
           visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"
-        }`}
+        } ${isEntering ? "intro-content-entering" : ""}`}
       >
         {/* Date row */}
         <div className="flex items-center gap-3" style={{ color: "rgba(201,185,154,0.6)" }}>
@@ -79,6 +104,21 @@ export default function Intro() {
           <span className="text-xs tracking-wider uppercase">{FIXED_WEDDING_CITY}</span>
           <div className="h-px w-12 bg-current" />
         </div>
+
+        <button
+          type="button"
+          data-testid="button-enter-intro"
+          onClick={handleEnter}
+          disabled={isEntering}
+          className={`intro-enter-button inline-flex items-center justify-center px-7 py-2.5 rounded-full border text-[11px] tracking-[0.22em] uppercase transition-colors mt-1 ${isEntering ? "intro-enter-button--vanish" : ""}`}
+          style={{
+            borderColor: "rgba(201,185,154,0.6)",
+            background: "rgba(248,245,238,0.12)",
+            color: "hsl(38 50% 97%)",
+          }}
+        >
+          Entra
+        </button>
       </div>
     </div>
   );
