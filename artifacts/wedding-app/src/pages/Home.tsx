@@ -12,28 +12,35 @@ import coupleVenueImg from "@assets/Evento_serale_elegante_nel_cortile_storico_1
 
 const INTRO_HOME_TRANSITION_KEY = "wedding_intro_home_white_fade";
 const HOME_WHITE_REVEAL_DURATION_MS = 1120;
+const shouldStartWhiteReveal = () => {
+  try {
+    return sessionStorage.getItem(INTRO_HOME_TRANSITION_KEY) === "1";
+  } catch {
+    return false;
+  }
+};
 
 export default function Home() {
   const c = getContent();
-  const [showWhiteReveal, setShowWhiteReveal] = useState(false);
+  const [showWhiteReveal, setShowWhiteReveal] = useState(shouldStartWhiteReveal);
 
   useEffect(() => {
+    if (!showWhiteReveal) {
+      return;
+    }
+
     let timer: ReturnType<typeof setTimeout> | null = null;
     try {
-      const shouldAnimate = sessionStorage.getItem(INTRO_HOME_TRANSITION_KEY) === "1";
-      if (shouldAnimate) {
-        sessionStorage.removeItem(INTRO_HOME_TRANSITION_KEY);
-        setShowWhiteReveal(true);
-        timer = setTimeout(() => setShowWhiteReveal(false), HOME_WHITE_REVEAL_DURATION_MS);
-      }
+      sessionStorage.removeItem(INTRO_HOME_TRANSITION_KEY);
     } catch {
       // ignore
     }
+    timer = setTimeout(() => setShowWhiteReveal(false), HOME_WHITE_REVEAL_DURATION_MS);
 
     return () => {
       if (timer) clearTimeout(timer);
     };
-  }, []);
+  }, [showWhiteReveal]);
 
   return (
     <Layout>

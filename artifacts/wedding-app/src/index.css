@@ -349,12 +349,12 @@
 }
 
 .intro-enter-anchor {
-  top: 75vh;
+  top: 82vh;
 }
 
 @supports (height: 100dvh) {
   .intro-enter-anchor {
-    top: 75dvh;
+    top: 82dvh;
   }
 }
 
@@ -455,9 +455,15 @@
 
 .home-white-reveal-overlay {
   background: #ffffff;
+  opacity: 1;
+  will-change: opacity;
   animation: homeWhiteRevealOut 1120ms ease forwards;
 }
 
 .home-content-reveal {
+  opacity: 0;
+  filter: blur(3px) saturate(0.96);
+  transform: translateY(3px);
+  will-change: opacity, filter, transform;
   animation: homeContentRevealIn 1120ms ease forwards;
 }
