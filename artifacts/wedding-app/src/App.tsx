@@ -76,6 +76,7 @@ function BackgroundMusicPlayer() {
     const audio = audioRef.current;
     if (!audio) return;
     audio.volume = 0.35;
+    audio.preload = "auto";
 
     const unlockAndPlay = () => {
       unlockedRef.current = true;
@@ -85,10 +86,16 @@ function BackgroundMusicPlayer() {
     };
 
     const pointerOptions: AddEventListenerOptions = { once: true, passive: true };
+    const handleCanPlay = () => {
+      if (!document.hidden && isPlayableRoute(locationRef.current)) {
+        safePlay();
+      }
+    };
     window.addEventListener("pointerdown", unlockAndPlay, pointerOptions);
     window.addEventListener("touchstart", unlockAndPlay, pointerOptions);
     window.addEventListener("click", unlockAndPlay, pointerOptions);
     window.addEventListener("keydown", unlockAndPlay, { once: true });
+    audio.addEventListener("canplay", handleCanPlay);
     safePlay();
 
     return () => {
@@ -96,6 +103,7 @@ function BackgroundMusicPlayer() {
       window.removeEventListener("touchstart", unlockAndPlay);
       window.removeEventListener("click", unlockAndPlay);
       window.removeEventListener("keydown", unlockAndPlay);
+      audio.removeEventListener("canplay", handleCanPlay);
     };
   }, []);
 
@@ -138,7 +146,7 @@ function BackgroundMusicPlayer() {
     };
   }, []);
 
-  return <audio ref={audioRef} src={src} loop preload="metadata" playsInline aria-hidden="true" />;
+  return <audio ref={audioRef} src={src} loop preload="auto" autoPlay playsInline aria-hidden="true" />;
 }
 
 function DataSourceBootstrapper({ children }: { children: React.ReactNode }) {
