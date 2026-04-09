@@ -44,6 +44,7 @@ function buildWeddingRsvpBackupSheet() {
   setupRsvpDbSheet_(dbSheet, columns, colors);
   setupDashboardSheet_(dashSheet, colors);
   setupInstructionsSheet_(helpSheet, colors);
+  compactRsvpDbRows_(dbSheet);
   refreshWeddingRsvpBackup_();
 }
 

@@ -231,3 +231,15 @@ I file archivio sotto `backup/` sono ignorati da Git tramite `.gitignore`.
 - PWA install prompt disattivato/rimosso globalmente nel runtime (coerenza con richieste operative).
 - Performance check confermato: colli di bottiglia residui noti su asset statici grandi (immagine hero e audio), senza modificare UX o business in questo ciclo.
 - Nessuna modifica a logiche di business o flussi funzionali core.
+
+## Aggiornamento Enterprise (2026-04-09 - stabilizzazione sync Google Sheet)
+
+- Audit completo rieseguito con quality gate verdi: `lint`, `typecheck`, `test`, `build`.
+- Integrazione RSVP backup allineata al comportamento reale validato in produzione:
+  - endpoint Apps Script `/exec` confermato operativo,
+  - trigger Supabase con timeout esplicito `20000ms`,
+  - backfill con timeout `60000ms` + throttling `pg_sleep(1.5)` per evitare timeout massivi.
+- Hardening Apps Script applicato per robustezza dati:
+  - upsert sulla prima riga `id` libera (evita scrittura in coda a migliaia di righe),
+  - compattazione righe sparse durante setup.
+- Nessuna modifica a business logic, funzioni core runtime o UX visuale dell'app.

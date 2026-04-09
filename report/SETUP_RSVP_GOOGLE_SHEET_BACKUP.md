@@ -35,6 +35,7 @@
    ```sql
    select public.backfill_rsvps_google_sheet_sync();
    ```
+   - Nota: la versione aggiornata usa timeout alto + throttling per evitare timeout massivi.
 
 ## Test manuale (obbligatorio)
 
@@ -53,5 +54,11 @@
   - mismatch tra JSON `token` e Script Property `RSVP_WEBHOOK_TOKEN`.
 - Nessuna scrittura dal trigger:
   - URL/token non valorizzati in `private.runtime_config`.
+- Timeout in `net._http_response`:
+  - aggiornare funzione trigger con `timeout_milliseconds := 20000`,
+  - aggiornare backfill con `timeout_milliseconds := 60000` + `pg_sleep(1.5)`.
 - KPI errati:
   - rilancia `refreshWeddingRsvpBackup_()` da Apps Script editor.
+- Record scritti su righe troppo alte:
+  - aggiornare script Apps Script enterprise,
+  - eseguire `buildWeddingRsvpBackupSheet()` che richiama compattazione dati.

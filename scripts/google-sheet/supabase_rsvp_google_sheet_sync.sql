@@ -79,7 +79,8 @@ begin
   perform net.http_post(
     url := webhook_url,
     headers := '{"Content-Type":"application/json"}'::jsonb,
-    body := req_body
+    body := req_body,
+    timeout_milliseconds := 20000
   );
 
   return new;
@@ -117,8 +118,11 @@ begin
         'source', 'supabase:backfill',
         'event', 'BACKFILL',
         'record', row_to_json(rec)::jsonb
-      )
+      ),
+      timeout_milliseconds := 60000
     );
+
+    perform pg_sleep(1.5);
   end loop;
 end;
 $$;

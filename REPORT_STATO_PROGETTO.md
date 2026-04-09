@@ -443,3 +443,15 @@ Scorciatoie locali/hack:
   - upsert deduplicato per `id`,
   - blocco righe fake vuote (`Non partecipa`/zeri su righe senza record),
   - dashboard KPI ricalcolata solo su record reali.
+
+## Aggiornamento Enterprise (2026-04-09 - stabilizzazione sync Google Sheet)
+
+- Audit completo rieseguito con quality gate verdi: `lint`, `typecheck`, `test`, `build`.
+- Integrazione RSVP backup allineata al comportamento reale validato in produzione:
+  - endpoint Apps Script `/exec` confermato operativo,
+  - trigger Supabase con timeout esplicito `20000ms`,
+  - backfill con timeout `60000ms` + throttling `pg_sleep(1.5)` per evitare timeout massivi.
+- Hardening Apps Script applicato per robustezza dati:
+  - upsert sulla prima riga `id` libera (evita scrittura in coda a migliaia di righe),
+  - compattazione righe sparse durante setup.
+- Nessuna modifica a business logic, funzioni core runtime o UX visuale dell'app.

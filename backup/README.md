@@ -169,3 +169,16 @@ I file di backup in questa cartella sono ignorati da Git e non devono essere com
 
 - Definita integrazione backup esterno RSVP con pipeline: Supabase trigger -> Apps Script webhook -> Google Sheet.
 - Artefatti tecnici versionati in `scripts/google-sheet/` + report setup in `report/`.
+
+## Aggiornamento Enterprise (2026-04-09 - stabilizzazione sync Google Sheet)
+
+- Audit completo rieseguito con quality gate verdi: `lint`, `typecheck`, `test`, `build`.
+- Integrazione RSVP backup allineata al comportamento reale validato in produzione:
+  - endpoint Apps Script `/exec` confermato operativo,
+  - trigger Supabase con timeout esplicito `20000ms`,
+  - backfill con timeout `60000ms` + throttling `pg_sleep(1.5)` per evitare timeout massivi.
+- Hardening Apps Script applicato per robustezza dati:
+  - upsert sulla prima riga `id` libera (evita scrittura in coda a migliaia di righe),
+  - compattazione righe sparse durante setup.
+- Nessuna modifica a business logic, funzioni core runtime o UX visuale dell'app.
+- Nuovo backup incrementale creato: `Backup_9 Aprile_18.28.tar.zst`.

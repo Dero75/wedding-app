@@ -47,3 +47,13 @@ Motivi:
 - Sync copre `INSERT` + `UPDATE`.
 - Delete non sincronizzato hard per preservare backup.
 - In errore webhook, la write primaria su Supabase non viene bloccata.
+
+## Aggiornamento Operativo (2026-04-09 sera - debug live completato)
+
+- Validata la catena reale end-to-end con test manuale su `net.http_post` e risposta webhook `200`.
+- Identificato timeout su backfill bulk (`pg_net`), mitigato con:
+  - trigger sync con timeout `20000ms`,
+  - backfill con timeout `60000ms` + `pg_sleep(1.5)` tra richieste.
+- Apps Script hardening applicato:
+  - upsert su prima riga `id` libera (niente append su `lastRow`),
+  - funzione di compattazione righe sparse per riportare i record in alto.

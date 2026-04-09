@@ -16,6 +16,8 @@ Nessuna doppia logica lato frontend e nessun cambio UX.
   - endpoint `doPost` con token
   - parse payload robusto
   - upsert per `id`
+  - inserimento nuovi record nella prima riga ID vuota (no salti su righe alte)
+  - compattazione opzionale righe storiche sparse (`compactRsvpDbRows_`)
   - refresh dashboard coerente
   - blocco dati fake/righe vuote
 - `wedding_rsvp_backup_setup.gs`:
@@ -24,7 +26,8 @@ Nessuna doppia logica lato frontend e nessun cambio UX.
 - `supabase_rsvp_google_sheet_sync.sql`:
   - trigger SQL su `public.rsvps` (insert/update)
   - invio webhook con `pg_net`
-  - funzione backfill iniziale
+  - timeout trigger esteso a `20000ms`
+  - backfill throttled (`pg_sleep(1.5)`) con timeout `60000ms`
 
 ## Setup rapido
 
@@ -51,8 +54,15 @@ Nessuna doppia logica lato frontend e nessun cambio UX.
 3. Verifica KPI dashboard.
 4. Verifica che non compaiano righe con stato fake su righe vuote.
 
+## Validazione operativa (2026-04-09)
+
+- Verificato endpoint `/exec` Apps Script rispondente via `doGet`.
+- Verificata sync reale via `net.http_post` con `status_code=200`.
+- Root cause timeout bulk identificata: default `pg_net` troppo aggressivo per backfill massivo.
+- Mitigazione applicata: timeout espliciti + throttling nel loop di backfill.
+
 ## Note operative
 
 - Il trigger non blocca la write primaria su `rsvps` in caso errore webhook.
 - La sync copre `INSERT` + `UPDATE` (no delete hard per evitare perdita backup involontaria).
-- Se necessario azzerare e ricostruire: pulire `RSVP_DB` e rilanciare backfill.
+- Se necessario azzerare e ricostruire: pulire `RSVP_DB`, eseguire `buildWeddingRsvpBackupSheet()`, poi rilanciare backfill.

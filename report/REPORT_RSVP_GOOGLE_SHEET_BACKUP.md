@@ -63,3 +63,14 @@ Data: 2026-04-09
   - deploy Apps Script Web App,
   - token in Script Properties,
   - esecuzione SQL trigger/backfill in Supabase.
+
+## 9) Aggiornamento operativo reale (2026-04-09 sera)
+
+- Debug live completato su ambiente reale: endpoint Apps Script raggiungibile e validato (`status_code=200`).
+- Identificata criticita' reale: timeout `pg_net` su batch backfill massivi.
+- Hardening applicato:
+  - `sync_rsvp_to_google_sheet()` con `timeout_milliseconds := 20000`,
+  - `backfill_rsvps_google_sheet_sync()` con `timeout_milliseconds := 60000` e `pg_sleep(1.5)` per request.
+- Apps Script aggiornato con strategia di scrittura robusta:
+  - nuovi record nella prima riga ID vuota,
+  - compattazione righe sparse per evitare salti su righe alte.
