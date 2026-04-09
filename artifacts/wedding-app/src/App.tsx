@@ -35,8 +35,8 @@ function Router() {
       <Route path="/details" component={Details} />
       <Route path="/gift" component={Gift} />
       <Route path="/pass" component={EntrancePass} />
-      <Route path="/admin/settings" component={AdminSettings} />
-      <Route path="/admin" component={Admin} />
+      <Route path="/admina/settings" component={AdminSettings} />
+      <Route path="/admina" component={Admin} />
       <Route component={NotFound} />
     </Switch>
   );
@@ -52,7 +52,7 @@ function BackgroundMusicPlayer() {
   const locationRef = useRef(location);
   const src = `${import.meta.env.BASE_URL}audio/piano.mp3`;
 
-  const isPlayableRoute = (path: string) => !path.startsWith("/admin");
+  const isPlayableRoute = (path: string) => !path.startsWith("/admina");
 
   const safePlay = () => {
     const audio = audioRef.current;
@@ -123,7 +123,7 @@ function BackgroundMusicPlayer() {
     if (isTestMode) return;
     const audio = audioRef.current;
     if (!audio) return;
-    if (location.startsWith("/admin") || document.hidden) {
+    if (location.startsWith("/admina") || document.hidden) {
       audio.pause();
       return;
     }

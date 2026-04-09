@@ -9,8 +9,8 @@ interface LayoutProps {
 
 export default function Layout({ children, adminTopbarActions }: LayoutProps) {
   const [location] = useLocation();
-  const isAdminRoute = location.startsWith("/admin");
-  const isAdminHome = location === "/admin";
+  const isAdminRoute = location.startsWith("/admina");
+  const isAdminHome = location === "/admina";
   const isPublicHome = location === "/home";
 
   return (
@@ -20,7 +20,7 @@ export default function Layout({ children, adminTopbarActions }: LayoutProps) {
         <div className="relative max-w-lg mx-auto px-5 h-14 flex items-center justify-between">
           {isAdminRoute ? (
             <Link
-              href="/admin"
+              href="/admina"
               data-testid="button-admin-home-topbar"
               className="font-sans text-foreground text-base tracking-wider uppercase hover:text-accent transition-colors"
             >
@@ -38,7 +38,7 @@ export default function Layout({ children, adminTopbarActions }: LayoutProps) {
             <div className="flex items-center gap-2 -mr-2">
               {adminTopbarActions}
               <Link
-                href="/admin/settings"
+                href="/admina/settings"
                 data-testid="button-admin-settings-topbar"
                 className="p-2 text-foreground hover:text-foreground/80 transition-colors"
                 aria-label="Apri impostazioni admin"

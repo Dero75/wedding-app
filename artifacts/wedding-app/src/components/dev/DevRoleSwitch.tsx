@@ -5,7 +5,7 @@ const inactiveClass = "text-foreground/70 hover:text-foreground";
 
 export default function DevRoleSwitch() {
   const [location, setLocation] = useLocation();
-  const isAdminView = location.startsWith("/admin");
+  const isAdminView = location.startsWith("/admina");
 
   return (
     <div
@@ -24,7 +24,7 @@ export default function DevRoleSwitch() {
       <button
         type="button"
         aria-pressed={isAdminView}
-        onClick={() => setLocation("/admin")}
+        onClick={() => setLocation("/admina")}
         className={`min-h-8 px-3 rounded-full text-[10px] tracking-wider uppercase transition-colors ${isAdminView ? activeClass : inactiveClass}`}
       >
         Admin

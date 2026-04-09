@@ -53,7 +53,7 @@ describe("runtime sections are always active", () => {
   });
 
   it("does not render visibility section block in admin settings", () => {
-    window.history.pushState({}, "", "/admin/settings");
+    window.history.pushState({}, "", "/admina/settings");
     render(<App />);
 
     expect(screen.getAllByText("Ora cerimonia").length).toBeGreaterThan(0);
@@ -63,7 +63,7 @@ describe("runtime sections are always active", () => {
   });
 
   it("hides hamburger menu on admin routes", () => {
-    window.history.pushState({}, "", "/admin/settings");
+    window.history.pushState({}, "", "/admina/settings");
     render(<App />);
 
     expect(screen.queryByTestId("button-menu-toggle")).not.toBeInTheDocument();
