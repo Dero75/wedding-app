@@ -105,12 +105,21 @@ export default function Intro() {
           <div className="h-px w-12 bg-current" />
         </div>
 
+      </div>
+
+      <div
+        className={`intro-enter-anchor absolute left-1/2 -translate-x-1/2 z-20 transition-opacity duration-700 ${
+          visible ? "opacity-100" : "opacity-0"
+        }`}
+      >
         <button
           type="button"
           data-testid="button-enter-intro"
           onClick={handleEnter}
           disabled={isEntering}
-          className={`intro-enter-button inline-flex items-center justify-center px-7 py-2.5 rounded-full border text-[11px] tracking-[0.22em] uppercase transition-colors mt-1 ${isEntering ? "intro-enter-button--vanish" : ""}`}
+          className={`intro-enter-button inline-flex items-center justify-center px-7 py-2.5 rounded-full border text-[11px] tracking-[0.22em] uppercase transition-colors ${
+            isEntering ? "intro-enter-button--vanish" : ""
+          }`}
           style={{
             borderColor: "rgba(201,185,154,0.6)",
             background: "rgba(248,245,238,0.12)",

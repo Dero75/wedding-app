@@ -348,6 +348,16 @@
   animation: enterBreath 2.8s ease-in-out infinite;
 }
 
+.intro-enter-anchor {
+  top: 75vh;
+}
+
+@supports (height: 100dvh) {
+  .intro-enter-anchor {
+    top: 75dvh;
+  }
+}
+
 @keyframes introEnterVanish {
   0% {
     opacity: 1;
