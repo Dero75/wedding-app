@@ -238,3 +238,18 @@ attached_assets/          # Venue photos
   - `build` OK
   - `deadcode` OK (restano solo export non bloccanti gia noti).
 - Backup incrementale creato senza sovrascritture: `Backup_9 Aprile_14.36.tar.zst`.
+
+## Aggiornamento Enterprise (2026-04-09 - consolidamento post-ultima chat)
+
+- Rieseguito audit tecnico completo su workspace con quality gate tutti verdi: `typecheck`, `lint`, `test`, `build`, `deadcode`.
+- Verificata soglia file funzionali <= 350 righe: nessun file runtime oltre limite (max `storage.ts` 310 righe).
+- Pulizia obsoleti: rimosso asset non piu usato `attached_assets/Evento_serale_elegante_nel_cortile_storico_1775302758542.png`.
+- Runtime/Admin allineato alle ultime richieste operative:
+  - topbar admin: pulsante `Home` nascosto nella sola `Gestione Invitati` (resta nelle altre route admin),
+  - route admin pubblica consolidata su `/admina` e `/admina/settings`,
+  - ottimizzato spacing verticale sezione `Gestione Invitati` (titolo/KPI/cards),
+  - cards RSVP: gap ridotto e label `Confermato` resa verde.
+- RSVP form UX testuale aggiornata senza impatto business: pulsante `Non potro partecipare` con icona triste minimale.
+- PWA install prompt disattivato/rimosso globalmente nel runtime (coerenza con richieste operative).
+- Performance check confermato: colli di bottiglia residui noti su asset statici grandi (immagine hero e audio), senza modificare UX o business in questo ciclo.
+- Nessuna modifica a logiche di business o flussi funzionali core.

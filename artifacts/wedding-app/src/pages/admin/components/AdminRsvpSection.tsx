@@ -59,7 +59,7 @@ export default function AdminRsvpSection({ rsvps, onDeleteRsvp }: AdminRsvpSecti
 
   return (
     <>
-      <div className="h-full min-h-0 overflow-y-auto overscroll-contain pr-0.5 space-y-2.5">
+      <div className="h-full min-h-0 overflow-y-auto overscroll-contain pr-0.5 space-y-1.5">
         {rsvps.length === 0 ? (
           <p className="text-center text-sm text-muted-foreground py-6">Nessuna risposta ancora.</p>
         ) : (
@@ -83,13 +83,19 @@ export default function AdminRsvpSection({ rsvps, onDeleteRsvp }: AdminRsvpSecti
                     {`${rsvp.firstName} ${rsvp.lastName}`.trim()}
                   </p>
                   <div className="mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-1 font-sans text-xs text-muted-foreground">
-                    <span>
-                      {rsvp.attending
-                        ? `Confermato · ${rsvp.guestCount} ${rsvp.guestCount === 1 ? "adulto" : "adulti"}${
+                    {rsvp.attending ? (
+                      <>
+                        <span style={{ color: "#6f8f4a" }}>Confermato</span>
+                        <span aria-hidden="true">·</span>
+                        <span>
+                          {`${rsvp.guestCount} ${rsvp.guestCount === 1 ? "adulto" : "adulti"}${
                             rsvp.childrenCount > 0 ? ` · ${rsvp.childrenCount} under` : ""
-                          }`
-                        : "Non partecipa"}
-                    </span>
+                          }`}
+                        </span>
+                      </>
+                    ) : (
+                      <span>Non partecipa</span>
+                    )}
 
                     {rsvp.attending &&
                       DIETARY_FLAG_VALUES.filter((flag) => rsvp.dietaryCounts[flag] > 0).map((flag) => {

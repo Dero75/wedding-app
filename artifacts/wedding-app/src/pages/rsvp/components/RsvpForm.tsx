@@ -1,4 +1,4 @@
-import { Edit3, Leaf, WheatOff } from "lucide-react";
+import { Edit3, Frown, Leaf, WheatOff } from "lucide-react";
 import { useState } from "react";
 import type { UseFormReturn } from "react-hook-form";
 import { DIETARY_FLAG_LABELS, type DietaryFlag } from "@/config/rsvp";
@@ -190,7 +190,10 @@ export default function RsvpForm({ form, editing, onCancelEdit, onSubmit, onDecl
           onClick={() => setDeclineMode(true)}
           className="w-full inline-flex items-center justify-center rounded-full border border-border bg-white px-5 py-3 text-xs uppercase tracking-wider text-foreground hover:opacity-95 transition-opacity"
         >
-          Non potrò partecipare
+          <span className="inline-flex items-center gap-1.5">
+            <span>Non potrò partecipare</span>
+            <Frown size={13} strokeWidth={1.8} aria-hidden="true" />
+          </span>
         </button>
       )}
 

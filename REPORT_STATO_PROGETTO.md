@@ -409,3 +409,37 @@ Scorciatoie locali/hack:
   - `build` OK
   - `deadcode` OK (restano solo export non bloccanti gia noti).
 - Backup incrementale creato senza sovrascritture: `Backup_9 Aprile_14.36.tar.zst`.
+
+## Aggiornamento Enterprise (2026-04-09 - consolidamento post-ultima chat)
+
+- Rieseguito audit tecnico completo su workspace con quality gate tutti verdi: `typecheck`, `lint`, `test`, `build`, `deadcode`.
+- Verificata soglia file funzionali <= 350 righe: nessun file runtime oltre limite (max `storage.ts` 310 righe).
+- Pulizia obsoleti: rimosso asset non piu usato `attached_assets/Evento_serale_elegante_nel_cortile_storico_1775302758542.png`.
+- Runtime/Admin allineato alle ultime richieste operative:
+  - topbar admin: pulsante `Home` nascosto nella sola `Gestione Invitati` (resta nelle altre route admin),
+  - route admin pubblica consolidata su `/admina` e `/admina/settings`,
+  - ottimizzato spacing verticale sezione `Gestione Invitati` (titolo/KPI/cards),
+  - cards RSVP: gap ridotto e label `Confermato` resa verde.
+- RSVP form UX testuale aggiornata senza impatto business: pulsante `Non potro partecipare` con icona triste minimale.
+- PWA install prompt disattivato/rimosso globalmente nel runtime (coerenza con richieste operative).
+- Performance check confermato: colli di bottiglia residui noti su asset statici grandi (immagine hero e audio), senza modificare UX o business in questo ciclo.
+- Nessuna modifica a logiche di business o flussi funzionali core.
+
+## Aggiornamento Enterprise (2026-04-09 - sync RSVP -> Google Sheet)
+
+- Integrazione backup operativo progettata e codificata con source of truth invariata su Supabase (`public.rsvps`).
+- Pipeline scelta: trigger SQL Supabase (`INSERT/UPDATE`) -> webhook Apps Script -> upsert su foglio `RSVP_DB`.
+- Aggiunti artefatti tecnici:
+  - `scripts/google-sheet/wedding_rsvp_backup_core.gs`
+  - `scripts/google-sheet/wedding_rsvp_backup_setup.gs`
+  - `scripts/google-sheet/supabase_rsvp_google_sheet_sync.sql`
+- Aggiunti report e setup operativo:
+  - `report/REPORT_RSVP_GOOGLE_SHEET_BACKUP.md`
+  - `report/SETUP_RSVP_GOOGLE_SHEET_BACKUP.md`
+  - `scripts/google-sheet/README.md`
+- Hardening Apps Script:
+  - validazione token webhook,
+  - parsing payload robusto (`record/rsvp/new`),
+  - upsert deduplicato per `id`,
+  - blocco righe fake vuote (`Non partecipa`/zeri su righe senza record),
+  - dashboard KPI ricalcolata solo su record reali.

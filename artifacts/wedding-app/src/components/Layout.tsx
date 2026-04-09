@@ -11,6 +11,7 @@ export default function Layout({ children, adminTopbarActions }: LayoutProps) {
   const [location] = useLocation();
   const isAdminRoute = location.startsWith("/admina");
   const isAdminHome = location === "/admina";
+  const showAdminHomeButton = isAdminRoute && !isAdminHome;
   const isPublicHome = location === "/home";
 
   return (
@@ -18,7 +19,7 @@ export default function Layout({ children, adminTopbarActions }: LayoutProps) {
       {/* Fixed nav */}
       <header className="fixed top-0 left-0 right-0 z-50 bg-background/90 backdrop-blur-md border-b border-border">
         <div className="relative max-w-lg mx-auto px-5 h-14 flex items-center justify-between">
-          {isAdminRoute ? (
+          {showAdminHomeButton ? (
             <Link
               href="/admina"
               data-testid="button-admin-home-topbar"
