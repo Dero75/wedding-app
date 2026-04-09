@@ -419,15 +419,17 @@
 .intro-white-overlay {
   background: #ffffff;
   opacity: 0;
-  z-index: 8;
+  z-index: 40;
+  will-change: opacity;
 }
 
 .intro-white-overlay--active {
-  animation: introToWhite 900ms ease forwards;
+  animation: introToWhite 900ms linear forwards;
 }
 
 @keyframes homeWhiteRevealOut {
-  0% {
+  0%,
+  16% {
     opacity: 1;
   }
 
@@ -437,10 +439,11 @@
 }
 
 @keyframes homeContentRevealIn {
-  0% {
-    opacity: 0.15;
-    filter: blur(2.2px) saturate(0.98);
-    transform: translateY(2px);
+  0%,
+  16% {
+    opacity: 0;
+    filter: blur(3px) saturate(0.96);
+    transform: translateY(3px);
   }
 
   100% {
@@ -452,9 +455,9 @@
 
 .home-white-reveal-overlay {
   background: #ffffff;
-  animation: homeWhiteRevealOut 980ms ease forwards;
+  animation: homeWhiteRevealOut 1120ms ease forwards;
 }
 
 .home-content-reveal {
-  animation: homeContentRevealIn 980ms ease forwards;
+  animation: homeContentRevealIn 1120ms ease forwards;
 }

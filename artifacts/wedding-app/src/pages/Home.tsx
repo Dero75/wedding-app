@@ -11,7 +11,7 @@ import {
 import coupleVenueImg from "@assets/Evento_serale_elegante_nel_cortile_storico_1775302758542.png";
 
 const INTRO_HOME_TRANSITION_KEY = "wedding_intro_home_white_fade";
-const HOME_WHITE_REVEAL_DURATION_MS = 980;
+const HOME_WHITE_REVEAL_DURATION_MS = 1120;
 
 export default function Home() {
   const c = getContent();

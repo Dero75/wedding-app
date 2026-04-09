@@ -47,8 +47,10 @@ function BackgroundMusicPlayer() {
     return null;
   }
 
+  const START_MUSIC_EVENT = "wedding:start-music";
   const [location] = useLocation();
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const musicEnabledRef = useRef(false);
   const unlockedRef = useRef(false);
   const locationRef = useRef(location);
   const src = `${import.meta.env.BASE_URL}audio/piano.mp3`;
@@ -78,31 +80,42 @@ function BackgroundMusicPlayer() {
     audio.volume = 0.35;
     audio.preload = "auto";
 
-    const unlockAndPlay = () => {
+    const handleStartMusic = () => {
+      musicEnabledRef.current = true;
       unlockedRef.current = true;
       if (!document.hidden && isPlayableRoute(locationRef.current)) {
         safePlay();
       }
     };
 
-    const pointerOptions: AddEventListenerOptions = { once: true, passive: true };
     const handleCanPlay = () => {
+      if (!musicEnabledRef.current) return;
       if (!document.hidden && isPlayableRoute(locationRef.current)) {
         safePlay();
       }
     };
-    window.addEventListener("pointerdown", unlockAndPlay, pointerOptions);
-    window.addEventListener("touchstart", unlockAndPlay, pointerOptions);
-    window.addEventListener("click", unlockAndPlay, pointerOptions);
-    window.addEventListener("keydown", unlockAndPlay, { once: true });
+
+    const unlockOnFirstUserGesture = () => {
+      unlockedRef.current = true;
+      if (musicEnabledRef.current && !document.hidden && isPlayableRoute(locationRef.current)) {
+        safePlay();
+      }
+    };
+
+    const pointerOptions: AddEventListenerOptions = { once: true, passive: true };
+    window.addEventListener("pointerdown", unlockOnFirstUserGesture, pointerOptions);
+    window.addEventListener("touchstart", unlockOnFirstUserGesture, pointerOptions);
+    window.addEventListener("click", unlockOnFirstUserGesture, pointerOptions);
+    window.addEventListener("keydown", unlockOnFirstUserGesture, { once: true });
+    window.addEventListener(START_MUSIC_EVENT, handleStartMusic);
     audio.addEventListener("canplay", handleCanPlay);
-    safePlay();
 
     return () => {
-      window.removeEventListener("pointerdown", unlockAndPlay);
-      window.removeEventListener("touchstart", unlockAndPlay);
-      window.removeEventListener("click", unlockAndPlay);
-      window.removeEventListener("keydown", unlockAndPlay);
+      window.removeEventListener("pointerdown", unlockOnFirstUserGesture);
+      window.removeEventListener("touchstart", unlockOnFirstUserGesture);
+      window.removeEventListener("click", unlockOnFirstUserGesture);
+      window.removeEventListener("keydown", unlockOnFirstUserGesture);
+      window.removeEventListener(START_MUSIC_EVENT, handleStartMusic);
       audio.removeEventListener("canplay", handleCanPlay);
     };
   }, []);
@@ -114,7 +127,7 @@ function BackgroundMusicPlayer() {
       audio.pause();
       return;
     }
-    if (unlockedRef.current) {
+    if (musicEnabledRef.current && unlockedRef.current) {
       safePlay();
     }
   }, [location]);
@@ -128,7 +141,7 @@ function BackgroundMusicPlayer() {
         audio.pause();
         return;
       }
-      if (unlockedRef.current && isPlayableRoute(locationRef.current)) {
+      if (musicEnabledRef.current && unlockedRef.current && isPlayableRoute(locationRef.current)) {
         safePlay();
       }
     };
@@ -146,7 +159,7 @@ function BackgroundMusicPlayer() {
     };
   }, []);
 
-  return <audio ref={audioRef} src={src} loop preload="auto" autoPlay playsInline aria-hidden="true" />;
+  return <audio ref={audioRef} src={src} loop preload="auto" playsInline aria-hidden="true" />;
 }
 
 function DataSourceBootstrapper({ children }: { children: React.ReactNode }) {

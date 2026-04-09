@@ -9,8 +9,11 @@ import {
 
 const INTRO_ENTER_DELAY_MS = 4500;
 const INTRO_WHITE_FADE_DURATION_MS = 900;
-const INTRO_WHITE_FADE_START_MS = INTRO_ENTER_DELAY_MS - INTRO_WHITE_FADE_DURATION_MS;
+const INTRO_WHITE_FADE_HOLD_MS = 250;
+const INTRO_WHITE_FADE_START_MS =
+  INTRO_ENTER_DELAY_MS - (INTRO_WHITE_FADE_DURATION_MS + INTRO_WHITE_FADE_HOLD_MS);
 const INTRO_HOME_TRANSITION_KEY = "wedding_intro_home_white_fade";
+const START_MUSIC_EVENT = "wedding:start-music";
 
 export default function Intro() {
   const [, setLocation] = useLocation();
@@ -35,6 +38,8 @@ export default function Intro() {
 
   const handleEnter = () => {
     if (isEntering) return;
+    window.dispatchEvent(new Event(START_MUSIC_EVENT));
+
     setIsEntering(true);
     whiteFadeTimerRef.current = setTimeout(() => {
       setIsFadingToWhite(true);
