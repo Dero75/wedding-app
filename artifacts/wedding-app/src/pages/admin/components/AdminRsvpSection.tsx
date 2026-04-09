@@ -59,7 +59,7 @@ export default function AdminRsvpSection({ rsvps, onDeleteRsvp }: AdminRsvpSecti
 
   return (
     <>
-      <div className="h-full min-h-0 overflow-y-auto pr-0.5 space-y-2.5">
+      <div className="h-full min-h-0 overflow-y-auto overscroll-contain pr-0.5 space-y-2.5">
         {rsvps.length === 0 ? (
           <p className="text-center text-sm text-muted-foreground py-6">Nessuna risposta ancora.</p>
         ) : (

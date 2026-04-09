@@ -3,3 +3,10 @@ import App from "./App";
 import "./index.css";
 
 createRoot(document.getElementById("root")!).render(<App />);
+
+if (import.meta.env.PROD && "serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    const swUrl = `${import.meta.env.BASE_URL}sw.js`;
+    void navigator.serviceWorker.register(swUrl).catch(() => undefined);
+  });
+}

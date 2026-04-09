@@ -109,7 +109,7 @@ export default function Admin() {
         </button>
       }
     >
-      <PageContainer className="h-[calc(100dvh-3.5rem)] max-h-[calc(100dvh-3.5rem)] overflow-hidden flex flex-col pt-8 pb-4">
+      <PageContainer className="box-border h-[calc(100dvh-3.5rem)] max-h-[calc(100dvh-3.5rem)] overflow-hidden flex flex-col pt-8 pb-4">
         <SectionTitle title="Gestione Invitati" />
 
         <AdminStats
