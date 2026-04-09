@@ -127,3 +127,25 @@ I file di backup in questa cartella sono ignorati da Git e non devono essere com
 - Consolidata la regola audio: avvio musica solo al click `ENTRA`.
 - Aggiornata e riallineata tutta la documentazione informativa (`DNA/*` + `REPORT_STATO_PROGETTO.md`) con il delta reale post-chat.
 - Nuovo backup incrementale creato: `Backup_9 Aprile_14.09.tar.zst`.
+
+## Aggiornamento Enterprise (2026-04-09 - pwa install e stabilizzazione finale)
+
+- Delta verificato rispetto all'ultimo aggiornamento documentale precedente: incluse tutte le modifiche introdotte nei commit `0d61a0c` e `8681475`.
+- Home pubblica: ridotta la dimensione del testo data (`VENERDI 11 SETTEMBRE 2026`) con impatto solo tipografico, senza modifiche funzionali.
+- Admin `/admin`: consolidato layout operativo con scroll confinato alla sola lista card adesioni; header/titolo/KPI/filtri restano fissi.
+- Installazione app multipiattaforma implementata (PWA):
+  - manifest pubblico (`manifest.webmanifest`),
+  - service worker (`public/sw.js`) e registrazione runtime in `main.tsx`,
+  - metadata iOS/Android/Desktop in `index.html`,
+  - prompt installazione con fallback iOS in `InstallAppPrompt.tsx`.
+- Nuova suite icone app integrata in `public/icons/` (SVG sorgente + PNG 192/512/1024 + apple-touch + favicon 32) basata su marchio `D&D` con palette intro.
+- Pulizia enterprise aggiuntiva:
+  - eliminata cartella temporanea locale `.tmp/` (anteprime non runtime),
+  - ridotto rumore analisi deadcode aggiornando `knip.json` per ignorare il falso positivo su `public/sw.js` (asset statico referenziato via URL).
+- Quality gates rieseguiti post-integrazione e confermati verdi:
+  - `lint` OK
+  - `typecheck` OK
+  - `test` OK (22/22)
+  - `build` OK
+  - `deadcode` OK (restano solo export non bloccanti gia noti).
+- Backup incrementale creato senza sovrascritture: `Backup_9 Aprile_14.36.tar.zst`.
