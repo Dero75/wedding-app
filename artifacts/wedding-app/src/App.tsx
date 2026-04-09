@@ -43,10 +43,7 @@ function Router() {
 }
 
 function BackgroundMusicPlayer() {
-  if (import.meta.env.MODE === "test") {
-    return null;
-  }
-
+  const isTestMode = import.meta.env.MODE === "test";
   const START_MUSIC_EVENT = "wedding:start-music";
   const [location] = useLocation();
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -71,10 +68,12 @@ function BackgroundMusicPlayer() {
   };
 
   useEffect(() => {
+    if (isTestMode) return;
     locationRef.current = location;
-  }, [location]);
+  }, [isTestMode, location]);
 
   useEffect(() => {
+    if (isTestMode) return;
     const audio = audioRef.current;
     if (!audio) return;
     audio.volume = 0.35;
@@ -118,9 +117,10 @@ function BackgroundMusicPlayer() {
       window.removeEventListener(START_MUSIC_EVENT, handleStartMusic);
       audio.removeEventListener("canplay", handleCanPlay);
     };
-  }, []);
+  }, [isTestMode]);
 
   useEffect(() => {
+    if (isTestMode) return;
     const audio = audioRef.current;
     if (!audio) return;
     if (location.startsWith("/admin") || document.hidden) {
@@ -130,9 +130,10 @@ function BackgroundMusicPlayer() {
     if (musicEnabledRef.current && unlockedRef.current) {
       safePlay();
     }
-  }, [location]);
+  }, [isTestMode, location]);
 
   useEffect(() => {
+    if (isTestMode) return;
     const audio = audioRef.current;
     if (!audio) return;
 
@@ -157,8 +158,11 @@ function BackgroundMusicPlayer() {
       document.removeEventListener("visibilitychange", handleVisibilityChange);
       window.removeEventListener("pagehide", handlePageHide);
     };
-  }, []);
+  }, [isTestMode]);
 
+  if (isTestMode) {
+    return null;
+  }
   return <audio ref={audioRef} src={src} loop preload="auto" playsInline aria-hidden="true" />;
 }
 

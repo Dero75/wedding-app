@@ -120,3 +120,10 @@ I file di backup in questa cartella sono ignorati da Git e non devono essere com
 - Allineata la documentazione informativa a tutte le modifiche runtime introdotte nel ciclo chat del 2026-04-09.
 - Nuovo backup incrementale creato: `Backup_9 Aprile_00.04.tar.gz`.
 
+## Aggiornamento Enterprise (2026-04-09 - hardening intro/home + clean pass)
+
+- Rieseguito audit tecnico enterprise con risoluzione issue lint bloccante su hook React condizionali in `BackgroundMusicPlayer` (`App.tsx`), senza cambi di business logic.
+- Consolidata la transizione mobile `Intro -> bianco -> Home` eliminando flicker pre-home e mantenendo UX canonica.
+- Consolidata la regola audio: avvio musica solo al click `ENTRA`.
+- Aggiornata e riallineata tutta la documentazione informativa (`DNA/*` + `REPORT_STATO_PROGETTO.md`) con il delta reale post-chat.
+- Nuovo backup incrementale creato: `Backup_9 Aprile_14.09.tar.zst`.

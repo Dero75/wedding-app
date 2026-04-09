@@ -170,3 +170,26 @@
   - badge dieta in linea con riga stato tramite icone + valore;
   - icona cestino centrata verticalmente a destra nella card.
 
+
+## Aggiornamento Enterprise (2026-04-09 - hardening intro/home + clean pass)
+
+- Eseguito audit tecnico completo post-chat con approccio conservativo: nessuna modifica a business logic, UX canonica invariata.
+- Stabilita' runtime consolidata su transizione intro/home:
+  - musica background avviata solo al click su `ENTRA` (niente autoplay anticipato);
+  - pipeline fade mobile resa continua `Intro -> bianco -> Home` con eliminazione del frame di flicker pre-home;
+  - transizione bianca in ingresso Home resa pre-paint-safe tramite inizializzazione stato da `sessionStorage` al primo render.
+- Intro UI allineata alle ultime richieste chat:
+  - pulsante `ENTRA` mantenuto in basso (`82vh` / `82dvh`);
+  - hint discreto `Audio on` aggiunto e rifinito (tracking/font ridotti);
+  - effetto di scomparsa del pulsante ripristinato alla versione baseline richiesta.
+- Hardening codice applicativo:
+  - corretto `BackgroundMusicPlayer` in `App.tsx` per rispetto regole hook React (eliminata chiamata condizionale hook che causava errore lint);
+  - effetti audio invariati lato comportamento funzionale.
+- Verifiche enterprise eseguite e verdi:
+  - `corepack pnpm run lint` -> OK
+  - `corepack pnpm run typecheck` -> OK
+  - `corepack pnpm run test` -> OK (22/22)
+  - `corepack pnpm run build` -> OK
+  - `corepack pnpm run deadcode` -> solo export residui non bloccanti (nessun errore runtime)
+- Soglia modularita' verificata: nessun file funzionale runtime wedding oltre 350 righe; nessuna modularizzazione aggiuntiva necessaria in questo pass.
+- File obsoleti: nessun file versionato da eliminare in sicurezza nel ciclo corrente.

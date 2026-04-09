@@ -117,22 +117,30 @@ export default function Intro() {
           visible ? "opacity-100" : "opacity-0"
         }`}
       >
-        <button
-          type="button"
-          data-testid="button-enter-intro"
-          onClick={handleEnter}
-          disabled={isEntering}
-          className={`intro-enter-button inline-flex items-center justify-center px-7 py-2.5 rounded-full border text-[11px] tracking-[0.22em] uppercase transition-colors ${
-            isEntering ? "intro-enter-button--vanish" : ""
-          }`}
-          style={{
-            borderColor: "rgba(201,185,154,0.6)",
-            background: "rgba(248,245,238,0.12)",
-            color: "hsl(38 50% 97%)",
-          }}
-        >
-          Entra
-        </button>
+        <div className="flex flex-col items-center">
+          <button
+            type="button"
+            data-testid="button-enter-intro"
+            onClick={handleEnter}
+            disabled={isEntering}
+            className={`intro-enter-button inline-flex items-center justify-center px-7 py-2.5 rounded-full border text-[11px] tracking-[0.22em] uppercase transition-colors ${
+              isEntering ? "intro-enter-button--vanish" : ""
+            }`}
+            style={{
+              borderColor: "rgba(201,185,154,0.6)",
+              background: "rgba(248,245,238,0.12)",
+              color: "hsl(38 50% 97%)",
+            }}
+          >
+            Entra
+          </button>
+          <p
+            className={`intro-audio-hint mt-2 ${isEntering ? "intro-audio-hint--fade" : ""}`}
+            aria-hidden="true"
+          >
+            Audio on
+          </p>
+        </div>
       </div>
     </div>
   );
