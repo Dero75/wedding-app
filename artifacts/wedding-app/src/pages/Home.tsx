@@ -70,7 +70,7 @@ export default function Home() {
         <div className="flex-1 min-h-0 flex flex-col px-5 pt-3 pb-4 max-w-lg mx-auto w-full">
           <div className="text-center flex-shrink-0 flex flex-col items-center gap-[0.1rem]">
             <p
-              className="home-kicker text-[12.5px] tracking-wider uppercase"
+              className="home-kicker text-[11.5px] tracking-wider uppercase"
               style={{ color: "hsl(var(--muted-foreground))" }}
             >
               {FIXED_WEDDING_DATE_LABEL}
