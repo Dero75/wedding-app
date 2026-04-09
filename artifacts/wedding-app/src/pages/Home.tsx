@@ -8,7 +8,7 @@ import {
   FIXED_GROOM_NAME,
   FIXED_WEDDING_DATE_LABEL,
 } from "@/config/event";
-import coupleVenueImg from "@assets/Evento_serale_elegante_nel_cortile_storico_1775302758542.png";
+import coupleVenueImg from "@assets/D&D.png";
 
 const INTRO_HOME_TRANSITION_KEY = "wedding_intro_home_white_fade";
 const HOME_WHITE_REVEAL_DURATION_MS = 1120;
