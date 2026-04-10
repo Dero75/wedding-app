@@ -1,68 +1,67 @@
 # Google Sheet RSVP Backup (Enterprise)
 
-Questa cartella contiene l'integrazione reale per sincronizzare gli RSVP dell'app sul foglio Google.
+Questa cartella contiene l'integrazione reale RSVP -> Google Sheet validata in produzione.
 
-## Architettura scelta
+## Architettura
 
-- **Source of truth**: `public.rsvps` (Supabase) gia' usata dal runtime app.
-- **Backup mirror**: Google Sheet (`RSVP_DB`, `Dashboard`, `Istruzioni`).
-- **Sync path**: `Supabase trigger -> Apps Script Web App (doPost) -> upsert su RSVP_DB`.
-
-Nessuna doppia logica lato frontend e nessun cambio UX.
+- Source of truth: `public.rsvps` (Supabase).
+- Mirror backup: Google Sheet tab `RSVP_BACKUP` (10 colonne operative).
+- Flusso: `Supabase trigger (INSERT/UPDATE/DELETE) -> Apps Script Web App doPost -> upsert/delete su RSVP_BACKUP`.
 
 ## File
 
-- `wedding_rsvp_backup_core.gs`:
-  - endpoint `doPost` con token
-  - parse payload robusto
-  - upsert per `id`
-  - inserimento nuovi record nella prima riga ID vuota (no salti su righe alte)
-  - compattazione opzionale righe storiche sparse (`compactRsvpDbRows_`)
-  - refresh dashboard coerente
-  - blocco dati fake/righe vuote
-- `wedding_rsvp_backup_setup.gs`:
-  - setup/idempotenza fogli + stile + validazioni
-  - conditional formatting corretta
-- `supabase_rsvp_google_sheet_sync.sql`:
-  - trigger SQL su `public.rsvps` (insert/update)
-  - invio webhook con `pg_net`
-  - timeout trigger esteso a `20000ms`
+- `wedding_rsvp_backup_core.gs`
+  - endpoint `doGet`/`doPost`
+  - validazione token (`RSVP_WEBHOOK_TOKEN`)
+  - lock concorrenza (`LockService`) per evitare race condition nel backfill
+  - upsert per `id` + delete per `id`
+  - compattazione righe dopo delete
+  - setup idempotente del tab `RSVP_BACKUP`
+- `supabase_rsvp_google_sheet_sync.sql`
+  - trigger `AFTER INSERT OR UPDATE OR DELETE` su `public.rsvps`
+  - invio webhook via `pg_net`
   - backfill throttled (`pg_sleep(1.5)`) con timeout `60000ms`
+  - nota operativa: `DELETE` sincronizza, `TRUNCATE` no
+- `rsvp_seed_mixed_20.sql`
+  - seed SQL pronto con 20 record misti per test end-to-end
+
+## Colonne `RSVP_BACKUP`
+
+1. `id`
+2. `nome`
+3. `cognome`
+4. `stato`
+5. `adulti`
+6. `under`
+7. `vegetariani`
+8. `celiaci`
+9. `totale_persone`
+10. `updated_at`
 
 ## Setup rapido
 
-1. Apri il Google Sheet e Apps Script.
-2. Copia entrambi i file `.gs` nel progetto script.
-3. In Apps Script:
-   - `Project Settings -> Script Properties`
-   - aggiungi `RSVP_WEBHOOK_TOKEN=<token-forte>`
-4. Esegui manualmente `buildWeddingRsvpBackupSheet()` una volta.
-5. Deploy Apps Script come Web App:
-   - Execute as: `Me`
-   - Access: `Anyone` (o `Anyone with link`)
-   - copia URL `/exec`
-6. In Supabase SQL Editor:
-   - esegui `supabase_rsvp_google_sheet_sync.sql`
-   - sostituisci URL e token placeholders in `private.runtime_config`
-7. Esegui backfill:
-   - `select public.backfill_rsvps_google_sheet_sync();`
+1. Copia `wedding_rsvp_backup_core.gs` in Apps Script del foglio.
+2. In `Project Settings -> Script Properties` imposta `RSVP_WEBHOOK_TOKEN=<token>`.
+3. Esegui una volta `buildWeddingRsvpBackupSheet()`.
+4. Deploy Web App (`Execute as Me`, accesso `Anyone with link`) e copia URL `/exec`.
+5. Esegui `supabase_rsvp_google_sheet_sync.sql` in Supabase.
+6. Aggiorna `private.runtime_config` con URL e token reali.
+7. Esegui `select public.backfill_rsvps_google_sheet_sync();`.
 
-## Test minimo
+## Test minimo obbligatorio
 
-1. Inserisci o aggiorna un RSVP dall'app.
-2. Verifica upsert su `RSVP_DB` (stesso `id`, nessun duplicato).
-3. Verifica KPI dashboard.
-4. Verifica che non compaiano righe con stato fake su righe vuote.
+1. INSERT RSVP da app o SQL -> riga creata nel foglio.
+2. UPDATE RSVP -> riga aggiornata stesso `id`.
+3. DELETE RSVP (`delete from public.rsvps where id=...`) -> riga rimossa nel foglio.
 
-## Validazione operativa (2026-04-09)
+## Regola critica
 
-- Verificato endpoint `/exec` Apps Script rispondente via `doGet`.
-- Verificata sync reale via `net.http_post` con `status_code=200`.
-- Root cause timeout bulk identificata: default `pg_net` troppo aggressivo per backfill massivo.
-- Mitigazione applicata: timeout espliciti + throttling nel loop di backfill.
+- Se vuoi svuotare anche Google automaticamente, usa:
+  - `delete from public.rsvps;`
+- Non usare `truncate table public.rsvps;` se vuoi propagazione delete.
 
-## Note operative
+## Stato validazione (2026-04-10)
 
-- Il trigger non blocca la write primaria su `rsvps` in caso errore webhook.
-- La sync copre `INSERT` + `UPDATE` (no delete hard per evitare perdita backup involontaria).
-- Se necessario azzerare e ricostruire: pulire `RSVP_DB`, eseguire `buildWeddingRsvpBackupSheet()`, poi rilanciare backfill.
+- Sync CRUD confermata live (`status_code=200`, `timed_out=false`).
+- Riallineamento storico eseguito con backfill.
+- Mismatch precedenti risolti (token/config/timeout/concorrenza/doPost).

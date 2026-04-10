@@ -319,3 +319,11 @@ Note: event date and couple names are fixed at app level and not editable from A
   - upsert sulla prima riga `id` libera (evita scrittura in coda a migliaia di righe),
   - compattazione righe sparse durante setup.
 - Nessuna modifica a business logic, funzioni core runtime o UX visuale dell'app.
+
+## Aggiornamento Operativo (2026-04-10 - RSVP Google Sheet CRUD)
+
+- Integrazione Google Sheet consolidata in modalita CRUD: `INSERT`, `UPDATE`, `DELETE`.
+- Trigger Supabase aggiornato a `AFTER INSERT OR UPDATE OR DELETE`.
+- Apps Script unificato su `scripts/google-sheet/wedding_rsvp_backup_core.gs` con lock concorrenza in `doPost`.
+- Backfill stabilizzato con timeout esteso + throttling (`pg_sleep(1.5)`).
+- Nota operativa confermata: `TRUNCATE` non propaga delete row-level; usare `DELETE FROM public.rsvps` per svuotamento con sync verso foglio.

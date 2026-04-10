@@ -182,3 +182,17 @@ I file di backup in questa cartella sono ignorati da Git e non devono essere com
   - compattazione righe sparse durante setup.
 - Nessuna modifica a business logic, funzioni core runtime o UX visuale dell'app.
 - Nuovo backup incrementale creato: `Backup_9 Aprile_18.28.tar.zst`.
+
+## Aggiornamento Operativo (2026-04-10 - RSVP Google Sheet CRUD)
+
+- Integrazione Google Sheet consolidata in modalita CRUD: `INSERT`, `UPDATE`, `DELETE`.
+- Trigger Supabase aggiornato a `AFTER INSERT OR UPDATE OR DELETE`.
+- Apps Script unificato su `scripts/google-sheet/wedding_rsvp_backup_core.gs` con lock concorrenza in `doPost`.
+- Backfill stabilizzato con timeout esteso + throttling (`pg_sleep(1.5)`).
+- Nota operativa confermata: `TRUNCATE` non propaga delete row-level; usare `DELETE FROM public.rsvps` per svuotamento con sync verso foglio.
+
+## Aggiornamento Operativo (2026-04-10 - chiusura QA enterprise)
+
+- Rieseguiti quality gate finali con esito verde: `typecheck`, `lint`, `test`, `build`.
+- Verifica dead code rieseguita: presenti solo export residui non bloccanti, nessun errore runtime.
+- Backup incrementale finale creato: `Backup_10 Aprile_02.21.tar.zst`.

@@ -1,76 +1,55 @@
 # REPORT RSVP -> Google Sheet Backup
 
-Data: 2026-04-09
+Data ultimo aggiornamento: 2026-04-10
 
-## 1) Stato iniziale reale trovato
+## Stato reale consolidato
 
-- Form RSVP e update fluiscono in `artifacts/wedding-app/src/pages/RSVP.tsx`.
-- Persistenza runtime centralizzata in `artifacts/wedding-app/src/lib/storage.ts`.
-- Con env Supabase presenti, la write primaria e' gia' su `public.rsvps` tramite `upsert`.
-- In assenza config/errore, fallback su localStorage.
-- `artifacts/api-server` non e' nel flusso RSVP (oggi solo `/api/healthz`).
-- Apps Script esistente creava struttura sheet ma senza sync reale con app.
+- Source of truth confermata: `public.rsvps` (Supabase).
+- Backup esterno confermato: Google Sheet tab `RSVP_BACKUP`.
+- Flusso reale validato: trigger Supabase -> Apps Script Web App -> mirror sheet.
 
-## 2) Problema reale
+## Problemi individuati e risolti
 
-- Foglio Google non popolato da dati reali.
-- Nessun canale applicativo robusto tra source of truth e sheet.
-- Possibile popolamento fake su righe vuote (stato derivato da checkbox).
+1. Timeout su backfill massivo (`pg_net`) con timeout basso.
+2. Mismatch token runtime (`private.runtime_config` vs Script Properties).
+3. URL errata in runtime config (404 verso pagina docs, non endpoint `/exec`).
+4. Race condition lato Apps Script durante backfill concorrente.
+5. Setup/filtro eseguito dentro `doPost`, con errori sporadici su richieste backfill.
+6. Gap funzionale su delete: cancellazioni DB non propagate al foglio.
 
-## 3) Architettura implementata
+## Correzioni applicate
 
-- Scelta: **Supabase -> Apps Script webhook** (mirror backup operativo).
-- Motivazione:
-  - minimamente invasiva sul runtime app,
-  - zero logiche duplicate nel frontend,
-  - coerenza con source of truth gia' in Supabase,
-  - manutenzione bassa.
+- SQL:
+  - trigger aggiornato a `AFTER INSERT OR UPDATE OR DELETE`;
+  - payload usa `OLD` su `DELETE`, `NEW` su `INSERT/UPDATE`;
+  - timeout trigger `20000ms`;
+  - backfill timeout `60000ms` + `pg_sleep(1.5)`.
+- Apps Script:
+  - script unificato su `wedding_rsvp_backup_core.gs`;
+  - lock `LockService` in `doPost`;
+  - setup idempotente tab `RSVP_BACKUP` (10 colonne essenziali);
+  - upsert per `id` + delete per `id` + compattazione righe.
+- Pulizia repo:
+  - rimosso file obsoleto `scripts/google-sheet/wedding_rsvp_backup_setup.gs`.
 
-## 4) Cosa e' stato aggiunto
+## Regole operative confermate
 
-- Apps Script enterprise:
-  - `scripts/google-sheet/wedding_rsvp_backup_core.gs`
-  - `scripts/google-sheet/wedding_rsvp_backup_setup.gs`
-- SQL trigger sync:
-  - `scripts/google-sheet/supabase_rsvp_google_sheet_sync.sql`
-- Documentazione operativa:
-  - `scripts/google-sheet/README.md`
-  - `report/SETUP_RSVP_GOOGLE_SHEET_BACKUP.md`
+- INSERT: nuova riga nel foglio.
+- UPDATE: stessa riga aggiornata per `id`.
+- DELETE: riga rimossa nel foglio.
+- TRUNCATE: non genera eventi `DELETE` row-level, quindi non svuota automaticamente il foglio.
 
-## 5) Regole business rispettate
+## Verifiche live completate
 
-- `stato`: Confermato / Non partecipa da `attending`.
-- `totale_persone`: `guest_count + children_count` solo se `attending=true`, altrimenti `0`.
-- `totale_diete`: `dietary_vegetarian + dietary_celiac`.
-- Upsert per `id` senza duplicati.
-- Nessuna generazione di righe fake su righe senza record reale.
+- Risposte webhook recenti: `status_code=200`, `timed_out=false`, `ok:true`.
+- Test end-to-end eseguito su inserimento, aggiornamento e cancellazione.
+- Riallineamento dataset completato con backfill.
 
-## 6) Gestione errori
+## Limiti noti (consapevoli)
 
-- Trigger SQL non blocca la write primaria su `rsvps`:
-  - in caso webhook failure, la write primaria resta valida.
-- Apps Script valida token e payload; risponde JSON con `ok/error`.
+- Il trigger non blocca la write primaria su `public.rsvps` in caso di errore webhook (scelta voluta per resilienza runtime app).
+- In caso di svuotamento totale con `TRUNCATE`, necessario allineare il foglio manualmente o usare `DELETE`.
 
-## 7) Limiti attuali
+## Esito finale
 
-- Sync `DELETE` non applicata intenzionalmente (scelta backup-safe).
-- Se la fonte e' localStorage-only (senza Supabase attivo), la sync sheet non parte.
-
-## 8) Esito
-
-- Base completa pronta per sync reale in produzione.
-- Per attivazione definitiva servono solo:
-  - deploy Apps Script Web App,
-  - token in Script Properties,
-  - esecuzione SQL trigger/backfill in Supabase.
-
-## 9) Aggiornamento operativo reale (2026-04-09 sera)
-
-- Debug live completato su ambiente reale: endpoint Apps Script raggiungibile e validato (`status_code=200`).
-- Identificata criticita' reale: timeout `pg_net` su batch backfill massivi.
-- Hardening applicato:
-  - `sync_rsvp_to_google_sheet()` con `timeout_milliseconds := 20000`,
-  - `backfill_rsvps_google_sheet_sync()` con `timeout_milliseconds := 60000` e `pg_sleep(1.5)` per request.
-- Apps Script aggiornato con strategia di scrittura robusta:
-  - nuovi record nella prima riga ID vuota,
-  - compattazione righe sparse per evitare salti su righe alte.
+Integrazione backup RSVP su Google Sheet operativa, stabile e coerente con i vincoli enterprise richiesti, senza modifiche a UX o business logic applicativa.

@@ -428,10 +428,9 @@ Scorciatoie locali/hack:
 ## Aggiornamento Enterprise (2026-04-09 - sync RSVP -> Google Sheet)
 
 - Integrazione backup operativo progettata e codificata con source of truth invariata su Supabase (`public.rsvps`).
-- Pipeline scelta: trigger SQL Supabase (`INSERT/UPDATE`) -> webhook Apps Script -> upsert su foglio `RSVP_DB`.
+- Pipeline scelta: trigger SQL Supabase (`INSERT/UPDATE/DELETE`) -> webhook Apps Script -> upsert/delete su foglio `RSVP_BACKUP`.
 - Aggiunti artefatti tecnici:
   - `scripts/google-sheet/wedding_rsvp_backup_core.gs`
-  - `scripts/google-sheet/wedding_rsvp_backup_setup.gs`
   - `scripts/google-sheet/supabase_rsvp_google_sheet_sync.sql`
 - Aggiunti report e setup operativo:
   - `report/REPORT_RSVP_GOOGLE_SHEET_BACKUP.md`
@@ -455,3 +454,17 @@ Scorciatoie locali/hack:
   - upsert sulla prima riga `id` libera (evita scrittura in coda a migliaia di righe),
   - compattazione righe sparse durante setup.
 - Nessuna modifica a business logic, funzioni core runtime o UX visuale dell'app.
+
+## Aggiornamento Operativo (2026-04-10 - RSVP Google Sheet CRUD)
+
+- Integrazione Google Sheet consolidata in modalita CRUD: `INSERT`, `UPDATE`, `DELETE`.
+- Trigger Supabase aggiornato a `AFTER INSERT OR UPDATE OR DELETE`.
+- Apps Script unificato su `scripts/google-sheet/wedding_rsvp_backup_core.gs` con lock concorrenza in `doPost`.
+- Backfill stabilizzato con timeout esteso + throttling (`pg_sleep(1.5)`).
+- Nota operativa confermata: `TRUNCATE` non propaga delete row-level; usare `DELETE FROM public.rsvps` per svuotamento con sync verso foglio.
+
+## Aggiornamento Operativo (2026-04-10 - chiusura QA enterprise)
+
+- Rieseguiti quality gate finali: `typecheck`, `lint`, `test`, `build` (tutti OK).
+- Verifica dead-code rieseguita: solo export residuali non bloccanti.
+- Backup incrementale finale creato: `backup/Backup_10 Aprile_02.21.tar.zst`.

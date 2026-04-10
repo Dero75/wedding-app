@@ -1,59 +1,62 @@
-# 16     RSVP Google Sheet Backup Integration (2026-04-09)
+# 16     RSVP Google Sheet Backup Integration (2026-04-10)
 
 ## Obiettivo
 
-Rendere Google Sheet un backup operativo reale degli RSVP, mantenendo Supabase come source of truth.
+Rendere Google Sheet un backup operativo reale degli RSVP mantenendo Supabase come source of truth.
 
-## Stato reale verificato
+## Stato reale consolidato
 
-- Runtime RSVP salva tramite `saveMyRSVP()` in `src/lib/storage.ts`.
-- Con config Supabase presente, write primaria su `public.rsvps` via `upsert`.
-- `api-server` non gestisce RSVP (solo health route).
-- Foglio Google preesistente era solo struttura UI senza flusso dati reale.
+- Persistenza primaria: `public.rsvps`.
+- Backup mirror: tab Google `RSVP_BACKUP`.
+- Pipeline attiva: `Supabase trigger -> Apps Script doPost -> upsert/delete sheet`.
 
-## Scelta architetturale
+## Architettura finale
 
-**Supabase -> Apps Script webhook** (trigger SQL `INSERT/UPDATE` su `public.rsvps`).
+**Supabase webhook trigger -> Apps Script Web App**
 
 Motivi:
-- non altera UX app,
-- evita doppia logica lato frontend,
-- mantiene coerenza con persistenza primaria,
-- setup e manutenzione semplici.
+- minima invasivita lato app;
+- nessuna modifica UX;
+- manutenzione bassa;
+- coerenza piena con la source of truth esistente.
 
-## Componenti introdotti
+## Componenti versionati
 
-- Apps Script:
-  - `scripts/google-sheet/wedding_rsvp_backup_core.gs`
-  - `scripts/google-sheet/wedding_rsvp_backup_setup.gs`
-- SQL trigger sync:
-  - `scripts/google-sheet/supabase_rsvp_google_sheet_sync.sql`
-- Setup operativo:
-  - `scripts/google-sheet/README.md`
-  - `report/SETUP_RSVP_GOOGLE_SHEET_BACKUP.md`
-  - `report/REPORT_RSVP_GOOGLE_SHEET_BACKUP.md`
+- `scripts/google-sheet/wedding_rsvp_backup_core.gs`
+  - setup idempotente foglio (10 colonne);
+  - lock concorrenza;
+  - upsert per `id`;
+  - delete per `id`;
+  - compattazione righe.
+- `scripts/google-sheet/supabase_rsvp_google_sheet_sync.sql`
+  - trigger su `INSERT/UPDATE/DELETE`;
+  - timeout hardening;
+  - backfill throttled.
 
 ## Regole dati garantite
 
-- Upsert per `id` (no duplicati).
-- Derivati coerenti:
-  - `stato` da `attending`
-  - `totale_persone` = `guest_count + children_count` solo se `attending=true`, altrimenti `0`
-  - `totale_diete` = `dietary_vegetarian + dietary_celiac`
-- Nessun popolamento fake su righe senza record reale.
+- `stato` derivato da `attending`.
+- Se `attending=false`: `adulti/under/veg/celiaci/totale_persone = 0` nel foglio mirror.
+- Nessun duplicato per `id`.
 
-## Note operative
+## Vincolo operativo cruciale
 
-- Sync copre `INSERT` + `UPDATE`.
-- Delete non sincronizzato hard per preservare backup.
-- In errore webhook, la write primaria su Supabase non viene bloccata.
+- `DELETE` su `public.rsvps` si propaga al foglio.
+- `TRUNCATE` non si propaga (nessun trigger row-level DELETE).
 
-## Aggiornamento Operativo (2026-04-09 sera - debug live completato)
+## Esito validazione live
 
-- Validata la catena reale end-to-end con test manuale su `net.http_post` e risposta webhook `200`.
-- Identificato timeout su backfill bulk (`pg_net`), mitigato con:
-  - trigger sync con timeout `20000ms`,
-  - backfill con timeout `60000ms` + `pg_sleep(1.5)` tra richieste.
-- Apps Script hardening applicato:
-  - upsert su prima riga `id` libera (niente append su `lastRow`),
-  - funzione di compattazione righe sparse per riportare i record in alto.
+- Sync CRUD verificata end-to-end:
+  - INSERT OK
+  - UPDATE OK
+  - DELETE OK
+- Risposte webhook: `200`, `timed_out=false`, `ok:true`.
+- Backfill completato con dataset reale.
+
+## Aggiornamento Operativo (2026-04-10 - RSVP Google Sheet CRUD)
+
+- Integrazione Google Sheet consolidata in modalita CRUD: `INSERT`, `UPDATE`, `DELETE`.
+- Trigger Supabase aggiornato a `AFTER INSERT OR UPDATE OR DELETE`.
+- Apps Script unificato su `scripts/google-sheet/wedding_rsvp_backup_core.gs` con lock concorrenza in `doPost`.
+- Backfill stabilizzato con timeout esteso + throttling (`pg_sleep(1.5)`).
+- Nota operativa confermata: `TRUNCATE` non propaga delete row-level; usare `DELETE FROM public.rsvps` per svuotamento con sync verso foglio.

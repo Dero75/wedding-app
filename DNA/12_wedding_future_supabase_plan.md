@@ -448,9 +448,8 @@ Stato attuale: Supabase non    ancora collegato al runtime, solo pianificato.
 - Implementata base enterprise per mirror backup RSVP su Google Sheet senza alterare la source of truth Supabase.
 - Artefatti aggiunti:
   - `scripts/google-sheet/wedding_rsvp_backup_core.gs`
-  - `scripts/google-sheet/wedding_rsvp_backup_setup.gs`
   - `scripts/google-sheet/supabase_rsvp_google_sheet_sync.sql`
-- Flusso finale previsto: `public.rsvps` (insert/update) -> trigger SQL `pg_net` -> `doPost` Apps Script -> upsert `RSVP_DB`.
+- Flusso finale previsto: `public.rsvps` (insert/update/delete) -> trigger SQL `pg_net` -> `doPost` Apps Script -> upsert/delete `RSVP_BACKUP`.
 - Setup e test operativo documentati in `report/SETUP_RSVP_GOOGLE_SHEET_BACKUP.md`.
 
 ## Aggiornamento Enterprise (2026-04-09 - stabilizzazione sync Google Sheet)
@@ -464,3 +463,11 @@ Stato attuale: Supabase non    ancora collegato al runtime, solo pianificato.
   - upsert sulla prima riga `id` libera (evita scrittura in coda a migliaia di righe),
   - compattazione righe sparse durante setup.
 - Nessuna modifica a business logic, funzioni core runtime o UX visuale dell'app.
+
+## Aggiornamento Operativo (2026-04-10 - RSVP Google Sheet CRUD)
+
+- Integrazione Google Sheet consolidata in modalita CRUD: `INSERT`, `UPDATE`, `DELETE`.
+- Trigger Supabase aggiornato a `AFTER INSERT OR UPDATE OR DELETE`.
+- Apps Script unificato su `scripts/google-sheet/wedding_rsvp_backup_core.gs` con lock concorrenza in `doPost`.
+- Backfill stabilizzato con timeout esteso + throttling (`pg_sleep(1.5)`).
+- Nota operativa confermata: `TRUNCATE` non propaga delete row-level; usare `DELETE FROM public.rsvps` per svuotamento con sync verso foglio.
