@@ -251,3 +251,14 @@ I file archivio sotto `backup/` sono ignorati da Git tramite `.gitignore`.
 - Apps Script unificato su `scripts/google-sheet/wedding_rsvp_backup_core.gs` con lock concorrenza in `doPost`.
 - Backfill stabilizzato con timeout esteso + throttling (`pg_sleep(1.5)`).
 - Nota operativa confermata: `TRUNCATE` non propaga delete row-level; usare `DELETE FROM public.rsvps` per svuotamento con sync verso foglio.
+
+## Aggiornamento Operativo (2026-05-03)
+
+- Procedura backup invariata e rieseguita con comando canonico:
+  - `corepack pnpm run backup:new`
+- Backup incrementale creato in `backup/` con naming policy ufficiale (giorno/mese/ora, senza sovrascritture).
+
+## Aggiornamento Operativo (2026-05-03 - audit enterprise)
+
+- A valle dell'audit enterprise completo, eseguito nuovo backup incrementale con procedura canonica.
+- Convenzioni backup e policy di retention locale mantenute invariate.

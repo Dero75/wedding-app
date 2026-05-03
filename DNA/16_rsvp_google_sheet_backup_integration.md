@@ -60,3 +60,12 @@ Motivi:
 - Apps Script unificato su `scripts/google-sheet/wedding_rsvp_backup_core.gs` con lock concorrenza in `doPost`.
 - Backfill stabilizzato con timeout esteso + throttling (`pg_sleep(1.5)`).
 - Nota operativa confermata: `TRUNCATE` non propaga delete row-level; usare `DELETE FROM public.rsvps` per svuotamento con sync verso foglio.
+
+## Aggiornamento Operativo (2026-05-03 - verifica integrazione su audit enterprise)
+
+- Verifica SQL diretta su DB progetto completata durante audit enterprise.
+- Confermata presenza trigger `trg_rsvps_google_sheet_sync` su eventi `INSERT/UPDATE/DELETE`.
+- Confermata presenza chiavi runtime config:
+  - `GOOGLE_SHEET_WEBHOOK_URL`
+  - `GOOGLE_SHEET_WEBHOOK_TOKEN`
+- Nessuna modifica al flusso business o alla pipeline di backup RSVP -> Google Sheet.

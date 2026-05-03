@@ -272,3 +272,35 @@
 - Apps Script unificato su `scripts/google-sheet/wedding_rsvp_backup_core.gs` con lock concorrenza in `doPost`.
 - Backfill stabilizzato con timeout esteso + throttling (`pg_sleep(1.5)`).
 - Nota operativa confermata: `TRUNCATE` non propaga delete row-level; usare `DELETE FROM public.rsvps` per svuotamento con sync verso foglio.
+
+## Aggiornamento Operativo (2026-05-03 - favicon/browser + risoluzione errore Home)
+
+- Eliminato completamente il fallback favicon arancione legacy:
+  - aggiornati riferimenti icone in `artifacts/wedding-app/index.html`;
+  - aggiornato `artifacts/wedding-app/public/favicon.svg` alla versione brand `D&D`;
+  - rigenerato `artifacts/wedding-app/public/icons/favicon-32.png` da `icon-192.png`.
+- Corretto errore `vite:import-analysis` su `Home.tsx`:
+  - rimosso import non risolvibile `@assets/D&D.png`;
+  - uso asset esistente `"/assets/pass-palazzo-isolani.jpg"`.
+- Runtime locale ripristinato e stabile su `http://localhost:5001`.
+
+## Aggiornamento Enterprise (2026-05-03 - hardening toolchain + validazione DB)
+
+- Audit completo eseguito in modalità conservativa (no cambi business logic/UX).
+- Ripristino file critici di qualità locale:
+  - `eslint.config.mjs`
+  - `vitest.config.ts`
+  - `pnpm-workspace.yaml`
+  - `attached_assets/`
+- Pulizia obsoleto confermata:
+  - rimosso `src/components/dev/DevRoleSwitch.tsx` (non importato nel runtime).
+- Stato quality gate finale:
+  - `lint` OK
+  - `typecheck` OK
+  - `test` OK (22/22)
+  - `build` OK
+  - `deadcode` con soli export residui non bloccanti.
+- Supabase DB check diretto completato:
+  - anomalia credenziale locale DB risolta (user tenant aggiornato su progetto `hbmccalscnescpvomrjo`);
+  - schema RSVP coerente, trigger attivi, realtime attivo, runtime config Google Sheet presente;
+  - nessuna anomalia dati RSVP (`bad_rows=0`).

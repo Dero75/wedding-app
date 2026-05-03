@@ -9,7 +9,8 @@ import {
   FIXED_GROOM_NAME,
   FIXED_WEDDING_DATE_LABEL,
 } from "@/config/event";
-const coupleVenueImg = "/assets/pass-palazzo-isolani.jpg";
+
+const coupleVenueImg = "/assets/home-hero-dd.png";
 
 const INTRO_HOME_TRANSITION_KEY = "wedding_intro_home_white_fade";
 const HOME_WHITE_REVEAL_DURATION_MS = 1120;

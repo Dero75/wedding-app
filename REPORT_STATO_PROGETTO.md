@@ -484,3 +484,43 @@ Scorciatoie locali/hack:
     - `#c49470`,
     - `#a5583a`,
     - `#505a52`.
+
+## Aggiornamento Operativo (2026-05-03 - icone app/tab + fix import Home)
+
+- Allineata la strategia icone PWA/browser:
+  - `index.html` aggiornato con riferimenti espliciti a `apple-touch-icon`, `favicon-32`, `icon-192`, `icon-512`, `icon.svg`, `shortcut icon`.
+  - `manifest.webmanifest` esteso con `icon-1024.png`.
+  - `public/favicon.svg` sostituito: rimosso il quadrato arancione legacy e allineato alla grafica `D&D`.
+  - `public/icons/favicon-32.png` rigenerato da `icon-192.png` per coerenza visiva su tab Chrome.
+- Corretto blocco runtime Vite su Home:
+  - rimosso import non valido `@assets/D&D.png` in `src/pages/Home.tsx`;
+  - sostituito con asset reale `"/assets/pass-palazzo-isolani.jpg"`.
+- Dev server verificato e riavviato con successo su porta `5001`.
+
+## Aggiornamento Enterprise (2026-05-03 - audit completo stabilita e coerenza)
+
+- Eseguito audit enterprise end-to-end con vincoli conservativi (nessuna modifica a business logic, funzioni core o UX).
+- Ripristinata coerenza toolchain locale (workspace governance):
+  - ripristinati file mancanti `eslint.config.mjs`, `vitest.config.ts`, `pnpm-workspace.yaml`;
+  - ripristinata cartella `attached_assets/` necessaria per alias/config condivise.
+- Corretto blocco lint residuo su `Home.tsx` (solo formattazione import, nessun impatto runtime).
+- Rimossa superficie obsoleta non utilizzata:
+  - eliminato `artifacts/wedding-app/src/components/dev/DevRoleSwitch.tsx` (file non referenziato).
+- Verifiche quality gate eseguite e verdi:
+  - `lint` OK
+  - `typecheck` OK
+  - `test` OK (22/22)
+  - `build` OK
+  - `deadcode` OK su file inutilizzati (restano solo export inutilizzati non bloccanti).
+- Performance/build note:
+  - warning noto su bundle frontend principale (`~640.81 kB`) confermato;
+  - nessuna ottimizzazione invasiva applicata per rispettare vincoli di non alterazione logica/UX.
+- Verifica DB Supabase diretta completata con connessione SQL reale via `pg`:
+  - risolta anomalia `SUPABASE_DB_URL` locale (tenant/user non allineato al progetto corrente);
+  - tabelle chiave presenti: `public.rsvps`, `public.wedding_content`, `private.runtime_config`;
+  - trigger RSVP attivi su `INSERT/UPDATE/DELETE` + `updated_at`;
+  - publication realtime include `public.rsvps`;
+  - chiavi runtime Google Sheet presenti;
+  - integrita RSVP OK (`bad_rows=0`).
+- Delta verificato dopo ultimo aggiornamento `.md`:
+  - modifiche reali su `Home.tsx`, rimozione `DevRoleSwitch.tsx`, aggiornamento documentazione tecnica.
