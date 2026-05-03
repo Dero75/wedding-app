@@ -21,7 +21,7 @@ export default function AdminStats({
         </p>
         <p
           className="text-[9px] uppercase tracking-wide"
-          style={{ color: "#6f8f4a" }}
+          style={{ color: "#7f604d" }}
         >
           Adulti
         </p>
@@ -33,7 +33,7 @@ export default function AdminStats({
         </p>
         <p
           className="text-[9px] uppercase tracking-wide"
-          style={{ color: "#6f8f4a" }}
+          style={{ color: "#7f604d" }}
         >
           Under
         </p>
@@ -57,7 +57,7 @@ export default function AdminStats({
         </p>
         <p
           className="text-[9px] uppercase tracking-wide"
-          style={{ color: "#6f8f4a" }}
+          style={{ color: "#d4b483" }}
         >
           Celiaci
         </p>

@@ -107,22 +107,10 @@ function sanitizeDietaryCounts(
 
 function normalizeDietaryCountsToGuests(dietaryCounts: DietaryCounts, maxGuests: number): DietaryCounts {
   if (maxGuests <= 0) return createDefaultDietaryCounts();
-
-  const totalDietary = dietaryCounts.vegetarian + dietaryCounts.celiac;
-  if (totalDietary <= maxGuests) return dietaryCounts;
-
-  const normalized = { ...dietaryCounts };
-  let overflow = totalDietary - maxGuests;
-
-  const reducibleFlags: DietaryFlag[] = ["celiac", "vegetarian"];
-  for (const flag of reducibleFlags) {
-    if (overflow <= 0) break;
-    const reducible = Math.min(normalized[flag], overflow);
-    normalized[flag] -= reducible;
-    overflow -= reducible;
-  }
-
-  return normalized;
+  return {
+    vegetarian: Math.min(dietaryCounts.vegetarian, maxGuests),
+    celiac: Math.min(dietaryCounts.celiac, maxGuests),
+  };
 }
 
 function hasExactDietaryCountsSnapshot(value: unknown, counts: DietaryCounts): boolean {

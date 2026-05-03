@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { RefreshCcw } from "lucide-react";
+import { Bell, RefreshCcw } from "lucide-react";
 import Layout from "@/components/Layout";
 import PageContainer from "@/components/PageContainer";
 import SectionTitle from "@/components/SectionTitle";
@@ -14,10 +14,34 @@ import AdminRsvpSection from "@/pages/admin/components/AdminRsvpSection";
 import AdminStats from "@/pages/admin/components/AdminStats";
 
 export default function Admin() {
+  const NOTIFY_LAST_SEEN_KEY = "wedding_admin_rsvp_last_seen_submitted_at";
   const [rsvps, setRsvps] = useState<RSVPEntry[]>(() => getRSVPs());
   const [nameOrder, setNameOrder] = useState<"az" | "za">("az");
   const [statusFilter, setStatusFilter] = useState<"all" | "confirmed" | "declined">("all");
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [newRecordsCount, setNewRecordsCount] = useState(0);
+  const [lastSeenSubmittedAt, setLastSeenSubmittedAt] = useState<string | null>(null);
+
+  const getLatestSubmittedAt = (entries: RSVPEntry[]): string | null => {
+    if (entries.length === 0) return null;
+    return entries.reduce<string | null>((latest, entry) => {
+      if (!entry.submittedAt) return latest;
+      if (!latest) return entry.submittedAt;
+      return entry.submittedAt > latest ? entry.submittedAt : latest;
+    }, null);
+  };
+
+  const markNotificationsAsRead = () => {
+    const latest = getLatestSubmittedAt(getRSVPs());
+    setLastSeenSubmittedAt(latest);
+    setNewRecordsCount(0);
+    try {
+      if (latest) localStorage.setItem(NOTIFY_LAST_SEEN_KEY, latest);
+      else localStorage.removeItem(NOTIFY_LAST_SEEN_KEY);
+    } catch {
+      // ignore storage failures
+    }
+  };
 
   const adultsCount = useMemo(
     () => rsvps.reduce((acc, rsvp) => acc + (rsvp.attending ? rsvp.guestCount : 0), 0),
@@ -71,6 +95,29 @@ export default function Admin() {
   };
 
   useEffect(() => {
+    const latest = getLatestSubmittedAt(getRSVPs());
+    try {
+      const stored = localStorage.getItem(NOTIFY_LAST_SEEN_KEY);
+      if (stored) {
+        setLastSeenSubmittedAt(stored);
+      } else {
+        setLastSeenSubmittedAt(latest);
+        if (latest) localStorage.setItem(NOTIFY_LAST_SEEN_KEY, latest);
+      }
+    } catch {
+      setLastSeenSubmittedAt(latest);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!lastSeenSubmittedAt) {
+      setNewRecordsCount(0);
+      return;
+    }
+    setNewRecordsCount(rsvps.filter((entry) => entry.submittedAt > lastSeenSubmittedAt).length);
+  }, [lastSeenSubmittedAt, rsvps]);
+
+  useEffect(() => {
     if (!hasSupabaseConfig || !supabase) return;
     const realtimeClient = supabase;
 
@@ -80,7 +127,10 @@ export default function Admin() {
       .on(
         "postgres_changes",
         { event: "*", schema: "public", table: "rsvps" },
-        () => {
+        (payload) => {
+          if (payload.eventType === "INSERT") {
+            setNewRecordsCount((prev) => prev + 1);
+          }
           void refreshRsvpsFromDb().then(() => {
             if (active) setRsvps(getRSVPs());
           });
@@ -96,6 +146,22 @@ export default function Admin() {
 
   return (
     <Layout
+      adminTopbarLeftActions={
+        <button
+          type="button"
+          onClick={markNotificationsAsRead}
+          data-testid="button-admin-notifications-topbar"
+          aria-label="Segna notifiche come lette"
+          className="relative inline-flex h-10 w-10 items-center justify-center rounded-full border border-border text-foreground transition-colors hover:text-foreground/80 hover:bg-card"
+        >
+          <Bell size={19} />
+          {newRecordsCount > 0 && (
+            <span className="absolute -top-1.5 -right-1.5 min-w-[18px] h-[18px] rounded-full bg-destructive text-destructive-foreground text-[10px] leading-[18px] px-1 text-center">
+              {newRecordsCount > 99 ? "99+" : newRecordsCount}
+            </span>
+          )}
+        </button>
+      }
       adminTopbarActions={
         <button
           type="button"

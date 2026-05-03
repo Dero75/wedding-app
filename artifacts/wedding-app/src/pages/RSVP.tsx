@@ -55,15 +55,6 @@ export default function RSVP() {
       });
       return;
     }
-    const totalGuests = data.guestCount + data.childrenCount;
-    const totalDietary = data.dietaryCounts.vegetarian + data.dietaryCounts.celiac;
-    if (totalDietary > totalGuests) {
-      form.setError("dietaryCounts", {
-        type: "manual",
-        message: "Vegetariani + Celiaci non puo superare il totale invitati",
-      });
-      return;
-    }
 
     const entry: RSVPEntry = {
       id: submitted?.id ?? generateId(),

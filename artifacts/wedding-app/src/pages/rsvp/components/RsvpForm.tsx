@@ -46,15 +46,13 @@ export default function RsvpForm({
   const vegetarianCount = form.watch("dietaryCounts.vegetarian");
   const celiacCount = form.watch("dietaryCounts.celiac");
   const totalGuests = Math.max(0, (guestCount ?? 0) + (childrenCount ?? 0));
-
-  const maxVegetarian = Math.max(0, totalGuests - (celiacCount ?? 0));
-  const maxCeliac = Math.max(0, totalGuests - (vegetarianCount ?? 0));
+  const maxDietaryPerType = totalGuests;
 
   useEffect(() => {
     if (declineMode) return;
 
-    const nextVegetarian = Math.min(vegetarianCount ?? 0, maxVegetarian);
-    const nextCeliac = Math.min(celiacCount ?? 0, maxCeliac);
+    const nextVegetarian = Math.min(vegetarianCount ?? 0, maxDietaryPerType);
+    const nextCeliac = Math.min(celiacCount ?? 0, maxDietaryPerType);
 
     if ((vegetarianCount ?? 0) !== nextVegetarian) {
       form.setValue("dietaryCounts.vegetarian", nextVegetarian, {
@@ -70,7 +68,7 @@ export default function RsvpForm({
         shouldValidate: true,
       });
     }
-  }, [celiacCount, declineMode, form, maxCeliac, maxVegetarian, vegetarianCount]);
+  }, [celiacCount, declineMode, form, maxDietaryPerType, vegetarianCount]);
 
   const dietaryCountsError = form.formState.errors.dietaryCounts;
   const dietaryCountsErrorMessage =
@@ -188,7 +186,7 @@ export default function RsvpForm({
                     className={dietarySelectClass}
                   >
                     {Array.from(
-                      { length: (flag === "vegetarian" ? maxVegetarian : maxCeliac) + 1 },
+                      { length: maxDietaryPerType + 1 },
                       (_, index) => index,
                     ).map((count) => (
                       <option key={`${flag}-${count}`} value={count}>

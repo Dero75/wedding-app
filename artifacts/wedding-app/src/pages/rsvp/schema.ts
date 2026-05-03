@@ -16,12 +16,18 @@ export const rsvpSchema = z
   })
   .superRefine((data, ctx) => {
     const totalGuests = data.guestCount + data.childrenCount;
-    const totalDietary = data.dietaryCounts.vegetarian + data.dietaryCounts.celiac;
-    if (totalDietary > totalGuests) {
+    if (data.dietaryCounts.vegetarian > totalGuests) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
-        path: ["dietaryCounts"],
-        message: "Vegetariani + Celiaci non puo superare il totale invitati",
+        path: ["dietaryCounts", "vegetarian"],
+        message: "I vegetariani non possono superare il totale invitati",
+      });
+    }
+    if (data.dietaryCounts.celiac > totalGuests) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["dietaryCounts", "celiac"],
+        message: "I celiaci non possono superare il totale invitati",
       });
     }
   });

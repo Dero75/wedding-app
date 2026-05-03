@@ -4,9 +4,14 @@ import { Settings } from "lucide-react";
 interface LayoutProps {
   children: React.ReactNode;
   adminTopbarActions?: React.ReactNode;
+  adminTopbarLeftActions?: React.ReactNode;
 }
 
-export default function Layout({ children, adminTopbarActions }: LayoutProps) {
+export default function Layout({
+  children,
+  adminTopbarActions,
+  adminTopbarLeftActions,
+}: LayoutProps) {
   const [location] = useLocation();
   const isAdminRoute = location.startsWith("/admina");
   const isAdminHome = location === "/admina";
@@ -26,6 +31,8 @@ export default function Layout({ children, adminTopbarActions }: LayoutProps) {
             >
               Home
             </Link>
+          ) : isAdminHome ? (
+            <div className="-ml-2">{adminTopbarLeftActions}</div>
           ) : (
             <div className="w-[74px] h-8" aria-hidden="true" />
           )}
