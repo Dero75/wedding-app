@@ -10,7 +10,8 @@ import {
   FIXED_WEDDING_DATE_LABEL,
 } from "@/config/event";
 
-const coupleVenueImg = "/assets/home-hero-dd.png";
+const coupleVenueImg = "/assets/home-hero-dd.jpg";
+const coupleVenueImgSmall = "/assets/home-hero-dd-900.jpg";
 
 const INTRO_HOME_TRANSITION_KEY = "wedding_intro_home_white_fade";
 const HOME_WHITE_REVEAL_DURATION_MS = 1120;
@@ -56,9 +57,16 @@ export default function Home() {
         className={`home-screen flex flex-col overflow-x-hidden overflow-y-auto ${showWhiteReveal ? "home-content-reveal" : ""}`}
       >
         <div className="home-photo relative flex-shrink-0 overflow-hidden">
-          <div
-            className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-            style={{ backgroundImage: `url(${coupleVenueImg})` }}
+          <img
+            src={coupleVenueImg}
+            srcSet={`${coupleVenueImgSmall} 747w, ${coupleVenueImg} 1452w`}
+            sizes="100vw"
+            alt=""
+            aria-hidden="true"
+            fetchPriority="high"
+            loading="eager"
+            decoding="async"
+            className="absolute inset-0 h-full w-full object-cover object-center"
           />
           <div
             className="absolute inset-0"
