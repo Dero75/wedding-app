@@ -1,5 +1,5 @@
 import { Edit3, Leaf, WheatOff } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { UseFormReturn } from "react-hook-form";
 import { DIETARY_FLAG_LABELS, type DietaryFlag } from "@/config/rsvp";
 import WeddingButton from "@/components/WeddingButton";
@@ -41,6 +41,37 @@ export default function RsvpForm({
   onDecline,
 }: RsvpFormProps) {
   const [declineMode, setDeclineMode] = useState(initialDeclineMode);
+  const guestCount = form.watch("guestCount");
+  const childrenCount = form.watch("childrenCount");
+  const vegetarianCount = form.watch("dietaryCounts.vegetarian");
+  const celiacCount = form.watch("dietaryCounts.celiac");
+  const totalGuests = Math.max(0, (guestCount ?? 0) + (childrenCount ?? 0));
+
+  const maxVegetarian = Math.max(0, totalGuests - (celiacCount ?? 0));
+  const maxCeliac = Math.max(0, totalGuests - (vegetarianCount ?? 0));
+
+  useEffect(() => {
+    if (declineMode) return;
+
+    const nextVegetarian = Math.min(vegetarianCount ?? 0, maxVegetarian);
+    const nextCeliac = Math.min(celiacCount ?? 0, maxCeliac);
+
+    if ((vegetarianCount ?? 0) !== nextVegetarian) {
+      form.setValue("dietaryCounts.vegetarian", nextVegetarian, {
+        shouldDirty: true,
+        shouldTouch: true,
+        shouldValidate: true,
+      });
+    }
+    if ((celiacCount ?? 0) !== nextCeliac) {
+      form.setValue("dietaryCounts.celiac", nextCeliac, {
+        shouldDirty: true,
+        shouldTouch: true,
+        shouldValidate: true,
+      });
+    }
+  }, [celiacCount, declineMode, form, maxCeliac, maxVegetarian, vegetarianCount]);
+
   const dietaryCountsError = form.formState.errors.dietaryCounts;
   const dietaryCountsErrorMessage =
     dietaryCountsError && "message" in dietaryCountsError && typeof dietaryCountsError.message === "string"
@@ -156,7 +187,10 @@ export default function RsvpForm({
                     data-testid={`select-dietary-${flag}`}
                     className={dietarySelectClass}
                   >
-                    {Array.from({ length: 7 }, (_, index) => index).map((count) => (
+                    {Array.from(
+                      { length: (flag === "vegetarian" ? maxVegetarian : maxCeliac) + 1 },
+                      (_, index) => index,
+                    ).map((count) => (
                       <option key={`${flag}-${count}`} value={count}>
                         {count}
                       </option>

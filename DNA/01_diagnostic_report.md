@@ -304,3 +304,9 @@
   - anomalia credenziale locale DB risolta (user tenant aggiornato su progetto `hbmccalscnescpvomrjo`);
   - schema RSVP coerente, trigger attivi, realtime attivo, runtime config Google Sheet presente;
   - nessuna anomalia dati RSVP (`bad_rows=0`).
+
+## Aggiornamento Operativo (2026-05-03 - RSVP dietary selector hardening)
+
+- Hardening non invasivo del form RSVP: i selettori dieta ora rispettano in tempo reale il limite totale invitati.
+- Eliminata la possibilita di combinazioni incoerenti in UI (es. 3 ospiti, 4 celiaci).
+- Regression check completato: build logica invariata, test verdi.

@@ -524,3 +524,14 @@ Scorciatoie locali/hack:
   - integrita RSVP OK (`bad_rows=0`).
 - Delta verificato dopo ultimo aggiornamento `.md`:
   - modifiche reali su `Home.tsx`, rimozione `DevRoleSwitch.tsx`, aggiornamento documentazione tecnica.
+
+## Aggiornamento Operativo (2026-05-03 - vincolo dinamico vegetariani/celiaci RSVP)
+
+- Corretto comportamento selettori dieta nella pagina RSVP senza modificare layout/UX o business flow.
+- Implementata logica dinamica sui dropdown:
+  - `max vegetariani = adulti + under - celiaci`
+  - `max celiaci = adulti + under - vegetariani`
+- Garantito vincolo sempre coerente anche lato opzioni visibili: `vegetariani + celiaci <= adulti + under`.
+- Aggiunto clamp automatico dei valori dieta quando cambia il totale ospiti (evita stati incoerenti residui).
+- Validazione schema Zod invariata; correzione applicata al livello UI/form state.
+- Verifica post-fix: `typecheck` OK, test suite OK (22/22).

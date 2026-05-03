@@ -339,3 +339,10 @@ Note: event date and couple names are fixed at app level and not editable from A
 - Apps Script unificato su `scripts/google-sheet/wedding_rsvp_backup_core.gs` con lock concorrenza in `doPost`.
 - Backfill stabilizzato con timeout esteso + throttling (`pg_sleep(1.5)`).
 - Nota operativa confermata: `TRUNCATE` non propaga delete row-level; usare `DELETE FROM public.rsvps` per svuotamento con sync verso foglio.
+
+## Aggiornamento Operativo (2026-05-03 - constraint dinamico esigenze alimentari)
+
+- RSVP form allineato al vincolo reale invitati su selettori dieta.
+- I select `Vegetariani` e `Celiaci` mostrano solo valori compatibili col totale `adulti + under`.
+- Implementata normalizzazione runtime valori dieta quando il totale ospiti viene ridotto.
+- Nessuna variazione su layout visuale, copy o flusso business; migliorata solo coerenza dei controlli input.
