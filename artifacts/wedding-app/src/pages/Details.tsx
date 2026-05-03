@@ -141,7 +141,7 @@ export default function Details() {
           <div className="flex items-center justify-center gap-3 mb-4">
             <span
               className="h-6 w-6 rounded-sm border border-border"
-              style={{ background: "#dac09b" }}
+              style={{ background: "#f0dfc9" }}
               aria-label="Palette outfit 1"
             />
             <span
