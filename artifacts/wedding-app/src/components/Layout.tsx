@@ -1,6 +1,5 @@
 import { Link, useLocation } from "wouter";
 import { Settings } from "lucide-react";
-import DevRoleSwitch from "@/components/dev/DevRoleSwitch";
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -31,9 +30,7 @@ export default function Layout({ children, adminTopbarActions }: LayoutProps) {
             <div className="w-[74px] h-8" aria-hidden="true" />
           )}
 
-          <div className="absolute left-1/2 -translate-x-1/2">
-            <DevRoleSwitch />
-          </div>
+          <div className="absolute left-1/2 -translate-x-1/2 w-[74px] h-8" aria-hidden="true" />
 
           {isAdminHome ? (
             <div className="flex items-center gap-2 -mr-2">

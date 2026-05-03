@@ -186,6 +186,17 @@
   - badge dieta in linea con riga stato tramite icone + valore;
   - icona cestino centrata verticalmente a destra nella card.
 
+## Aggiornamento Operativo (2026-05-03 - navigazione e CTA home)
+
+- Rimosso dallo UI runtime il toggle `USER/ADMIN` nella topbar globale.
+- Home aggiornata con ordine CTA:
+  - `Il Programma` sopra;
+  - `Conferma la tua presenza` sotto.
+- Aggiunto in Home il pulsante `Non potrò partecipare` con instradamento a `/rsvp?decline=1`.
+- Flusso RSVP aggiornato:
+  - il pulsante `Non potrò partecipare` non è più mostrato nella pagina `/rsvp`;
+  - la modalità assenza viene attivata da query param (`decline=1`) mantenendo la stessa logica di salvataggio.
+
 
 ## Aggiornamento Enterprise (2026-04-09 - hardening intro/home + clean pass)
 

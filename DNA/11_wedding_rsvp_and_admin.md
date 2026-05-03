@@ -238,6 +238,18 @@ Note: event date and couple names are fixed at app level and not editable from A
   - rimosso corsivo dalle note `ceremonyNote`/`receptionNote`.
 - Admin contenuti esteso con gestione esplicita del box outfit:
   - nuovi campi `outfitTitle` e `outfitText` in `EditableContent` e `Admin Settings`.
+
+## Aggiornamento Operativo (2026-05-03 - RSVP entrypoint e semplificazione header)
+
+- Entrypoint assenza utente spostato in Home:
+  - nuovo pulsante `Non potrò partecipare` in home action area.
+  - il pulsante apre `/rsvp?decline=1`.
+- La logica assenza resta invariata:
+  - conferma nome/cognome;
+  - salvataggio RSVP con `attending=false`, `guestCount=1`, `childrenCount=0`, `dietaryCounts` azzerati.
+- Nella pagina RSVP il pulsante `Non potrò partecipare` non è più mostrato.
+- Topbar runtime semplificata:
+  - rimosso lo switch `USER/ADMIN` dalla UI.
 - Persistenza contenuti consolidata senza cambio logica business:
   - mapping storage aggiornato per i nuovi campi outfit;
   - in modalità DB-first i campi outfit vengono conservati tramite override locale dedicato, evitando regressioni con schema DB invariato.

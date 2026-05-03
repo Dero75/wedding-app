@@ -468,3 +468,19 @@ Scorciatoie locali/hack:
 - Rieseguiti quality gate finali: `typecheck`, `lint`, `test`, `build` (tutti OK).
 - Verifica dead-code rieseguita: solo export residuali non bloccanti.
 - Backup incrementale finale creato: `backup/Backup_10 Aprile_02.21.tar.zst`.
+
+## Aggiornamento Operativo (2026-05-03 - home/RSVP/details allineamento)
+
+- Rimosso toggle `USER/ADMIN` dalla topbar runtime (UI semplificata).
+- Home aggiornata:
+  - invertito ordine CTA (`Il Programma` prima, `Conferma la tua presenza` dopo);
+  - aggiunto pulsante `Non potrò partecipare` con sfondo beige chiaro.
+- RSVP aggiornato:
+  - il pulsante `Non potrò partecipare` non è più visualizzato nel form RSVP;
+  - modalità assenza attivata via `/rsvp?decline=1` mantenendo logica business invariata.
+- Details (`Outfit consigliato`) aggiornato:
+  - palette allineata a 4 campioni:
+    - `#f0dfc9` (primo colore schiarito progressivamente),
+    - `#c49470`,
+    - `#a5583a`,
+    - `#505a52`.
