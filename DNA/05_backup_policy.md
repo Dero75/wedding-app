@@ -262,3 +262,9 @@ I file archivio sotto `backup/` sono ignorati da Git tramite `.gitignore`.
 
 - A valle dell'audit enterprise completo, eseguito nuovo backup incrementale con procedura canonica.
 - Convenzioni backup e policy di retention locale mantenute invariate.
+
+## Aggiornamento Operativo (2026-05-04)
+
+- A valle dell'hardening finale, eseguito nuovo backup incrementale con comando canonico:
+  - `corepack pnpm run backup:new`
+- Backup precedenti mantenuti, nessuna sovrascrittura.

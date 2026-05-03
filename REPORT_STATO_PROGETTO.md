@@ -535,3 +535,20 @@ Scorciatoie locali/hack:
 - Aggiunto clamp automatico dei valori dieta quando cambia il totale ospiti (evita stati incoerenti residui).
 - Validazione schema Zod invariata; correzione applicata al livello UI/form state.
 - Verifica post-fix: `typecheck` OK, test suite OK (22/22).
+
+## Aggiornamento Enterprise (2026-05-04 - stabilizzazione finale user/admin)
+
+- Eseguito hardening finale completo su runtime user/admin con approccio conservativo (nessuna modifica a business logic o layout).
+- Quality gates finali confermati verdi:
+  - `lint` OK
+  - `typecheck` OK
+  - `test` OK (22/22)
+  - `build` OK
+- Verifica DB Supabase live confermata:
+  - integrita dati RSVP OK (`bad=0`)
+  - realtime attivo su `public.rsvps`
+  - trigger RSVP attivi (`INSERT/UPDATE/DELETE` + `updated_at`).
+- Performance frontend migliorata con splitting chunk vendor in build Vite:
+  - ridotto payload iniziale applicativo;
+  - migliorata fluidita percepita su dispositivi mobile economici senza cambiare UX.
+- Home hero image gia ottimizzata in step precedenti (asset responsive e alleggeriti) e mantenuta invariata a livello visivo.

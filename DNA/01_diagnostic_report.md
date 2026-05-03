@@ -310,3 +310,15 @@
 - Hardening non invasivo del form RSVP: i selettori dieta ora rispettano in tempo reale il limite totale invitati.
 - Eliminata la possibilita di combinazioni incoerenti in UI (es. 3 ospiti, 4 celiaci).
 - Regression check completato: build logica invariata, test verdi.
+
+## Aggiornamento Enterprise (2026-05-04 - release readiness)
+
+- Rieseguiti controlli completi di stabilita e coerenza su app wedding:
+  - `lint`, `typecheck`, `test`, `build` tutti OK.
+- Supabase validato direttamente in runtime:
+  - connessione DB operativa,
+  - coerenza dati RSVP,
+  - publication realtime e trigger attivi.
+- Ottimizzazione non invasiva performance build:
+  - introdotto chunk splitting vendor in `vite.config.ts` per migliorare avvio/caching su mobile low-end.
+- Nessuna regressione funzionale rilevata nei test di flusso user/admin.
