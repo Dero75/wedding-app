@@ -16,6 +16,10 @@ import { toast } from "@/hooks/use-toast";
 export default function RSVP() {
   const [submitted, setSubmitted] = useState<RSVPEntry | null>(() => getMyRSVP());
   const [editing, setEditing] = useState(false);
+  const [initialDeclineMode] = useState(() => {
+    if (typeof window === "undefined") return false;
+    return new URLSearchParams(window.location.search).get("decline") === "1";
+  });
   const [pendingConfirmation, setPendingConfirmation] = useState<RSVPFormData | null>(null);
   const [showSubmitConfirmModal, setShowSubmitConfirmModal] = useState(false);
   const [showInviteModal, setShowInviteModal] = useState(false);
@@ -195,6 +199,7 @@ export default function RSVP() {
           <RsvpForm
             form={form}
             editing={editing}
+            initialDeclineMode={initialDeclineMode}
             onCancelEdit={() => setEditing(false)}
             onSubmit={onSubmit}
             onDecline={onDecline}

@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Frown } from "lucide-react";
 import { Link } from "wouter";
 import Layout from "@/components/Layout";
 import WeddingButton from "@/components/WeddingButton";
@@ -109,6 +110,13 @@ export default function Home() {
 
             <div className="home-actions flex flex-col gap-2.5 flex-shrink-0 mt-10">
               <div className="w-[70%] mx-auto">
+                <Link href="/details">
+                  <WeddingButton variant="outline" fullWidth data-testid="button-cta-details">
+                    <span className="whitespace-pre-line text-center">{c.ctaDetails}</span>
+                  </WeddingButton>
+                </Link>
+              </div>
+              <div className="w-[70%] mx-auto">
                 <Link href="/rsvp">
                   <WeddingButton fullWidth data-testid="button-cta-rsvp">
                     <span className="whitespace-pre-line text-center">{c.ctaRSVP}</span>
@@ -116,10 +124,17 @@ export default function Home() {
                 </Link>
               </div>
               <div className="w-[70%] mx-auto">
-                <Link href="/details">
-                  <WeddingButton variant="outline" fullWidth data-testid="button-cta-details">
-                    <span className="whitespace-pre-line text-center">{c.ctaDetails}</span>
-                  </WeddingButton>
+                <Link href="/rsvp?decline=1">
+                  <button
+                    type="button"
+                    data-testid="button-home-decline-rsvp"
+                    className="w-full inline-flex items-center justify-center rounded-full border border-border bg-[#f3ede3] px-5 py-3 text-xs uppercase tracking-wider text-foreground hover:opacity-95 transition-opacity"
+                  >
+                    <span className="inline-flex items-center gap-1.5">
+                      <span>Non potrò partecipare</span>
+                      <Frown size={13} strokeWidth={1.8} aria-hidden="true" />
+                    </span>
+                  </button>
                 </Link>
               </div>
             </div>

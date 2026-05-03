@@ -1,4 +1,4 @@
-import { Edit3, Frown, Leaf, WheatOff } from "lucide-react";
+import { Edit3, Leaf, WheatOff } from "lucide-react";
 import { useState } from "react";
 import type { UseFormReturn } from "react-hook-form";
 import { DIETARY_FLAG_LABELS, type DietaryFlag } from "@/config/rsvp";
@@ -16,6 +16,7 @@ const dietarySelectClass =
 interface RsvpFormProps {
   form: UseFormReturn<RSVPFormData>;
   editing: boolean;
+  initialDeclineMode?: boolean;
   onCancelEdit: () => void;
   onSubmit: (data: RSVPFormData) => void;
   onDecline: (firstName: string, lastName: string) => Promise<void> | void;
@@ -31,8 +32,15 @@ const dietaryIconColor: Record<DietaryFlag, string> = {
   celiac: "#b38a63",
 };
 
-export default function RsvpForm({ form, editing, onCancelEdit, onSubmit, onDecline }: RsvpFormProps) {
-  const [declineMode, setDeclineMode] = useState(false);
+export default function RsvpForm({
+  form,
+  editing,
+  initialDeclineMode = false,
+  onCancelEdit,
+  onSubmit,
+  onDecline,
+}: RsvpFormProps) {
+  const [declineMode, setDeclineMode] = useState(initialDeclineMode);
   const dietaryCountsError = form.formState.errors.dietaryCounts;
   const dietaryCountsErrorMessage =
     dietaryCountsError && "message" in dietaryCountsError && typeof dietaryCountsError.message === "string"
@@ -182,20 +190,6 @@ export default function RsvpForm({ form, editing, onCancelEdit, onSubmit, onDecl
           {editing ? "Aggiorna risposta" : declineMode ? "Conferma la tua assenza" : "Invia conferma"}
         </WeddingButton>
       </div>
-
-      {!editing && !declineMode && (
-        <button
-          type="button"
-          data-testid="button-decline-rsvp"
-          onClick={() => setDeclineMode(true)}
-          className="w-full inline-flex items-center justify-center rounded-full border border-border bg-white px-5 py-3 text-xs uppercase tracking-wider text-foreground hover:opacity-95 transition-opacity"
-        >
-          <span className="inline-flex items-center gap-1.5">
-            <span>Non potrò partecipare</span>
-            <Frown size={13} strokeWidth={1.8} aria-hidden="true" />
-          </span>
-        </button>
-      )}
 
     </form>
   );
