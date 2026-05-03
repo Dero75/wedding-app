@@ -14,33 +14,39 @@ import AdminRsvpSection from "@/pages/admin/components/AdminRsvpSection";
 import AdminStats from "@/pages/admin/components/AdminStats";
 
 export default function Admin() {
-  const NOTIFY_LAST_SEEN_KEY = "wedding_admin_rsvp_last_seen_submitted_at";
+  const NOTIFY_SEEN_IDS_KEY = "wedding_admin_rsvp_seen_ids";
   const [rsvps, setRsvps] = useState<RSVPEntry[]>(() => getRSVPs());
   const [nameOrder, setNameOrder] = useState<"az" | "za">("az");
   const [statusFilter, setStatusFilter] = useState<"all" | "confirmed" | "declined">("all");
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [newRecordsCount, setNewRecordsCount] = useState(0);
-  const [lastSeenSubmittedAt, setLastSeenSubmittedAt] = useState<string | null>(null);
+  const [seenIds, setSeenIds] = useState<string[]>([]);
 
-  const getLatestSubmittedAt = (entries: RSVPEntry[]): string | null => {
-    if (entries.length === 0) return null;
-    return entries.reduce<string | null>((latest, entry) => {
-      if (!entry.submittedAt) return latest;
-      if (!latest) return entry.submittedAt;
-      return entry.submittedAt > latest ? entry.submittedAt : latest;
-    }, null);
-  };
-
-  const markNotificationsAsRead = () => {
-    const latest = getLatestSubmittedAt(getRSVPs());
-    setLastSeenSubmittedAt(latest);
-    setNewRecordsCount(0);
+  const persistSeenIds = (ids: string[]) => {
+    setSeenIds(ids);
     try {
-      if (latest) localStorage.setItem(NOTIFY_LAST_SEEN_KEY, latest);
-      else localStorage.removeItem(NOTIFY_LAST_SEEN_KEY);
+      localStorage.setItem(NOTIFY_SEEN_IDS_KEY, JSON.stringify(ids));
     } catch {
       // ignore storage failures
     }
+  };
+
+  const loadSeenIds = (): string[] | null => {
+    try {
+      const raw = localStorage.getItem(NOTIFY_SEEN_IDS_KEY);
+      if (!raw) return null;
+      const parsed = JSON.parse(raw);
+      if (!Array.isArray(parsed)) return null;
+      return parsed.filter((value): value is string => typeof value === "string" && value.length > 0);
+    } catch {
+      return null;
+    }
+  };
+
+  const markNotificationsAsRead = () => {
+    const merged = Array.from(new Set([...seenIds, ...getRSVPs().map((entry) => entry.id)]));
+    persistSeenIds(merged);
+    setNewRecordsCount(0);
   };
 
   const adultsCount = useMemo(
@@ -95,27 +101,19 @@ export default function Admin() {
   };
 
   useEffect(() => {
-    const latest = getLatestSubmittedAt(getRSVPs());
-    try {
-      const stored = localStorage.getItem(NOTIFY_LAST_SEEN_KEY);
-      if (stored) {
-        setLastSeenSubmittedAt(stored);
-      } else {
-        setLastSeenSubmittedAt(latest);
-        if (latest) localStorage.setItem(NOTIFY_LAST_SEEN_KEY, latest);
-      }
-    } catch {
-      setLastSeenSubmittedAt(latest);
+    const storedIds = loadSeenIds();
+    if (storedIds && storedIds.length > 0) {
+      setSeenIds(storedIds);
+      return;
     }
+    const initialIds = getRSVPs().map((entry) => entry.id);
+    persistSeenIds(initialIds);
   }, []);
 
   useEffect(() => {
-    if (!lastSeenSubmittedAt) {
-      setNewRecordsCount(0);
-      return;
-    }
-    setNewRecordsCount(rsvps.filter((entry) => entry.submittedAt > lastSeenSubmittedAt).length);
-  }, [lastSeenSubmittedAt, rsvps]);
+    const seenSet = new Set(seenIds);
+    setNewRecordsCount(rsvps.filter((entry) => !seenSet.has(entry.id)).length);
+  }, [rsvps, seenIds]);
 
   useEffect(() => {
     if (!hasSupabaseConfig || !supabase) return;
@@ -127,10 +125,7 @@ export default function Admin() {
       .on(
         "postgres_changes",
         { event: "*", schema: "public", table: "rsvps" },
-        (payload) => {
-          if (payload.eventType === "INSERT") {
-            setNewRecordsCount((prev) => prev + 1);
-          }
+        () => {
           void refreshRsvpsFromDb().then(() => {
             if (active) setRsvps(getRSVPs());
           });
@@ -141,6 +136,23 @@ export default function Admin() {
     return () => {
       active = false;
       void realtimeClient.removeChannel(channel);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!hasSupabaseConfig || !supabase) return;
+
+    const syncOnForeground = () => {
+      if (document.hidden) return;
+      void refreshRsvpsFromDb().then(() => setRsvps(getRSVPs()));
+    };
+
+    document.addEventListener("visibilitychange", syncOnForeground);
+    window.addEventListener("focus", syncOnForeground);
+
+    return () => {
+      document.removeEventListener("visibilitychange", syncOnForeground);
+      window.removeEventListener("focus", syncOnForeground);
     };
   }, []);
 
