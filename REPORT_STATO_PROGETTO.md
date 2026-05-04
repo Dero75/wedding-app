@@ -574,3 +574,44 @@ Scorciatoie locali/hack:
 - Aggiornati tutti i file `DNA/*.md` con lo stato corrente e il backup locale appena creato.
 - Nuovo backup locale creato: `backup/Backup_4 Maggio_20.42.tar.gz` (14.268.080 byte).
 - Verifiche correnti: `lint` OK, `typecheck` OK, `test` OK (26/26).
+
+## Aggiornamento Operativo (2026-05-04 - verifica parziale DB RSVP)
+
+- Ricevuto e analizzato report SQL parziale su `public.rsvps`.
+- Record riportati:
+  - Paolo Casale (`1777900852201-tc8st0e`): confermato, 2 adulti, 0 under, nessuna esigenza alimentare.
+  - Gloria Balducci (`1777907921361-xgcsl3a`): confermata, 1 adulto, 0 under, nessuna esigenza alimentare.
+- Totali dedotti: 2 conferme, 3 adulti, 0 assenti, 0 under, 0 vegetariani, 0 celiaci.
+- Integrati i documenti `DNA/11_wedding_rsvp_and_admin.md`, `DNA/12_wedding_future_supabase_plan.md` e `DNA/16_rsvp_google_sheet_backup_integration.md`.
+- Nessuna modifica runtime o SQL eseguita in questo passaggio.
+
+## Aggiornamento Operativo (2026-05-04 - restore backup RSVP versionato)
+
+- Analizzato report webhook `pg_net`: ultimi eventi disponibili (`32`-`36`) tutti `status_code=200`, `timed_out=false`, `error_msg=null`.
+- Aggiunto script `scripts/google-sheet/restore_rsvps_from_google_sheet_backup.sql` per restore da CSV Google Sheet `RSVP_BACKUP`.
+- Aggiunto report operativo `report/RESTORE_RSVP_GOOGLE_SHEET_BACKUP.md`.
+- Aggiornato `scripts/google-sheet/README.md` con procedura restore.
+- Nessuna modifica eseguita su Supabase: gli artefatti sono pronti per uso controllato in emergenza.
+
+## Aggiornamento Enterprise (2026-05-04 - mobile rendering, Google Sheet settings e deploy)
+
+- Admin Settings: aggiunto pulsante verde `Foglio Google` in fondo alla schermata impostazioni, configurabile tramite variabile `VITE_GOOGLE_SHEET_RSVP_BACKUP_URL`.
+- `.env.example` aggiornato con placeholder per URL Google Sheet; il link reale resta solo in `.env` locale/non versionato.
+- Stabilizzazione visuale mobile Android/iOS:
+  - rimossa variante Tailwind dark non prevista;
+  - dichiarato `color-scheme: only light` in HTML/CSS;
+  - portati `theme-color`, `background_color` e `theme_color` PWA su avorio chiaro (`#faf5ee`);
+  - aggiunta boot shell HTML avorio senza testo/icone per coprire il primissimo paint prima del mount React;
+  - caricamento Google Fonts spostato nell'head HTML per ridurre frame con font fallback su dispositivi lenti.
+- Avvio app:
+  - prima apertura su `/` mantiene Intro;
+  - dopo completamento intro nella stessa sessione, `/` renderizza direttamente Home tramite `sessionStorage` (`wedding_intro_completed`).
+- Nota PWA: Android puo mostrare per una frazione di secondo una splash nativa se l'app e installata in modalita standalone; la splash e ora neutralizzata con colori chiari e nome breve `D&D`, ma non e una pagina React eliminabile via codice web senza disattivare l'esperienza standalone.
+- Quality gates post-fix confermati verdi: `typecheck`, `lint`, test suite completa (27/27), `build`.
+
+## Backup Locale (2026-05-04 - pre-deploy)
+
+- Creato backup locale pre-commit/deploy con script canonico `scripts/create-backup.sh`.
+- Archivio: `backup/Backup_4 Maggio_21.13.tar.gz`.
+- Dimensione: `14.281.192` byte.
+- Il backup resta locale/ignorato da Git secondo policy di progetto.

@@ -281,3 +281,16 @@ Shared components (`WeddingButton`, `WeddingCard`, `Layout`, `SectionTitle`, `To
 - Verifiche runtime eseguite durante il ciclo: `lint`, `typecheck`, test mirati e suite test completa verdi; suite corrente a 26 test passati.
 - Dev server locale confermato attivo su `http://localhost:5001`.
 - Nuovo backup locale creato con procedura canonica: `backup/Backup_4 Maggio_20.42.tar.gz` (14.268.080 byte).
+
+## Aggiornamento Enterprise (2026-05-04 - light mode obbligatoria e boot mobile)
+
+- Tema canonico confermato: solo `Avorio Classico`, nessuna modalita dark prevista.
+- Rimossa la variante Tailwind `dark` non utilizzata dal CSS runtime wedding.
+- Aggiunto `color-scheme: only light` a livello HTML/CSS per impedire auto-dark dei browser Android/Samsung/Chrome quando il dispositivo e in dark mode.
+- PWA metadata allineati al tema chiaro:
+  - `theme-color: #faf5ee`;
+  - `background_color: #faf5ee`;
+  - `theme_color: #faf5ee`.
+- Aggiunta boot shell inline avorio in `index.html` per evitare flash di pagine/fallback prima del mount React sui dispositivi mobile lenti.
+- Google Fonts caricati tramite `preload` + `stylesheet` in `index.html`; rimosso `@import` dal CSS per anticipare il discovery dei font.
+- Nota tecnica: la splash nativa Android delle PWA standalone puo ancora apparire per una frazione di secondo; e gestita dal sistema operativo, non da React. Il progetto la neutralizza cromaticamente ma non la elimina senza rinunciare a `display: standalone`.

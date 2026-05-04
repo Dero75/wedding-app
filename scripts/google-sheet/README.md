@@ -24,6 +24,10 @@ Questa cartella contiene l'integrazione reale RSVP -> Google Sheet validata in p
   - nota operativa: `DELETE` sincronizza, `TRUNCATE` no
 - `rsvp_seed_mixed_20.sql`
   - seed SQL pronto con 20 record misti per test end-to-end
+- `restore_rsvps_from_google_sheet_backup.sql`
+  - procedura versionata per ripristino controllato da export CSV del tab `RSVP_BACKUP`
+  - usa staging table `private.rsvp_google_sheet_restore_staging`
+  - include preview/validazione prima dell'UPSERT su `public.rsvps`
 
 ## Colonne `RSVP_BACKUP`
 
@@ -53,6 +57,18 @@ Questa cartella contiene l'integrazione reale RSVP -> Google Sheet validata in p
 1. INSERT RSVP da app o SQL -> riga creata nel foglio.
 2. UPDATE RSVP -> riga aggiornata stesso `id`.
 3. DELETE RSVP (`delete from public.rsvps where id=...`) -> riga rimossa nel foglio.
+
+## Restore da backup
+
+Per ripristinare da Google Sheet:
+
+1. Esporta il tab `RSVP_BACKUP` come CSV.
+2. Esegui `restore_rsvps_from_google_sheet_backup.sql` PHASE 1 in Supabase.
+3. Importa il CSV nella staging table.
+4. Esegui PHASE 2 e verifica `invalid_rows = 0`.
+5. Esegui PHASE 3 solo dopo controllo dei totali.
+
+Report operativo: `report/RESTORE_RSVP_GOOGLE_SHEET_BACKUP.md`.
 
 ## Regola critica
 

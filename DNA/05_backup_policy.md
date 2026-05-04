@@ -284,3 +284,10 @@ I file archivio sotto `backup/` sono ignorati da Git tramite `.gitignore`.
 - Verifiche runtime eseguite durante il ciclo: `lint`, `typecheck`, test mirati e suite test completa verdi; suite corrente a 26 test passati.
 - Dev server locale confermato attivo su `http://localhost:5001`.
 - Nuovo backup locale creato con procedura canonica: `backup/Backup_4 Maggio_20.42.tar.gz` (14.268.080 byte).
+
+## Backup Locale (2026-05-04 - pre-deploy)
+
+- Creato nuovo backup locale prima del commit/push deploy.
+- Archivio: `backup/Backup_4 Maggio_21.13.tar.gz`.
+- Dimensione: `14.281.192` byte.
+- Il file rimane locale e non va versionato.

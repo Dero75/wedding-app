@@ -1,12 +1,12 @@
 {
-  "name": "Deborah & Davide Wedding",
+  "name": "D&D",
   "short_name": "D&D",
   "description": "Invito matrimonio Deborah e Davide",
   "start_url": ".",
   "scope": ".",
   "display": "standalone",
-  "background_color": "#3D2B1F",
-  "theme_color": "#3D2B1F",
+  "background_color": "#faf5ee",
+  "theme_color": "#faf5ee",
   "icons": [
     {
       "src": "icons/icon-192.png",

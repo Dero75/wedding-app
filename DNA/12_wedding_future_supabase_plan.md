@@ -487,3 +487,38 @@ Stato attuale: Supabase non    ancora collegato al runtime, solo pianificato.
 - Verifiche runtime eseguite durante il ciclo: `lint`, `typecheck`, test mirati e suite test completa verdi; suite corrente a 26 test passati.
 - Dev server locale confermato attivo su `http://localhost:5001`.
 - Nuovo backup locale creato con procedura canonica: `backup/Backup_4 Maggio_20.42.tar.gz` (14.268.080 byte).
+
+## Aggiornamento Operativo (2026-05-04 - verifica parziale `public.rsvps`)
+
+- Ricevuto output SQL parziale della tabella `public.rsvps` con gli ultimi record.
+- Stato dati riportato:
+  - Paolo Casale: confermato, 2 adulti, 0 under, dieta `{celiac:0, vegetarian:0}`.
+  - Gloria Balducci: confermata, 1 adulto, 0 under, dieta `{celiac:0, vegetarian:0}`.
+- La forma dei record e coerente con il mapping runtime attuale:
+  - `attending` boolean;
+  - `guest_count` adulti;
+  - `children_count` under;
+  - `dietary_counts` JSON con chiavi `celiac` e `vegetarian`.
+- Non sono emersi dal report problemi di shape dati o valori fuori vincolo.
+- Per completare audit DB/Supabase servono ancora, se richiesto, output di:
+  - schema colonne `public.rsvps`;
+  - trigger su `public.rsvps`;
+  - publication realtime;
+  - chiavi `private.runtime_config` per webhook Google Sheet.
+- Nessuno script di modifica DB va eseguito sulla base di questo report parziale.
+
+## Aggiornamento Operativo (2026-05-04 - restore RSVP da staging)
+
+- Aggiunto script SQL versionato per restore controllato da CSV Google Sheet:
+  - `scripts/google-sheet/restore_rsvps_from_google_sheet_backup.sql`.
+- Lo script usa staging table `private.rsvp_google_sheet_restore_staging` con colonne testuali allineate al tab `RSVP_BACKUP`.
+- La scrittura reale e separata in PHASE 3 e va eseguita solo dopo validazione PHASE 2 con `invalid_rows = 0`.
+- Strategia restore: `UPSERT` conservativo su `public.rsvps`, senza cancellare automaticamente record esistenti.
+- Per gli assenti il restore scrive `attending=false`, `guest_count=1`, `children_count=0` e dieta a zero, mantenendo compatibilita con vincolo DB/runtime e conteggi Admin.
+
+## Aggiornamento Operativo (2026-05-04 - restore e variabili deploy)
+
+- Restore RSVP da Google Sheet ora documentato e supportato da script SQL versionato con staging/validazione/upsert controllato.
+- Variabile deploy da configurare per accesso rapido Admin al mirror Google Sheet:
+  - `VITE_GOOGLE_SHEET_RSVP_BACKUP_URL`.
+- La variabile e solo frontend link-out: non sostituisce ne modifica le chiavi server `private.runtime_config` usate dal webhook Supabase/Apps Script.

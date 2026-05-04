@@ -368,3 +368,32 @@ Note: event date and couple names are fixed at app level and not editable from A
 - Verifiche runtime eseguite durante il ciclo: `lint`, `typecheck`, test mirati e suite test completa verdi; suite corrente a 26 test passati.
 - Dev server locale confermato attivo su `http://localhost:5001`.
 - Nuovo backup locale creato con procedura canonica: `backup/Backup_4 Maggio_20.42.tar.gz` (14.268.080 byte).
+
+## Aggiornamento Operativo (2026-05-04 - snapshot DB RSVP ricevuto)
+
+- Analizzato report SQL fornito dall'utente per `public.rsvps`.
+- Snapshot ricevuto contiene 2 record RSVP correnti:
+  - `1777900852201-tc8st0e` - Paolo Casale - `attending=true`, 2 adulti, 0 under, nessuna esigenza alimentare.
+  - `1777907921361-xgcsl3a` - Gloria Balducci - `attending=true`, 1 adulto, 0 under, nessuna esigenza alimentare.
+- Totale operativo dedotto dal report ricevuto: 2 conferme, 3 adulti confermati, 0 assenti, 0 under, 0 vegetariani, 0 celiaci.
+- Il report incollato non includeva gli output di trigger, publication realtime e `private.runtime_config`; tali elementi restano documentati come gia confermati nei cicli precedenti, ma per audit completo vanno riverificati con script SQL dedicato.
+- Nessuna modifica runtime necessaria in questo passaggio; aggiornata solo documentazione operativa.
+
+## Aggiornamento Operativo (2026-05-04 - restore amministrativo RSVP)
+
+- Aggiunta procedura versionata per ricostruire `public.rsvps` da backup Google Sheet in caso di problemi DB/app.
+- Lo script di restore conserva la semantica Admin:
+  - confermati contano adulti/under/diete;
+  - assenti restano `attending=false` e non incrementano conteggi persone/diete.
+- Nessuna modifica alla UI Admin o al runtime richiesta da questa procedura.
+
+## Aggiornamento Operativo (2026-05-04 - impostazioni admin e mobile hardening)
+
+- Pagina Admin Settings estesa con pulsante verde `Foglio Google` in fondo alla schermata.
+- Il pulsante legge `VITE_GOOGLE_SHEET_RSVP_BACKUP_URL`; se la variabile manca, viene mostrato disabilitato per evitare link rotti.
+- Il link reale del Google Sheet non deve essere versionato: resta in `.env` locale o nelle variabili ambiente del deploy.
+- Stabilizzazione avvio app mobile:
+  - shell HTML iniziale avorio prima del mount React;
+  - font caricati dall'head per ridurre flash di font fallback;
+  - avvio `/` diretto a Home quando l'intro e gia stata completata nella stessa sessione.
+- Nessuna modifica alle logiche Admin RSVP, PIN, Supabase o backup DB in questo passaggio.

@@ -4,7 +4,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import NotFound from "@/pages/not-found";
-import Intro from "@/pages/Intro";
+import Intro, { INTRO_COMPLETED_SESSION_KEY } from "@/pages/Intro";
 import Home from "@/pages/Home";
 import RSVP from "@/pages/RSVP";
 import Details from "@/pages/Details";
@@ -19,6 +19,14 @@ import {
 
 const queryClient = new QueryClient();
 
+function hasCompletedIntroThisSession(): boolean {
+  try {
+    return sessionStorage.getItem(INTRO_COMPLETED_SESSION_KEY) === "1";
+  } catch {
+    return false;
+  }
+}
+
 function LegacyStorageSanitizer() {
   useEffect(() => {
     clearLegacyAdminSettingsSnapshot();
@@ -29,7 +37,7 @@ function LegacyStorageSanitizer() {
 function Router() {
   return (
     <Switch>
-      <Route path="/" component={Intro} />
+      <Route path="/" component={hasCompletedIntroThisSession() ? Home : Intro} />
       <Route path="/home" component={Home} />
       <Route path="/rsvp" component={RSVP} />
       <Route path="/details" component={Details} />

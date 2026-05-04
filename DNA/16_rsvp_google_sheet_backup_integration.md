@@ -85,3 +85,48 @@ Motivi:
 - Verifiche runtime eseguite durante il ciclo: `lint`, `typecheck`, test mirati e suite test completa verdi; suite corrente a 26 test passati.
 - Dev server locale confermato attivo su `http://localhost:5001`.
 - Nuovo backup locale creato con procedura canonica: `backup/Backup_4 Maggio_20.42.tar.gz` (14.268.080 byte).
+
+## Aggiornamento Operativo (2026-05-04 - snapshot RSVP e implicazioni restore)
+
+- Analizzato report SQL ricevuto per gli ultimi record `public.rsvps`.
+- Dataset riportato al momento della verifica:
+  - `1777900852201-tc8st0e`, Paolo Casale, `Confermato`, 2 adulti, 0 under, 0 vegetariani, 0 celiaci.
+  - `1777907921361-xgcsl3a`, Gloria Balducci, `Confermato`, 1 adulto, 0 under, 0 vegetariani, 0 celiaci.
+- Totali dedotti dal report: 2 record, 2 confermati, 0 assenti, 3 adulti, 0 under, 0 vegetariani, 0 celiaci.
+- Questi dati sono compatibili con il formato del mirror `RSVP_BACKUP`:
+  - `id` -> `id`;
+  - `first_name` -> `nome`;
+  - `last_name` -> `cognome`;
+  - `attending=true` -> `stato=Confermato`;
+  - `guest_count` -> `adulti`;
+  - `children_count` -> `under`;
+  - `dietary_counts.vegetarian` -> `vegetariani`;
+  - `dietary_counts.celiac` -> `celiaci`.
+- Il report fornito non include verifica live del trigger `trg_rsvps_google_sheet_sync`, delle risposte `net._http_response` o delle chiavi `private.runtime_config`; nessuna conclusione nuova su webhook/backfill va quindi tratta da questo solo output.
+- Prossimo hardening consigliato: aggiungere script versionato di restore da CSV/staging Google Sheet verso `public.rsvps`, con modalità `upsert` e validazione dati prima della scrittura.
+
+## Aggiornamento Operativo (2026-05-04 - webhook OK e restore versionato)
+
+- Ricevuto report `net._http_response` con ultimi webhook Google Sheet:
+  - id `36`, `35`, `34`, `33`, `32`;
+  - tutti con `status_code=200`;
+  - tutti con `timed_out=false`;
+  - tutti con `error_msg=null`.
+- Stato dedotto: la pipeline webhook recente `Supabase -> Apps Script -> Google Sheet` risponde correttamente almeno sugli ultimi eventi osservati.
+- Aggiunto script versionato `scripts/google-sheet/restore_rsvps_from_google_sheet_backup.sql`.
+- Aggiunta guida operativa `report/RESTORE_RSVP_GOOGLE_SHEET_BACKUP.md`.
+- Restore progettato in tre fasi:
+  - creazione/clear staging table `private.rsvp_google_sheet_restore_staging`;
+  - preview e validazione CSV;
+  - `UPSERT` su `public.rsvps` solo dopo verifica manuale.
+- Nessuno script SQL di modifica e stato eseguito sul DB in questo ciclo.
+
+## Aggiornamento Operativo (2026-05-04 - accesso rapido al foglio da Admin)
+
+- Aggiunto accesso rapido al Google Sheet backup dalla schermata Admin Settings.
+- Configurazione runtime frontend tramite `VITE_GOOGLE_SHEET_RSVP_BACKUP_URL`.
+- Sicurezza operativa:
+  - `.env.example` contiene solo placeholder;
+  - `.env` locale contiene il link reale ed e ignorato da Git;
+  - il deploy deve definire la stessa variabile ambiente per rendere attivo il pulsante in produzione.
+- La modifica non altera la pipeline `public.rsvps -> pg_net -> Apps Script -> RSVP_BACKUP` e non introduce scritture dirette dal frontend al foglio.

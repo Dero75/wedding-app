@@ -1,9 +1,6 @@
-@import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Jost:wght@300;400;500&display=swap");
 @import "tailwindcss";
 @import "tw-animate-css";
 @plugin "@tailwindcss/typography";
-
-@custom-variant dark (&:is(.dark *));
 
 @theme inline {
   --color-background: hsl(var(--background));
@@ -55,6 +52,8 @@
    CANONICAL THEME: Avorio Classico
    ═══════════════════════════════════════════════════════════ */
 :root {
+  color-scheme: only light;
+
   --button-outline: rgba(74, 55, 40, 0.12);
   --badge-outline: rgba(74, 55, 40, 0.06);
   --opaque-button-border-intensity: -8;
@@ -162,10 +161,23 @@
 
   html {
     -webkit-tap-highlight-color: transparent;
+    background: hsl(var(--background));
+    color-scheme: only light;
   }
 
   body {
     @apply font-sans antialiased bg-background text-foreground;
+    min-height: 100vh;
+    background: hsl(var(--background));
+    color: hsl(var(--foreground));
+    color-scheme: only light;
+  }
+
+  #root {
+    min-height: 100vh;
+    background: hsl(var(--background));
+    color: hsl(var(--foreground));
+    color-scheme: only light;
   }
 
   h1,

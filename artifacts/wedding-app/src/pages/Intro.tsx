@@ -13,6 +13,7 @@ const INTRO_WHITE_FADE_HOLD_MS = 250;
 const INTRO_WHITE_FADE_START_MS =
   INTRO_ENTER_DELAY_MS - (INTRO_WHITE_FADE_DURATION_MS + INTRO_WHITE_FADE_HOLD_MS);
 const INTRO_HOME_TRANSITION_KEY = "wedding_intro_home_white_fade";
+export const INTRO_COMPLETED_SESSION_KEY = "wedding_intro_completed";
 const START_MUSIC_EVENT = "wedding:start-music";
 
 export default function Intro() {
@@ -47,6 +48,7 @@ export default function Intro() {
     navigationTimerRef.current = setTimeout(() => {
       try {
         sessionStorage.setItem(INTRO_HOME_TRANSITION_KEY, "1");
+        sessionStorage.setItem(INTRO_COMPLETED_SESSION_KEY, "1");
       } catch {
         // ignore
       }
