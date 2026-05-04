@@ -552,3 +552,25 @@ Scorciatoie locali/hack:
   - ridotto payload iniziale applicativo;
   - migliorata fluidita percepita su dispositivi mobile economici senza cambiare UX.
 - Home hero image gia ottimizzata in step precedenti (asset responsive e alleggeriti) e mantenuta invariata a livello visivo.
+
+## Aggiornamento Operativo (2026-05-04 - fix campanella admin su iOS)
+
+- Corretto comportamento notifiche campanella in `Gestione Invitati` su iPhone/Safari.
+- La logica non dipende piu solo dall'evento realtime istantaneo (che su iOS puo perdersi in background).
+- Nuovo conteggio robusto basato su record RSVP non ancora letti (tracking per `id` in storage locale admin).
+- Aggiunto riallineamento automatico al ritorno in foreground/focus:
+  - refresh RSVP da DB quando la pagina torna attiva.
+- Azzeramento notifiche invariato su tap campanella (`Segna come lette`).
+- Verifiche post-fix: `typecheck` OK, `lint` OK, test suite OK (22/22).
+
+## Aggiornamento Enterprise (2026-05-04 - commit runtime admin e backup)
+
+- Riallineato lo stato progetto dopo ciclo modifiche admin/home/backup.
+- Admin RSVP: card invitato ora modificabile tramite modale dedicato; aggiunta API storage `updateRSVP()` per aggiornamenti admin senza alterare la RSVP utente corrente.
+- Accesso admin: pulsante invisibile centrato in home con PIN `2015`, sessione via `sessionStorage`, tastierino touch friendly e pulsante `User` visibile in admin per rientro alla home pubblica.
+- Programma: ultimo swatch outfit aggiornato a salvia naturale leggermente scuro (`#96aa86`).
+- Campanella admin: fix persistente del conteggio notifiche non lette con chiave `wedding_admin_rsvp_seen_ids_v2`, nessuna auto-marcatura iniziale, sync tra tab e badge stabile su browser/PWA mobile.
+- Backup RSVP: confermata pipeline Google Sheet `RSVP_BACKUP` come mirror esterno di `public.rsvps`; restore oggi manuale via CSV/staging/upsert, consigliato prossimo script one-click.
+- Aggiornati tutti i file `DNA/*.md` con lo stato corrente e il backup locale appena creato.
+- Nuovo backup locale creato: `backup/Backup_4 Maggio_20.42.tar.gz` (14.268.080 byte).
+- Verifiche correnti: `lint` OK, `typecheck` OK, `test` OK (26/26).

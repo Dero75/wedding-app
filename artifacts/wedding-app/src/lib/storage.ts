@@ -263,6 +263,44 @@ export function saveMyRSVP(entry: RSVPEntry): void {
   storageSet(STORAGE_KEYS.rsvps, rsvpsCache);
 }
 
+export async function updateRSVP(entry: RSVPEntry): Promise<void> {
+  ensureBootstrappedSyncFallback();
+
+  const normalizedEntry: RSVPEntry = {
+    ...entry,
+    firstName: normalizePersonName(entry.firstName),
+    lastName: normalizePersonName(entry.lastName),
+  };
+  const previousRsvps = rsvpsCache;
+  const previousMyRsvp = myRsvpCache;
+  if (!rsvpsCache.some((rsvp) => rsvp.id === normalizedEntry.id)) throw new Error("RSVP not found");
+
+  rsvpsCache = rsvpsCache.map((rsvp) => (rsvp.id === normalizedEntry.id ? normalizedEntry : rsvp));
+  if (myRsvpCache?.id === normalizedEntry.id) myRsvpCache = normalizedEntry;
+
+  if (USE_DB_SOURCE) {
+    const { error } = await supabase!.from("rsvps").upsert(toDbRsvpRow(normalizedEntry), {
+      onConflict: "id",
+    });
+
+    if (error) {
+      rsvpsCache = previousRsvps;
+      myRsvpCache = previousMyRsvp;
+      throw new Error(error.message);
+    }
+
+    storageSet(STORAGE_KEYS.rsvps, rsvpsCache);
+    if (myRsvpCache?.id === normalizedEntry.id) {
+      storageSet(STORAGE_KEYS.myRsvpId, normalizedEntry.id);
+      storageRemove(STORAGE_KEYS.myRsvp);
+    }
+    return;
+  }
+
+  storageSet(STORAGE_KEYS.rsvps, rsvpsCache);
+  if (myRsvpCache?.id === normalizedEntry.id) storageSet(STORAGE_KEYS.myRsvp, normalizedEntry);
+}
+
 export async function deleteRSVPById(id: string): Promise<void> {
   ensureBootstrappedSyncFallback();
 

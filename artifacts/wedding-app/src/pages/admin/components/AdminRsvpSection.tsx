@@ -2,14 +2,21 @@ import { useMemo, useState } from "react";
 import { AlertTriangle, Leaf, Trash2, WheatOff, X } from "lucide-react";
 import { DIETARY_FLAG_LABELS, DIETARY_FLAG_VALUES } from "@/config/rsvp";
 import type { RSVPEntry } from "@/lib/storage";
+import AdminRsvpEditModal from "./AdminRsvpEditModal";
 
 interface AdminRsvpSectionProps {
   rsvps: RSVPEntry[];
   onDeleteRsvp: (id: string) => Promise<void>;
+  onUpdateRsvp: (entry: RSVPEntry) => Promise<void>;
 }
 
-export default function AdminRsvpSection({ rsvps, onDeleteRsvp }: AdminRsvpSectionProps) {
+export default function AdminRsvpSection({
+  rsvps,
+  onDeleteRsvp,
+  onUpdateRsvp,
+}: AdminRsvpSectionProps) {
   const [selectedRsvpId, setSelectedRsvpId] = useState<string | null>(null);
+  const [editingRsvpId, setEditingRsvpId] = useState<string | null>(null);
   const [deleteStep, setDeleteStep] = useState<1 | 2 | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
   const [deleteError, setDeleteError] = useState<string | null>(null);
@@ -17,6 +24,10 @@ export default function AdminRsvpSection({ rsvps, onDeleteRsvp }: AdminRsvpSecti
   const selectedRsvp = useMemo(
     () => (selectedRsvpId ? rsvps.find((rsvp) => rsvp.id === selectedRsvpId) ?? null : null),
     [rsvps, selectedRsvpId],
+  );
+  const editingRsvp = useMemo(
+    () => (editingRsvpId ? rsvps.find((rsvp) => rsvp.id === editingRsvpId) ?? null : null),
+    [editingRsvpId, rsvps],
   );
 
   const selectedName = selectedRsvp ? `${selectedRsvp.firstName} ${selectedRsvp.lastName}`.trim() : "";
@@ -66,7 +77,16 @@ export default function AdminRsvpSection({ rsvps, onDeleteRsvp }: AdminRsvpSecti
           rsvps.map((rsvp) => (
             <div
               key={rsvp.id}
-              className="p-3 rounded-xl border bg-white"
+              role="button"
+              tabIndex={0}
+              onClick={() => setEditingRsvpId(rsvp.id)}
+              onKeyDown={(event) => {
+                if (event.key !== "Enter" && event.key !== " ") return;
+                event.preventDefault();
+                setEditingRsvpId(rsvp.id);
+              }}
+              className="p-3 rounded-xl border bg-white cursor-pointer transition-colors hover:border-primary-border focus:outline-none focus:ring-2 focus:ring-ring/35"
+              data-testid={`card-rsvp-${rsvp.id}`}
               style={
                 rsvp.attending
                   ? undefined
@@ -119,7 +139,10 @@ export default function AdminRsvpSection({ rsvps, onDeleteRsvp }: AdminRsvpSecti
 
                 <button
                   type="button"
-                  onClick={() => startDeleteFlow(rsvp.id)}
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    startDeleteFlow(rsvp.id);
+                  }}
                   data-testid={`button-delete-rsvp-${rsvp.id}`}
                   className="inline-flex items-center justify-center p-1 text-[#b74a4a] hover:text-[#a53f3f] transition-colors shrink-0"
                   aria-label={`Elimina invitato ${`${rsvp.firstName} ${rsvp.lastName}`.trim()}`}
@@ -131,6 +154,14 @@ export default function AdminRsvpSection({ rsvps, onDeleteRsvp }: AdminRsvpSecti
           ))
         )}
       </div>
+
+      {editingRsvp && (
+        <AdminRsvpEditModal
+          rsvp={editingRsvp}
+          onClose={() => setEditingRsvpId(null)}
+          onSaveRsvp={onUpdateRsvp}
+        />
+      )}
 
       {deleteStep && selectedRsvp && (
         <div

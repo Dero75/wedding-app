@@ -7,20 +7,33 @@ import {
   deleteRSVPById,
   getRSVPs,
   refreshRsvpsFromDb,
+  updateRSVP,
   type RSVPEntry,
 } from "@/lib/storage";
 import { hasSupabaseConfig, supabase } from "@/lib/supabaseClient";
 import AdminRsvpSection from "@/pages/admin/components/AdminRsvpSection";
 import AdminStats from "@/pages/admin/components/AdminStats";
 
+const NOTIFY_SEEN_IDS_KEY = "wedding_admin_rsvp_seen_ids_v2";
+
+function loadSeenIds(): string[] {
+  try {
+    const raw = localStorage.getItem(NOTIFY_SEEN_IDS_KEY);
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    if (!Array.isArray(parsed)) return [];
+    return parsed.filter((value): value is string => typeof value === "string" && value.length > 0);
+  } catch {
+    return [];
+  }
+}
+
 export default function Admin() {
-  const NOTIFY_SEEN_IDS_KEY = "wedding_admin_rsvp_seen_ids";
   const [rsvps, setRsvps] = useState<RSVPEntry[]>(() => getRSVPs());
   const [nameOrder, setNameOrder] = useState<"az" | "za">("az");
   const [statusFilter, setStatusFilter] = useState<"all" | "confirmed" | "declined">("all");
   const [isRefreshing, setIsRefreshing] = useState(false);
-  const [newRecordsCount, setNewRecordsCount] = useState(0);
-  const [seenIds, setSeenIds] = useState<string[]>([]);
+  const [seenIds, setSeenIds] = useState<string[]>(() => loadSeenIds());
 
   const persistSeenIds = (ids: string[]) => {
     setSeenIds(ids);
@@ -31,22 +44,9 @@ export default function Admin() {
     }
   };
 
-  const loadSeenIds = (): string[] | null => {
-    try {
-      const raw = localStorage.getItem(NOTIFY_SEEN_IDS_KEY);
-      if (!raw) return null;
-      const parsed = JSON.parse(raw);
-      if (!Array.isArray(parsed)) return null;
-      return parsed.filter((value): value is string => typeof value === "string" && value.length > 0);
-    } catch {
-      return null;
-    }
-  };
-
   const markNotificationsAsRead = () => {
-    const merged = Array.from(new Set([...seenIds, ...getRSVPs().map((entry) => entry.id)]));
+    const merged = Array.from(new Set([...seenIds, ...rsvps.map((entry) => entry.id)]));
     persistSeenIds(merged);
-    setNewRecordsCount(0);
   };
 
   const adultsCount = useMemo(
@@ -83,9 +83,18 @@ export default function Admin() {
       return nameOrder === "az" ? comparison : -comparison;
     });
   }, [rsvps, statusFilter, nameOrder]);
+  const newRecordsCount = useMemo(() => {
+    const seenSet = new Set(seenIds);
+    return rsvps.filter((entry) => !seenSet.has(entry.id)).length;
+  }, [rsvps, seenIds]);
 
   const handleDeleteRsvp = async (id: string) => {
     await deleteRSVPById(id);
+    setRsvps(getRSVPs());
+  };
+
+  const handleUpdateRsvp = async (entry: RSVPEntry) => {
+    await updateRSVP(entry);
     setRsvps(getRSVPs());
   };
 
@@ -101,19 +110,15 @@ export default function Admin() {
   };
 
   useEffect(() => {
-    const storedIds = loadSeenIds();
-    if (storedIds && storedIds.length > 0) {
-      setSeenIds(storedIds);
-      return;
-    }
-    const initialIds = getRSVPs().map((entry) => entry.id);
-    persistSeenIds(initialIds);
+    const syncSeenIdsAcrossTabs = (event: StorageEvent) => {
+      if (event.key !== NOTIFY_SEEN_IDS_KEY) return;
+      setSeenIds(loadSeenIds());
+    };
+
+    window.addEventListener("storage", syncSeenIdsAcrossTabs);
+    return () => window.removeEventListener("storage", syncSeenIdsAcrossTabs);
   }, []);
 
-  useEffect(() => {
-    const seenSet = new Set(seenIds);
-    setNewRecordsCount(rsvps.filter((entry) => !seenSet.has(entry.id)).length);
-  }, [rsvps, seenIds]);
 
   useEffect(() => {
     if (!hasSupabaseConfig || !supabase) return;
@@ -168,7 +173,10 @@ export default function Admin() {
         >
           <Bell size={19} />
           {newRecordsCount > 0 && (
-            <span className="absolute -top-1.5 -right-1.5 min-w-[18px] h-[18px] rounded-full bg-destructive text-destructive-foreground text-[10px] leading-[18px] px-1 text-center">
+            <span
+              data-testid="badge-admin-notifications-count"
+              className="absolute -top-1.5 -right-1.5 min-w-[18px] h-[18px] rounded-full bg-destructive text-destructive-foreground text-[10px] leading-[18px] px-1 text-center"
+            >
               {newRecordsCount > 99 ? "99+" : newRecordsCount}
             </span>
           )}
@@ -264,7 +272,11 @@ export default function Admin() {
         </div>
 
         <div className="flex-1 min-h-0">
-          <AdminRsvpSection rsvps={filteredAndSortedRsvps} onDeleteRsvp={handleDeleteRsvp} />
+          <AdminRsvpSection
+            rsvps={filteredAndSortedRsvps}
+            onDeleteRsvp={handleDeleteRsvp}
+            onUpdateRsvp={handleUpdateRsvp}
+          />
         </div>
       </PageContainer>
     </Layout>

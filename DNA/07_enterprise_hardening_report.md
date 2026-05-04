@@ -276,3 +276,19 @@ All required gates are green.
 - Apps Script unificato su `scripts/google-sheet/wedding_rsvp_backup_core.gs` con lock concorrenza in `doPost`.
 - Backfill stabilizzato con timeout esteso + throttling (`pg_sleep(1.5)`).
 - Nota operativa confermata: `TRUNCATE` non propaga delete row-level; usare `DELETE FROM public.rsvps` per svuotamento con sync verso foglio.
+
+## Aggiornamento Enterprise (2026-05-04 - riallineamento runtime admin, notifiche e backup)
+
+- Eseguito riallineamento documentale completo dello stato corrente del progetto dopo le ultime modifiche runtime.
+- Admin `Gestione Invitati` esteso con modifica RSVP da card: click su card apre modale coerente con UI esistente per aggiornare nome, cognome, stato confermato/assente, adulti, under, vegetariani e celiaci.
+- Introdotta funzione storage dedicata `updateRSVP()` per aggiornare RSVP admin senza sovrascrivere `my_rsvp` dell utente corrente.
+- Accesso admin dalla home utente riallineato: pulsante invisibile centrato nella topbar bianca, modale PIN con codice `2015`, persistenza sessione via `sessionStorage` fino a chiusura app/browser.
+- Modale PIN reso mobile touch friendly con tastierino numerico 3x4, pulsante cancella e invio dedicato.
+- In area admin resta visibile il pulsante centrale `User` per rientrare nella sezione pubblica.
+- Pagina Programma aggiornata con ultimo swatch palette outfit in verde salvia naturale leggermente scuro (`#96aa86`).
+- Campanella notifiche admin corretta in modo persistente per browser e PWA mobile: rimossa auto-marcatura iniziale come letto, introdotta chiave `wedding_admin_rsvp_seen_ids_v2`, conteggio calcolato da RSVP non viste e sync tra tab tramite `storage` event.
+- Backup RSVP confermato come pipeline esterna operativa: `public.rsvps` Supabase resta source of truth, Google Sheet `RSVP_BACKUP` resta mirror CRUD via trigger `INSERT/UPDATE/DELETE` e Apps Script.
+- Restore RSVP da backup Google Sheet analizzato: oggi e possibile ripristinare manualmente via export CSV + staging table + upsert su `public.rsvps`; non esiste ancora script one-click versionato, consigliato come prossimo hardening operativo.
+- Verifiche runtime eseguite durante il ciclo: `lint`, `typecheck`, test mirati e suite test completa verdi; suite corrente a 26 test passati.
+- Dev server locale confermato attivo su `http://localhost:5001`.
+- Nuovo backup locale creato con procedura canonica: `backup/Backup_4 Maggio_20.42.tar.gz` (14.268.080 byte).

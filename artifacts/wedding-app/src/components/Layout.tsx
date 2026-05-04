@@ -1,10 +1,31 @@
+import { useState, type FormEvent, type ReactNode } from "react";
 import { Link, useLocation } from "wouter";
-import { Settings } from "lucide-react";
+import { Delete, Settings } from "lucide-react";
 
 interface LayoutProps {
-  children: React.ReactNode;
-  adminTopbarActions?: React.ReactNode;
-  adminTopbarLeftActions?: React.ReactNode;
+  children: ReactNode;
+  adminTopbarActions?: ReactNode;
+  adminTopbarLeftActions?: ReactNode;
+}
+
+const ADMIN_PIN = "2015";
+const ADMIN_SESSION_KEY = "wedding_admin_pin_unlocked";
+const PIN_KEYPAD_VALUES = ["1", "2", "3", "4", "5", "6", "7", "8", "9"] as const;
+
+function hasAdminSession(): boolean {
+  try {
+    return sessionStorage.getItem(ADMIN_SESSION_KEY) === "true";
+  } catch {
+    return false;
+  }
+}
+
+function setAdminSession(): void {
+  try {
+    sessionStorage.setItem(ADMIN_SESSION_KEY, "true");
+  } catch {
+    // Session persistence is best-effort; navigation can still proceed.
+  }
 }
 
 export default function Layout({
@@ -12,11 +33,51 @@ export default function Layout({
   adminTopbarActions,
   adminTopbarLeftActions,
 }: LayoutProps) {
-  const [location] = useLocation();
+  const [location, setLocation] = useLocation();
+  const [isPinModalOpen, setIsPinModalOpen] = useState(false);
+  const [pin, setPin] = useState("");
+  const [pinError, setPinError] = useState<string | null>(null);
   const isAdminRoute = location.startsWith("/admina");
   const isAdminHome = location === "/admina";
   const showAdminHomeButton = isAdminRoute && !isAdminHome;
   const isPublicHome = location === "/home";
+
+  const openAdminAccess = () => {
+    if (hasAdminSession()) {
+      setLocation("/admina");
+      return;
+    }
+    setPin("");
+    setPinError(null);
+    setIsPinModalOpen(true);
+  };
+
+  const closePinModal = () => {
+    setIsPinModalOpen(false);
+    setPin("");
+    setPinError(null);
+  };
+
+  const handlePinSubmit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (pin.trim() !== ADMIN_PIN) {
+      setPinError("PIN non corretto.");
+      return;
+    }
+    setAdminSession();
+    closePinModal();
+    setLocation("/admina");
+  };
+
+  const appendPinDigit = (digit: string) => {
+    setPin((current) => `${current}${digit}`.slice(0, ADMIN_PIN.length));
+    setPinError(null);
+  };
+
+  const deletePinDigit = () => {
+    setPin((current) => current.slice(0, -1));
+    setPinError(null);
+  };
 
   return (
     <div className="min-h-screen bg-background font-sans">
@@ -37,7 +98,26 @@ export default function Layout({
             <div className="w-[74px] h-8" aria-hidden="true" />
           )}
 
-          <div className="absolute left-1/2 -translate-x-1/2 w-[74px] h-8" aria-hidden="true" />
+          {isPublicHome ? (
+            <button
+              type="button"
+              onClick={openAdminAccess}
+              data-testid="button-hidden-admin-access"
+              className="absolute left-1/2 top-1/2 h-10 w-10 -translate-x-1/2 -translate-y-1/2 rounded-full bg-background text-transparent outline-none focus-visible:ring-2 focus-visible:ring-ring/30"
+              aria-label="Accedi ad admin"
+            />
+          ) : isAdminRoute ? (
+            <Link
+              href="/home"
+              data-testid="button-user-switch-topbar"
+              className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full border border-border bg-card px-4 py-2 font-sans text-[10px] uppercase tracking-wider text-foreground transition-colors hover:bg-background hover:text-foreground/80"
+              aria-label="Torna alla sezione user"
+            >
+              User
+            </Link>
+          ) : (
+            <div className="absolute left-1/2 -translate-x-1/2 w-[74px] h-8" aria-hidden="true" />
+          )}
 
           {isAdminHome ? (
             <div className="flex items-center gap-2 -mr-2">
@@ -68,6 +148,100 @@ export default function Layout({
 
       {/* Main */}
       <main className="pt-14">{children}</main>
+
+      {isPinModalOpen && (
+        <div
+          className="fixed inset-0 z-[90] flex items-center justify-center bg-foreground/30 px-5 backdrop-blur-sm"
+          onClick={closePinModal}
+        >
+          <form
+            onSubmit={handlePinSubmit}
+            className="w-full max-w-sm rounded-2xl border border-border bg-card p-5 text-center shadow-xl"
+            onClick={(event) => event.stopPropagation()}
+            role="dialog"
+            aria-modal="true"
+            aria-label="Accesso admin"
+            data-testid="modal-admin-pin"
+          >
+            <p className="mb-2 font-sans text-[10px] uppercase tracking-wider text-muted-foreground">
+              Area riservata
+            </p>
+            <h3 className="mb-4 font-serif text-2xl leading-tight" style={{ color: "hsl(var(--foreground))" }}>
+              Accesso admin
+            </h3>
+            <input
+              value={pin}
+              onChange={(event) => {
+                setPin(event.target.value.replace(/\D/g, "").slice(0, ADMIN_PIN.length));
+                setPinError(null);
+              }}
+              autoFocus
+              type="password"
+              inputMode="numeric"
+              maxLength={4}
+              className="mb-2 w-full rounded-xl border border-border bg-white px-4 py-3 text-center font-sans text-lg tracking-wider text-foreground outline-none transition-all focus:border-accent focus:ring-2 focus:ring-ring/40"
+              aria-label="PIN admin"
+              data-testid="input-admin-pin"
+            />
+            {pinError && <p className="mb-3 text-xs text-destructive">{pinError}</p>}
+
+            <div className="mx-auto mt-4 grid max-w-[16rem] grid-cols-3 gap-2.5" aria-label="Tastierino PIN">
+              {PIN_KEYPAD_VALUES.map((digit) => (
+                <button
+                  key={digit}
+                  type="button"
+                  onClick={() => appendPinDigit(digit)}
+                  className="flex h-14 items-center justify-center rounded-2xl border border-border bg-white font-sans text-xl text-foreground transition-colors hover:bg-background active:bg-muted"
+                  data-testid={`button-pin-digit-${digit}`}
+                >
+                  {digit}
+                </button>
+              ))}
+              <button
+                type="button"
+                onClick={deletePinDigit}
+                className="flex h-14 items-center justify-center rounded-2xl border border-border bg-white text-muted-foreground transition-colors hover:bg-background hover:text-foreground active:bg-muted"
+                aria-label="Cancella cifra"
+                data-testid="button-pin-delete"
+              >
+                <Delete size={20} />
+              </button>
+              <button
+                type="button"
+                onClick={() => appendPinDigit("0")}
+                className="flex h-14 items-center justify-center rounded-2xl border border-border bg-white font-sans text-xl text-foreground transition-colors hover:bg-background active:bg-muted"
+                data-testid="button-pin-digit-0"
+              >
+                0
+              </button>
+              <button
+                type="submit"
+                className="flex h-14 items-center justify-center rounded-2xl border border-primary-border bg-primary font-sans text-[10px] uppercase tracking-wider text-primary-foreground transition-opacity hover:opacity-95 active:opacity-90"
+                data-testid="button-pin-keypad-submit"
+              >
+                Entra
+              </button>
+            </div>
+
+            <div className="mt-4 flex gap-2.5">
+              <button
+                type="button"
+                onClick={closePinModal}
+                className="flex-1 rounded-full border border-border px-4 py-2.5 text-xs uppercase tracking-wider text-muted-foreground transition-colors hover:border-muted-foreground/40 hover:text-foreground"
+              >
+                Annulla
+              </button>
+              <button
+                type="submit"
+                className="flex-1 rounded-full border border-primary-border bg-primary px-4 py-2.5 text-xs uppercase tracking-wider text-primary-foreground transition-opacity hover:opacity-95"
+                data-testid="button-submit-admin-pin"
+              >
+                Entra
+              </button>
+            </div>
+          </form>
+        </div>
+      )}
     </div>
   );
 }

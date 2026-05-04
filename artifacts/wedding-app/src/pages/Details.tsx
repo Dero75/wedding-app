@@ -156,7 +156,7 @@ export default function Details() {
             />
             <span
               className="h-6 w-6 rounded-sm border border-border"
-              style={{ background: "#505a52" }}
+              style={{ background: "#96aa86" }}
               aria-label="Palette outfit 4"
             />
           </div>
