@@ -305,3 +305,9 @@ I file archivio sotto `backup/` sono ignorati da Git tramite `.gitignore`.
 - Archivio: `backup/Backup_4 Maggio_21.52.tar.gz`.
 - Dimensione: `12.895.299` byte.
 - Il file resta locale e non va versionato.
+
+## Aggiornamento Operativo (2026-05-04 - keepalive Supabase)
+
+- Creato nuovo backup incrementale prima dell'intervento keepalive: `Backup_4 Maggio_21.54.tar.gz`.
+- Aggiunta automazione esterna GitHub Actions per ping giornaliero Supabase, senza scritture database e senza impatto runtime sull'app.
+- Confermata strategia: il backup locale resta separato dalla prevenzione sleep Supabase; il keepalive serve solo a mantenere attivo il progetto Free quando possibile.

@@ -640,3 +640,15 @@ Scorciatoie locali/hack:
   - `typecheck` OK;
   - `test` OK (27/27);
   - `build` OK.
+
+## Aggiornamento Operativo (2026-05-04 - Supabase keepalive)
+
+- Verificato che non esisteva un keep-alive schedulato nel progetto.
+- Aggiunto keep-alive esterno giornaliero con GitHub Actions per ridurre il rischio di pausa Supabase Free dopo inattivita.
+- Implementato script `scripts/supabase-keepalive.mjs`:
+  - usa REST API Supabase con anon key;
+  - legge env da secrets/vars CI o fallback locale;
+  - esegue solo lettura `wedding_content.id` con timeout e retry automatico;
+  - non scrive su DB e non impatta runtime app.
+- Aggiunto workflow `.github/workflows/supabase-keepalive.yml` con schedule giornaliera e avvio manuale.
+- Ping reale locale verificato con esito OK.

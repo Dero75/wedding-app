@@ -522,3 +522,16 @@ Stato attuale: Supabase non    ancora collegato al runtime, solo pianificato.
 - Variabile deploy da configurare per accesso rapido Admin al mirror Google Sheet:
   - `VITE_GOOGLE_SHEET_RSVP_BACKUP_URL`.
 - La variabile e solo frontend link-out: non sostituisce ne modifica le chiavi server `private.runtime_config` usate dal webhook Supabase/Apps Script.
+
+## Aggiornamento Operativo (2026-05-04 - keepalive Supabase Free)
+
+- Supabase Free puo essere pausato per bassa attivita su finestra di circa 7 giorni.
+- Il keepalive non deve stare solo nella web app: se nessuno apre l'app, il codice frontend non parte.
+- Implementata schedulazione esterna tramite GitHub Actions:
+  - `.github/workflows/supabase-keepalive.yml`;
+  - `scripts/supabase-keepalive.mjs`.
+- Il ping usa REST API Supabase con anon key, legge `wedding_content.id` e riprova automaticamente in caso di errore temporaneo.
+- Nessuna scrittura su `public.rsvps`, `public.wedding_content`, Google Sheet o altre tabelle.
+- Configurazione consigliata GitHub Actions secrets:
+  - `SUPABASE_URL`;
+  - `SUPABASE_ANON_KEY`.
