@@ -22,7 +22,7 @@ export default function RsvpConfirmationView({ submitted, onEdit }: RsvpConfirma
           {isAttending
             ? `Con gioia confermiamo la registrazione per ${totalGuests} ${
                 totalGuests === 1 ? "persona" : "persone"
-              } (totale adulti+under).`
+              } .`
             : `Abbiamo registrato la tua non partecipazione, ${fullName}.`}
         </p>
 

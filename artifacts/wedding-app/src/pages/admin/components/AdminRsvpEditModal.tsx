@@ -1,6 +1,10 @@
 import { useEffect, useMemo, useState, type FormEvent } from "react";
 import { Check, Leaf, WheatOff, X } from "lucide-react";
-import { DIETARY_FLAG_LABELS, DIETARY_FLAG_VALUES, createDefaultDietaryCounts } from "@/config/rsvp";
+import {
+  DIETARY_FLAG_LABELS,
+  DIETARY_FLAG_VALUES,
+  createDefaultDietaryCounts,
+} from "@/config/rsvp";
 import { normalizePersonName } from "@/lib/personName";
 import type { RSVPEntry } from "@/lib/storage";
 
@@ -34,7 +38,10 @@ export default function AdminRsvpEditModal({ rsvp, onClose, onSaveRsvp }: AdminR
   const [isSaving, setIsSaving] = useState(false);
 
   const totalGuests = Math.max(0, draft.guestCount + draft.childrenCount);
-  const dietaryTotal = DIETARY_FLAG_VALUES.reduce((acc, flag) => acc + draft.dietaryCounts[flag], 0);
+  const dietaryTotal = DIETARY_FLAG_VALUES.reduce(
+    (acc, flag) => acc + draft.dietaryCounts[flag],
+    0,
+  );
   const selectedName = `${rsvp.firstName} ${rsvp.lastName}`.trim();
 
   const dietaryOptions = useMemo(
@@ -113,12 +120,12 @@ export default function AdminRsvpEditModal({ rsvp, onClose, onSaveRsvp }: AdminR
 
   return (
     <div
-      className="fixed inset-0 z-[80] flex items-center justify-center bg-foreground/30 px-5 backdrop-blur-sm"
+      className="fixed inset-0 z-[80] flex items-center justify-center overflow-y-auto bg-foreground/30 px-4 py-4 backdrop-blur-sm [padding-bottom:max(1rem,env(safe-area-inset-bottom))] [padding-top:max(1rem,env(safe-area-inset-top))] sm:px-5"
       onClick={isSaving ? undefined : onClose}
     >
       <form
         onSubmit={(event) => void handleSubmit(event)}
-        className="max-h-[88dvh] w-full max-w-md overflow-y-auto rounded-2xl border border-border bg-card p-5 shadow-xl"
+        className="max-h-[calc(100dvh-2rem)] w-full max-w-md overflow-y-auto rounded-2xl border border-border bg-card p-5 shadow-xl"
         onClick={(event) => event.stopPropagation()}
         role="dialog"
         aria-modal="true"
@@ -130,7 +137,10 @@ export default function AdminRsvpEditModal({ rsvp, onClose, onSaveRsvp }: AdminR
             <p className="font-sans text-[10px] uppercase tracking-wider text-muted-foreground">
               Gestione invitato
             </p>
-            <h3 className="font-serif text-2xl leading-tight" style={{ color: "hsl(var(--foreground))" }}>
+            <h3
+              className="font-serif text-2xl leading-tight"
+              style={{ color: "hsl(var(--foreground))" }}
+            >
               Modifica conferma
             </h3>
           </div>
@@ -176,7 +186,9 @@ export default function AdminRsvpEditModal({ rsvp, onClose, onSaveRsvp }: AdminR
               </span>
               <input
                 value={draft.firstName}
-                onChange={(event) => setDraft((current) => ({ ...current, firstName: event.target.value }))}
+                onChange={(event) =>
+                  setDraft((current) => ({ ...current, firstName: event.target.value }))
+                }
                 onBlur={(event) =>
                   setDraft((current) => ({
                     ...current,
@@ -194,7 +206,9 @@ export default function AdminRsvpEditModal({ rsvp, onClose, onSaveRsvp }: AdminR
               </span>
               <input
                 value={draft.lastName}
-                onChange={(event) => setDraft((current) => ({ ...current, lastName: event.target.value }))}
+                onChange={(event) =>
+                  setDraft((current) => ({ ...current, lastName: event.target.value }))
+                }
                 onBlur={(event) =>
                   setDraft((current) => ({
                     ...current,
@@ -217,7 +231,10 @@ export default function AdminRsvpEditModal({ rsvp, onClose, onSaveRsvp }: AdminR
                   <select
                     value={draft.guestCount}
                     onChange={(event) =>
-                      setDraft((current) => ({ ...current, guestCount: Number(event.target.value) }))
+                      setDraft((current) => ({
+                        ...current,
+                        guestCount: Number(event.target.value),
+                      }))
                     }
                     className={fieldClass}
                     data-testid="select-edit-rsvp-guest-count"
@@ -232,19 +249,22 @@ export default function AdminRsvpEditModal({ rsvp, onClose, onSaveRsvp }: AdminR
 
                 <label className="space-y-1.5">
                   <span className="font-sans text-[10px] uppercase tracking-wider text-muted-foreground">
-                    Under
+                    Under18
                   </span>
                   <select
                     value={draft.childrenCount}
                     onChange={(event) =>
-                      setDraft((current) => ({ ...current, childrenCount: Number(event.target.value) }))
+                      setDraft((current) => ({
+                        ...current,
+                        childrenCount: Number(event.target.value),
+                      }))
                     }
                     className={fieldClass}
                     data-testid="select-edit-rsvp-children-count"
                   >
                     {[0, 1, 2, 3, 4, 5, 6].map((count) => (
                       <option key={count} value={count}>
-                        {count} under
+                        {count} under18
                       </option>
                     ))}
                   </select>

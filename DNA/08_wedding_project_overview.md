@@ -1,4 +1,4 @@
-# 01     Project Overview
+# 01 Project Overview
 
 ## What this is
 
@@ -6,15 +6,15 @@ A mobile-first digital wedding invitation and RSVP web app for **Deborah & David
 
 ## Stack
 
-| Layer       | Technology                                              |
-| ----------- | ------------------------------------------------------- |
-| Framework   | React 19 + Vite + TypeScript                            |
-| Routing     | Wouter                                                  |
-| Styling     | Tailwind CSS v4 + tw-animate-css                        |
-| Forms       | react-hook-form + zod                                   |
-| Icons       | lucide-react                                            |
-| Persistence | localStorage                                            |
-| Fonts       | Cormorant Garamond (serif) + Jost (sans)     Google Fonts |
+| Layer       | Technology                                            |
+| ----------- | ----------------------------------------------------- |
+| Framework   | React 19 + Vite + TypeScript                          |
+| Routing     | Wouter                                                |
+| Styling     | Tailwind CSS v4 + tw-animate-css                      |
+| Forms       | react-hook-form + zod                                 |
+| Icons       | lucide-react                                          |
+| Persistence | localStorage                                          |
+| Fonts       | Cormorant Garamond (serif) + Jost (sans) Google Fonts |
 
 ## Language
 
@@ -22,13 +22,13 @@ All user-facing text is in Italian.
 
 ## Architecture principles
 
-1. **Single data layer**     all persistence lives in `src/lib/storage.ts`. No page component ever accesses `localStorage` directly.
+1. **Single data layer** all persistence lives in `src/lib/storage.ts`. No page component ever accesses `localStorage` directly.
 2. **EditableContent** is the authoritative source for user-facing text except event date, which is fixed in `src/config/event.ts`. All pages call `getContent()` for editable copy.
 3. **AdminSettings** controls only editable text/content.
-4. **Single visual theme**     the app uses one canonical `Avorio Classico` theme; no runtime preset switching.
-5. **Admin direct access**     `/admin` is directly available (no PIN gate).
-6. **RSVP model**     confirm-only with structured fields (`firstName`, `lastName`, `guestCount`, `childrenCount`, `dietaryCounts`).
-7. **Supabase-ready**     swap the implementations in `storage.ts`. Zero page changes needed.
+4. **Single visual theme** the app uses one canonical `Avorio Classico` theme; no runtime preset switching.
+5. **Admin direct access** `/admin` is directly available (no PIN gate).
+6. **RSVP model** confirm-only with structured fields (`firstName`, `lastName`, `guestCount`, `childrenCount`, `dietaryCounts`).
+7. **Supabase-ready** swap the implementations in `storage.ts`. Zero page changes needed.
 
 ## Folder structure
 
@@ -65,22 +65,22 @@ attached_assets/          # Venue photos
 - Verifiche complete rieseguite: install/ typecheck/ lint/ build/ test tutti OK.
 - Rimozione completa logica `vegano` dal runtime RSVP (config, schema, form, storage, test).
 - Etichette alimentari aggiornate: `Vegetariani`, `Celiaci`.
-- Home ottimizzata: data fissa `Venerdi 11 Settembre 2026`, nome coppia e citt   centrati con interspazi ridotti; separatore senza icona cuore.
+- Home ottimizzata: data fissa `Venerdi 11 Settembre 2026`, nome coppia e citt centrati con interspazi ridotti; separatore senza icona cuore.
 - Dettagli (`Cerimonia`/`Ricevimento`) compattati ~20% mantenendo stile/layout canonico.
 - Header admin consolidato: `Home` a sinistra, switch USER/ADMIN centrato, hamburger assente in `/admin*`.
-- Stabilit   dev server migliorata: avvio detached affidabile in `scripts/wedding-app-dev-server.sh` per evitare stop intermittenti su `5001`.
+- Stabilit dev server migliorata: avvio detached affidabile in `scripts/wedding-app-dev-server.sh` per evitare stop intermittenti su `5001`.
 - Nessuna modifica di business logic; solo consolidamento tecnico e coerenza runtime/documentazione.
 
 ## Aggiornamento Enterprise Finale (2026-04-07)
 
-- Eseguito hardening completo runtime con qualit   verde (`typecheck`, `lint`, `test`, `build`, `deadcode`).
+- Eseguito hardening completo runtime con qualit verde (`typecheck`, `lint`, `test`, `build`, `deadcode`).
 - Confermata assenza di file funzionali oltre soglia 350 righe.
 - Deploy Cloudflare Pages validato (build monorepo `@wedding-app/wedding-app`, output `artifacts/wedding-app/dist/public`).
 - Variabili Supabase aggiornate ai nuovi valori progetto (`hbmccalscnescpvomrjo`).
 - Intro aggiornata: rimossi i testi "il matrimonio di" e "tocca per entrare"; durata auto a 4.5s.
 - Header home aggiornato: pulsante/label `Home` non mostrato su route `/home`.
 - Switch `USER/ADMIN` reso visibile anche in deploy (non solo DEV) su `/home` e `/admin*`.
-- Home aggiornata senza cambiare business logic: pulsanti CTA ridotti al 70% larghezza; blocco testi principale aumentato del 25%; data/citt   uniformate a 10px.
+- Home aggiornata senza cambiare business logic: pulsanti CTA ridotti al 70% larghezza; blocco testi principale aumentato del 25%; data/citt uniformate a 10px.
 - Tipografia UI uniforme: tracking caratteri standardizzato a `tracking-wider` dove applicabile.
 - Testi da Admin ora rispettano i ritorni a capo in rendering (`whitespace-pre-line`) mantenendo allineamenti correnti.
 - Pagina Programma estesa con sezione contributo + modale IBAN (copia/intestatario) mantenendo coerenza visiva.
@@ -104,16 +104,16 @@ attached_assets/          # Venue photos
 - Tipografia uniformata: solo `Cormorant Garamond` per heading/titoli e `Jost` per il resto.
 - Home: testo di benvenuto impostato a `15px`.
 - Test suite riallineata alle nuove regole runtime/UI (nessuna logica business alterata).
-- Verifiche qualit   complete eseguite con esito verde:
+- Verifiche qualit complete eseguite con esito verde:
   - `typecheck` OK
   - `lint` OK
   - `test` OK (13/13)
   - `build` OK
 - SQL/Supabase: in questo ciclo non sono stati introdotti cambi schema DB; quindi nessun nuovo script SQL necessario.
 
-## Aggiornamento Enterprise Finale (2026-04-08     ciclo finale realtime + RSVP)
+## Aggiornamento Enterprise Finale (2026-04-08 ciclo finale realtime + RSVP)
 
-- Audit completo rieseguito con qualit   verde: `lint`, `typecheck`, `test`, `build` OK.
+- Audit completo rieseguito con qualit verde: `lint`, `typecheck`, `test`, `build` OK.
 - Verificata soglia file funzionali: nessun file oltre 350 righe (`RSVP.tsx` 321, `storage.ts` 310).
 - Abilitata sincronizzazione realtime in Admin (`Gestione Invitati`) via subscription Supabase su `public.rsvps`.
 - Corretto errore TypeScript nel cleanup channel realtime (`supabase` nullable guard).
@@ -126,7 +126,7 @@ attached_assets/          # Venue photos
   - doppia conferma modale prima dell'eliminazione,
   - filtri smart tra riepilogo e cards (`A-Z/Z-A`, `Tutti/Confermati/Eliminati`),
   - pulsante elimina ridotto a sola icona cestino rossa senza bordo/testo.
-- Riepilogo Admin aggiornato a cinque box in una sola riga (`Adulti`, `Minorenni`, `Vegetariani`, `Celiaci`, `Assenti`) senza icone; `Assenti`   in ultima posizione a destra con colore rosso naturale.
+- Riepilogo Admin aggiornato a cinque box in una sola riga (`Adulti`, `Minorenni`, `Vegetariani`, `Celiaci`, `Assenti`) senza icone; `Assenti` in ultima posizione a destra con colore rosso naturale.
 - Intro aggiornata: switch `USER/ADMIN` non visualizzato nella schermata intro.
 - Invito scaricato da RSVP allineato alla intro in versione standard generica:
   - nessun nominativo ospite,
@@ -192,7 +192,6 @@ attached_assets/          # Venue photos
   - KPI con label ridotte e allineate;
   - badge dieta in linea con riga stato tramite icone + valore;
   - icona cestino centrata verticalmente a destra nella card.
-
 
 ## Aggiornamento Enterprise (2026-04-09 - hardening intro/home + clean pass)
 
@@ -278,6 +277,22 @@ attached_assets/          # Venue photos
 
 - Eseguito riallineamento documentale completo dello stato corrente del progetto dopo le ultime modifiche runtime.
 - Admin `Gestione Invitati` esteso con modifica RSVP da card: click su card apre modale coerente con UI esistente per aggiornare nome, cognome, stato confermato/assente, adulti, under, vegetariani e celiaci.
+
+## Aggiornamento Finale (2026-05-05 - chiusura UX mobile)
+
+- App pubblica consolidata per uso mobile reale Android/iOS:
+  - IBAN non deborda piu nei box Programma/Regalo;
+  - modali scrollabili e safe-area aware;
+  - CTA, riepiloghi e righe decorative resi adattivi su viewport stretti.
+- RSVP:
+  - naming visibile `Under18` uniformato;
+  - select ospiti ridotti a valori numerici;
+  - messaggio conferma semplificato mantenendo totale corretto;
+  - annullamento assenza torna alla Home.
+- Admin:
+  - rimosso tastierino custom dal modale PIN;
+  - accesso affidato al campo PIN con tastiera nativa mobile.
+- Nessuna modifica a persistenza, Supabase, schema DB o Google Sheet backup.
 - Introdotta funzione storage dedicata `updateRSVP()` per aggiornare RSVP admin senza sovrascrivere `my_rsvp` dell utente corrente.
 - Accesso admin dalla home utente riallineato: pulsante invisibile centrato nella topbar bianca, modale PIN con codice `2015`, persistenza sessione via `sessionStorage` fino a chiusura app/browser.
 - Modale PIN reso mobile touch friendly con tastierino numerico 3x4, pulsante cancella e invio dedicato.

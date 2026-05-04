@@ -80,10 +80,15 @@ export default function Intro() {
         } ${isEntering ? "intro-content-entering" : ""}`}
       >
         {/* Date row */}
-        <div className="flex items-center gap-3" style={{ color: "rgba(201,185,154,0.6)" }}>
-          <div className="h-px w-12 bg-current" />
-          <span className="text-xs tracking-wider uppercase">{FIXED_WEDDING_DATE_LABEL}</span>
-          <div className="h-px w-12 bg-current" />
+        <div
+          className="flex w-[min(20rem,calc(100vw-2rem))] items-center gap-2"
+          style={{ color: "rgba(201,185,154,0.6)" }}
+        >
+          <div className="h-px min-w-5 flex-1 bg-current" />
+          <span className="min-w-0 text-center text-[10px] uppercase tracking-wider">
+            {FIXED_WEDDING_DATE_LABEL}
+          </span>
+          <div className="h-px min-w-5 flex-1 bg-current" />
         </div>
 
         {/* Names */}
@@ -106,12 +111,16 @@ export default function Intro() {
         </div>
 
         {/* Location row */}
-        <div className="flex items-center gap-3" style={{ color: "rgba(201,185,154,0.6)" }}>
-          <div className="h-px w-12 bg-current" />
-          <span className="text-xs tracking-wider uppercase">{FIXED_WEDDING_CITY}</span>
-          <div className="h-px w-12 bg-current" />
+        <div
+          className="flex w-[min(20rem,calc(100vw-2rem))] items-center gap-2"
+          style={{ color: "rgba(201,185,154,0.6)" }}
+        >
+          <div className="h-px min-w-5 flex-1 bg-current" />
+          <span className="min-w-0 text-center text-xs uppercase tracking-wider">
+            {FIXED_WEDDING_CITY}
+          </span>
+          <div className="h-px min-w-5 flex-1 bg-current" />
         </div>
-
       </div>
 
       <div

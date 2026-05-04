@@ -1,5 +1,5 @@
 import { Edit3, Leaf, WheatOff } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import type { UseFormReturn } from "react-hook-form";
 import { DIETARY_FLAG_LABELS, type DietaryFlag } from "@/config/rsvp";
 import WeddingButton from "@/components/WeddingButton";
@@ -18,6 +18,7 @@ interface RsvpFormProps {
   editing: boolean;
   initialDeclineMode?: boolean;
   onCancelEdit: () => void;
+  onCancelDecline: () => void;
   onSubmit: (data: RSVPFormData) => void;
   onDecline: (firstName: string, lastName: string) => Promise<void> | void;
 }
@@ -37,10 +38,11 @@ export default function RsvpForm({
   editing,
   initialDeclineMode = false,
   onCancelEdit,
+  onCancelDecline,
   onSubmit,
   onDecline,
 }: RsvpFormProps) {
-  const [declineMode, setDeclineMode] = useState(initialDeclineMode);
+  const declineMode = initialDeclineMode;
   const guestCount = form.watch("guestCount");
   const childrenCount = form.watch("childrenCount");
   const vegetarianCount = form.watch("dietaryCounts.vegetarian");
@@ -72,7 +74,9 @@ export default function RsvpForm({
 
   const dietaryCountsError = form.formState.errors.dietaryCounts;
   const dietaryCountsErrorMessage =
-    dietaryCountsError && "message" in dietaryCountsError && typeof dietaryCountsError.message === "string"
+    dietaryCountsError &&
+    "message" in dietaryCountsError &&
+    typeof dietaryCountsError.message === "string"
       ? dietaryCountsError.message
       : undefined;
   const firstNameField = form.register("firstName");
@@ -145,13 +149,13 @@ export default function RsvpForm({
               >
                 {[1, 2, 3, 4, 5, 6].map((count) => (
                   <option key={count} value={count}>
-                    {count} {count === 1 ? "adulto" : "adulti"}
+                    {count}
                   </option>
                 ))}
               </select>
             </RsvpInputField>
 
-            <RsvpInputField label="Under" error={form.formState.errors.childrenCount?.message}>
+            <RsvpInputField label="Under18" error={form.formState.errors.childrenCount?.message}>
               <select
                 {...form.register("childrenCount", { valueAsNumber: true })}
                 data-testid="select-children-count"
@@ -159,7 +163,7 @@ export default function RsvpForm({
               >
                 {[0, 1, 2, 3, 4, 5, 6].map((count) => (
                   <option key={count} value={count}>
-                    {count} under
+                    {count}
                   </option>
                 ))}
               </select>
@@ -185,14 +189,13 @@ export default function RsvpForm({
                     data-testid={`select-dietary-${flag}`}
                     className={dietarySelectClass}
                   >
-                    {Array.from(
-                      { length: maxDietaryPerType + 1 },
-                      (_, index) => index,
-                    ).map((count) => (
-                      <option key={`${flag}-${count}`} value={count}>
-                        {count}
-                      </option>
-                    ))}
+                    {Array.from({ length: maxDietaryPerType + 1 }, (_, index) => index).map(
+                      (count) => (
+                        <option key={`${flag}-${count}`} value={count}>
+                          {count}
+                        </option>
+                      ),
+                    )}
                   </select>
                 </div>
               ))}
@@ -208,7 +211,7 @@ export default function RsvpForm({
             type="button"
             onClick={() => {
               if (declineMode) {
-                setDeclineMode(false);
+                onCancelDecline();
                 return;
               }
               onCancelEdit();
@@ -219,10 +222,13 @@ export default function RsvpForm({
           </WeddingButton>
         )}
         <WeddingButton type="submit" fullWidth data-testid="button-submit-rsvp">
-          {editing ? "Aggiorna risposta" : declineMode ? "Conferma la tua assenza" : "Invia conferma"}
+          {editing
+            ? "Aggiorna risposta"
+            : declineMode
+              ? "Conferma la tua assenza"
+              : "Invia conferma"}
         </WeddingButton>
       </div>
-
     </form>
   );
 }

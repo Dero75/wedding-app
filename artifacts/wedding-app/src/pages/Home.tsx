@@ -4,11 +4,7 @@ import { Link } from "wouter";
 import Layout from "@/components/Layout";
 import WeddingButton from "@/components/WeddingButton";
 import { getContent } from "@/lib/storage";
-import {
-  FIXED_BRIDE_NAME,
-  FIXED_GROOM_NAME,
-  FIXED_WEDDING_DATE_LABEL,
-} from "@/config/event";
+import { FIXED_BRIDE_NAME, FIXED_GROOM_NAME, FIXED_WEDDING_DATE_LABEL } from "@/config/event";
 
 const coupleVenueImg = "/assets/home-hero-dd.jpg";
 const coupleVenueImgSmall = "/assets/home-hero-dd-900.jpg";
@@ -98,7 +94,8 @@ export default function Home() {
               <div
                 className="mx-auto h-px w-44 mt-2 mb-2 translate-y-1.5"
                 style={{
-                  background: "linear-gradient(to right, transparent, hsl(var(--border)), transparent)",
+                  background:
+                    "linear-gradient(to right, transparent, hsl(var(--border)), transparent)",
                 }}
               />
               <div className="translate-y-3">
@@ -118,21 +115,21 @@ export default function Home() {
             </div>
 
             <div className="home-actions flex flex-col gap-2.5 flex-shrink-0 mt-10">
-              <div className="w-[70%] mx-auto">
+              <div className="w-full max-w-xs mx-auto">
                 <Link href="/details">
                   <WeddingButton variant="outline" fullWidth data-testid="button-cta-details">
                     <span className="whitespace-pre-line text-center">{c.ctaDetails}</span>
                   </WeddingButton>
                 </Link>
               </div>
-              <div className="w-[70%] mx-auto">
+              <div className="w-full max-w-xs mx-auto">
                 <Link href="/rsvp">
                   <WeddingButton fullWidth data-testid="button-cta-rsvp">
                     <span className="whitespace-pre-line text-center">{c.ctaRSVP}</span>
                   </WeddingButton>
                 </Link>
               </div>
-              <div className="w-[70%] mx-auto">
+              <div className="w-full max-w-xs mx-auto">
                 <Link href="/rsvp?decline=1">
                   <button
                     type="button"

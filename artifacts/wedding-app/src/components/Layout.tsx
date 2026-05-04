@@ -1,6 +1,6 @@
 import { useState, type FormEvent, type ReactNode } from "react";
 import { Link, useLocation } from "wouter";
-import { Delete, Settings } from "lucide-react";
+import { Settings } from "lucide-react";
 
 interface LayoutProps {
   children: ReactNode;
@@ -10,7 +10,6 @@ interface LayoutProps {
 
 const ADMIN_PIN = "2015";
 const ADMIN_SESSION_KEY = "wedding_admin_pin_unlocked";
-const PIN_KEYPAD_VALUES = ["1", "2", "3", "4", "5", "6", "7", "8", "9"] as const;
 
 function hasAdminSession(): boolean {
   try {
@@ -67,16 +66,6 @@ export default function Layout({
     setAdminSession();
     closePinModal();
     setLocation("/admina");
-  };
-
-  const appendPinDigit = (digit: string) => {
-    setPin((current) => `${current}${digit}`.slice(0, ADMIN_PIN.length));
-    setPinError(null);
-  };
-
-  const deletePinDigit = () => {
-    setPin((current) => current.slice(0, -1));
-    setPinError(null);
   };
 
   return (
@@ -151,12 +140,12 @@ export default function Layout({
 
       {isPinModalOpen && (
         <div
-          className="fixed inset-0 z-[90] flex items-center justify-center bg-foreground/30 px-5 backdrop-blur-sm"
+          className="fixed inset-0 z-[90] flex items-center justify-center overflow-y-auto bg-foreground/30 px-4 py-4 backdrop-blur-sm [padding-bottom:max(1rem,env(safe-area-inset-bottom))] [padding-top:max(1rem,env(safe-area-inset-top))] sm:px-5"
           onClick={closePinModal}
         >
           <form
             onSubmit={handlePinSubmit}
-            className="w-full max-w-sm rounded-2xl border border-border bg-card p-5 text-center shadow-xl"
+            className="max-h-[calc(100dvh-2rem)] w-full max-w-sm overflow-y-auto rounded-2xl border border-border bg-card p-5 text-center shadow-xl"
             onClick={(event) => event.stopPropagation()}
             role="dialog"
             aria-modal="true"
@@ -166,7 +155,10 @@ export default function Layout({
             <p className="mb-2 font-sans text-[10px] uppercase tracking-wider text-muted-foreground">
               Area riservata
             </p>
-            <h3 className="mb-4 font-serif text-2xl leading-tight" style={{ color: "hsl(var(--foreground))" }}>
+            <h3
+              className="mb-4 font-serif text-2xl leading-tight"
+              style={{ color: "hsl(var(--foreground))" }}
+            >
               Accesso admin
             </h3>
             <input
@@ -184,44 +176,6 @@ export default function Layout({
               data-testid="input-admin-pin"
             />
             {pinError && <p className="mb-3 text-xs text-destructive">{pinError}</p>}
-
-            <div className="mx-auto mt-4 grid max-w-[16rem] grid-cols-3 gap-2.5" aria-label="Tastierino PIN">
-              {PIN_KEYPAD_VALUES.map((digit) => (
-                <button
-                  key={digit}
-                  type="button"
-                  onClick={() => appendPinDigit(digit)}
-                  className="flex h-14 items-center justify-center rounded-2xl border border-border bg-white font-sans text-xl text-foreground transition-colors hover:bg-background active:bg-muted"
-                  data-testid={`button-pin-digit-${digit}`}
-                >
-                  {digit}
-                </button>
-              ))}
-              <button
-                type="button"
-                onClick={deletePinDigit}
-                className="flex h-14 items-center justify-center rounded-2xl border border-border bg-white text-muted-foreground transition-colors hover:bg-background hover:text-foreground active:bg-muted"
-                aria-label="Cancella cifra"
-                data-testid="button-pin-delete"
-              >
-                <Delete size={20} />
-              </button>
-              <button
-                type="button"
-                onClick={() => appendPinDigit("0")}
-                className="flex h-14 items-center justify-center rounded-2xl border border-border bg-white font-sans text-xl text-foreground transition-colors hover:bg-background active:bg-muted"
-                data-testid="button-pin-digit-0"
-              >
-                0
-              </button>
-              <button
-                type="submit"
-                className="flex h-14 items-center justify-center rounded-2xl border border-primary-border bg-primary font-sans text-[10px] uppercase tracking-wider text-primary-foreground transition-opacity hover:opacity-95 active:opacity-90"
-                data-testid="button-pin-keypad-submit"
-              >
-                Entra
-              </button>
-            </div>
 
             <div className="mt-4 flex gap-2.5">
               <button

@@ -81,10 +81,15 @@ export default function EntrancePass() {
               />
 
               <div className="relative z-10 flex flex-col items-center gap-6 text-center px-6 py-10">
-                <div className="flex items-center gap-3" style={{ color: "rgba(201,185,154,0.6)" }}>
-                  <div className="h-px w-12 bg-current" />
-                  <span className="text-xs tracking-wider uppercase">{FIXED_WEDDING_DATE_LABEL}</span>
-                  <div className="h-px w-12 bg-current" />
+                <div
+                  className="flex w-[min(20rem,100%)] items-center gap-2"
+                  style={{ color: "rgba(201,185,154,0.6)" }}
+                >
+                  <div className="h-px min-w-5 flex-1 bg-current" />
+                  <span className="min-w-0 text-center text-[10px] uppercase tracking-wider">
+                    {FIXED_WEDDING_DATE_LABEL}
+                  </span>
+                  <div className="h-px min-w-5 flex-1 bg-current" />
                 </div>
 
                 <div className="text-center">
@@ -94,7 +99,10 @@ export default function EntrancePass() {
                   >
                     {FIXED_BRIDE_NAME}
                   </h2>
-                  <p className="font-serif text-2xl my-2" style={{ color: "rgba(201,185,154,0.8)" }}>
+                  <p
+                    className="font-serif text-2xl my-2"
+                    style={{ color: "rgba(201,185,154,0.8)" }}
+                  >
                     &
                   </p>
                   <h2
@@ -105,10 +113,15 @@ export default function EntrancePass() {
                   </h2>
                 </div>
 
-                <div className="flex items-center gap-3" style={{ color: "rgba(201,185,154,0.6)" }}>
-                  <div className="h-px w-12 bg-current" />
-                  <span className="text-xs tracking-wider uppercase">{FIXED_WEDDING_CITY}</span>
-                  <div className="h-px w-12 bg-current" />
+                <div
+                  className="flex w-[min(20rem,100%)] items-center gap-2"
+                  style={{ color: "rgba(201,185,154,0.6)" }}
+                >
+                  <div className="h-px min-w-5 flex-1 bg-current" />
+                  <span className="min-w-0 text-center text-xs uppercase tracking-wider">
+                    {FIXED_WEDDING_CITY}
+                  </span>
+                  <div className="h-px min-w-5 flex-1 bg-current" />
                 </div>
               </div>
 

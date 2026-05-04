@@ -4,12 +4,14 @@ import Layout from "@/components/Layout";
 import PageContainer from "@/components/PageContainer";
 import SectionTitle from "@/components/SectionTitle";
 import { getContent } from "@/lib/storage";
+import { formatIbanForDisplay } from "@/lib/iban";
 import { FIXED_WEDDING_DATE_LABEL } from "@/config/event";
 
 export default function Details() {
   const [isGiftModalOpen, setIsGiftModalOpen] = useState(false);
   const [ibanCopied, setIbanCopied] = useState(false);
   const c = getContent();
+  const displayIban = formatIbanForDisplay(c.giftIBAN);
 
   const receptionMapsUrl = `https://maps.google.com/?q=${encodeURIComponent(c.receptionAddress)}`;
 
@@ -211,11 +213,11 @@ export default function Details() {
 
         {isGiftModalOpen && (
           <div
-            className="fixed inset-0 z-[70] bg-foreground/30 backdrop-blur-sm px-5 flex items-center justify-center"
+            className="fixed inset-0 z-[70] flex items-center justify-center overflow-y-auto bg-foreground/30 px-4 py-4 backdrop-blur-sm [padding-bottom:max(1rem,env(safe-area-inset-bottom))] [padding-top:max(1rem,env(safe-area-inset-top))] sm:px-5"
             onClick={() => setIsGiftModalOpen(false)}
           >
             <div
-              className="w-full max-w-md rounded-2xl border border-border bg-card p-5 shadow-xl"
+              className="max-h-[calc(100dvh-2rem)] w-full max-w-md overflow-y-auto rounded-2xl border border-border bg-card p-5 shadow-xl"
               onClick={(event) => event.stopPropagation()}
               role="dialog"
               aria-modal="true"
@@ -244,7 +246,10 @@ export default function Details() {
                   <p className="text-[10px] uppercase tracking-wider text-muted-foreground mb-1">
                     Intestatario conto
                   </p>
-                  <p className="font-sans text-base whitespace-pre-line" style={{ color: "hsl(var(--foreground))" }}>
+                  <p
+                    className="font-sans text-base whitespace-pre-line"
+                    style={{ color: "hsl(var(--foreground))" }}
+                  >
                     {c.giftHolder}
                   </p>
                 </div>
@@ -253,17 +258,17 @@ export default function Details() {
                   <p className="text-[10px] uppercase tracking-wider text-muted-foreground mb-1">
                     IBAN
                   </p>
-                  <div className="flex items-center justify-center gap-2 rounded-xl border border-border bg-background px-3 py-2.5">
+                  <div className="flex flex-wrap items-center justify-center gap-2 rounded-xl border border-border bg-background px-3 py-2.5">
                     <p
-                      className="font-sans text-sm tracking-wider flex-1 whitespace-pre-line"
+                      className="min-w-0 flex-1 basis-[13rem] whitespace-normal break-words font-sans text-[0.82rem] leading-relaxed tracking-wide [overflow-wrap:anywhere]"
                       style={{ color: "hsl(var(--foreground))" }}
                     >
-                      {c.giftIBAN}
+                      {displayIban}
                     </p>
                     <button
                       type="button"
                       onClick={copyIBAN}
-                      className="inline-flex items-center justify-center rounded-lg border border-border px-2.5 py-1.5 text-xs text-muted-foreground hover:text-foreground hover:border-muted-foreground/40 transition-colors"
+                      className="inline-flex shrink-0 items-center justify-center rounded-lg border border-border px-2.5 py-1.5 text-xs text-muted-foreground transition-colors hover:border-muted-foreground/40 hover:text-foreground"
                     >
                       {ibanCopied ? (
                         <>

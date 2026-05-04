@@ -1,5 +1,5 @@
 import React from "react";
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { vi } from "vitest";
 import App from "./App";
 
@@ -38,7 +38,7 @@ describe("RSVP confirm-only flow and pass gating", () => {
     expect(await screen.findByText("Presenza Confermata!")).toBeInTheDocument();
     expect(await screen.findByText("Grazie, Mario De Rose!")).toBeInTheDocument();
     expect(
-      screen.getByText("Con gioia confermiamo la registrazione per 2 persone (totale adulti+under)."),
+      screen.getByText("Con gioia confermiamo la registrazione per 2 persone ."),
     ).toBeInTheDocument();
     fireEvent.click(screen.getByRole("dialog").parentElement as HTMLElement);
 
@@ -75,6 +75,18 @@ describe("RSVP confirm-only flow and pass gating", () => {
 
     expect(screen.queryByTestId("modal-submit-confirm-rsvp")).not.toBeInTheDocument();
     expect(screen.queryByText("Presenza Confermata!")).not.toBeInTheDocument();
+  });
+
+  it("returns home when canceling the absence flow", async () => {
+    window.history.pushState({}, "", "/rsvp?decline=1");
+    render(<App />);
+
+    expect(screen.getByText("Conferma la tua assenza")).toBeInTheDocument();
+
+    fireEvent.click(screen.getByTestId("button-cancel-edit"));
+
+    await waitFor(() => expect(window.location.pathname).toBe("/home"));
+    expect(screen.getByTestId("button-cta-rsvp")).toBeInTheDocument();
   });
 
   it("shows pass only when a confirmation exists", () => {

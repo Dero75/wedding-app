@@ -3,6 +3,7 @@ import { useForm } from "react-hook-form";
 import type { Resolver } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Download } from "lucide-react";
+import { useLocation } from "wouter";
 import Layout from "@/components/Layout";
 import PageContainer from "@/components/PageContainer";
 import SectionTitle from "@/components/SectionTitle";
@@ -19,6 +20,7 @@ const rsvpFormResolver = zodResolver(
 ) as Resolver<RSVPFormData>;
 
 export default function RSVP() {
+  const [, setLocation] = useLocation();
   const [submitted, setSubmitted] = useState<RSVPEntry | null>(() => getMyRSVP());
   const [editing, setEditing] = useState(false);
   const [initialDeclineMode] = useState(() => {
@@ -143,7 +145,8 @@ export default function RSVP() {
           });
           toast({
             title: "Invito pronto",
-            description: "Azione completata. Puoi trovarlo nella galleria foto se hai scelto Salva immagine.",
+            description:
+              "Azione completata. Puoi trovarlo nella galleria foto se hai scelto Salva immagine.",
           });
           return;
         } catch (error) {
@@ -197,6 +200,7 @@ export default function RSVP() {
             editing={editing}
             initialDeclineMode={initialDeclineMode}
             onCancelEdit={() => setEditing(false)}
+            onCancelDecline={() => setLocation("/home")}
             onSubmit={onSubmit}
             onDecline={onDecline}
           />
@@ -204,11 +208,11 @@ export default function RSVP() {
 
         {showInviteModal && submitted?.attending && (
           <div
-            className="fixed inset-0 z-[70] bg-foreground/30 backdrop-blur-sm px-5 flex items-center justify-center"
+            className="fixed inset-0 z-[70] flex items-center justify-center overflow-y-auto bg-foreground/30 px-4 py-4 backdrop-blur-sm [padding-bottom:max(1rem,env(safe-area-inset-bottom))] [padding-top:max(1rem,env(safe-area-inset-top))] sm:px-5"
             onClick={() => setShowInviteModal(false)}
           >
             <div
-              className="w-full max-w-md rounded-2xl border border-border bg-card p-5 shadow-xl text-center"
+              className="max-h-[calc(100dvh-2rem)] w-full max-w-md overflow-y-auto rounded-2xl border border-border bg-card p-5 text-center shadow-xl"
               onClick={(event) => event.stopPropagation()}
               role="dialog"
               aria-modal="true"
@@ -236,14 +240,14 @@ export default function RSVP() {
 
         {showSubmitConfirmModal && pendingConfirmation && (
           <div
-            className="fixed inset-0 z-[75] bg-foreground/30 backdrop-blur-sm px-5 flex items-center justify-center"
+            className="fixed inset-0 z-[75] flex items-center justify-center overflow-y-auto bg-foreground/30 px-4 py-4 backdrop-blur-sm [padding-bottom:max(1rem,env(safe-area-inset-bottom))] [padding-top:max(1rem,env(safe-area-inset-top))] sm:px-5"
             onClick={() => {
               setShowSubmitConfirmModal(false);
               setPendingConfirmation(null);
             }}
           >
             <div
-              className="w-full max-w-md rounded-2xl border border-border bg-card p-5 shadow-xl text-center"
+              className="max-h-[calc(100dvh-2rem)] w-full max-w-md overflow-y-auto rounded-2xl border border-border bg-card p-5 text-center shadow-xl"
               onClick={(event) => event.stopPropagation()}
               role="dialog"
               aria-modal="true"

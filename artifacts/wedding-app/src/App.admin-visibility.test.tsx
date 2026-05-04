@@ -75,20 +75,21 @@ describe("runtime sections are always active", () => {
     });
   });
 
-  it("supports touch keypad PIN entry", async () => {
+  it("uses the native PIN input without rendering a custom keypad", async () => {
     window.history.pushState({}, "", "/home");
     render(<App />);
 
     fireEvent.click(screen.getByTestId("button-hidden-admin-access"));
-    fireEvent.click(screen.getByTestId("button-pin-digit-2"));
-    fireEvent.click(screen.getByTestId("button-pin-digit-0"));
-    fireEvent.click(screen.getByTestId("button-pin-digit-1"));
-    fireEvent.click(screen.getByTestId("button-pin-digit-4"));
-    fireEvent.click(screen.getByTestId("button-pin-delete"));
-    fireEvent.click(screen.getByTestId("button-pin-digit-5"));
+
+    expect(screen.queryByLabelText("Tastierino PIN")).not.toBeInTheDocument();
+    expect(screen.queryByTestId("button-pin-digit-2")).not.toBeInTheDocument();
+
+    fireEvent.change(screen.getByTestId("input-admin-pin"), {
+      target: { value: "2015" },
+    });
 
     expect(screen.getByTestId("input-admin-pin")).toHaveValue("2015");
-    fireEvent.click(screen.getByTestId("button-pin-keypad-submit"));
+    fireEvent.click(screen.getByTestId("button-submit-admin-pin"));
 
     await waitFor(() => {
       expect(screen.getByText("Gestione Invitati")).toBeInTheDocument();

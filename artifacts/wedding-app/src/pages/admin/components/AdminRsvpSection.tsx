@@ -22,15 +22,17 @@ export default function AdminRsvpSection({
   const [deleteError, setDeleteError] = useState<string | null>(null);
 
   const selectedRsvp = useMemo(
-    () => (selectedRsvpId ? rsvps.find((rsvp) => rsvp.id === selectedRsvpId) ?? null : null),
+    () => (selectedRsvpId ? (rsvps.find((rsvp) => rsvp.id === selectedRsvpId) ?? null) : null),
     [rsvps, selectedRsvpId],
   );
   const editingRsvp = useMemo(
-    () => (editingRsvpId ? rsvps.find((rsvp) => rsvp.id === editingRsvpId) ?? null : null),
+    () => (editingRsvpId ? (rsvps.find((rsvp) => rsvp.id === editingRsvpId) ?? null) : null),
     [editingRsvpId, rsvps],
   );
 
-  const selectedName = selectedRsvp ? `${selectedRsvp.firstName} ${selectedRsvp.lastName}`.trim() : "";
+  const selectedName = selectedRsvp
+    ? `${selectedRsvp.firstName} ${selectedRsvp.lastName}`.trim()
+    : "";
 
   const resetDeleteState = () => {
     setDeleteStep(null);
@@ -109,7 +111,7 @@ export default function AdminRsvpSection({
                         <span aria-hidden="true">·</span>
                         <span>
                           {`${rsvp.guestCount} ${rsvp.guestCount === 1 ? "adulto" : "adulti"}${
-                            rsvp.childrenCount > 0 ? ` · ${rsvp.childrenCount} under` : ""
+                            rsvp.childrenCount > 0 ? ` · ${rsvp.childrenCount} under18` : ""
                           }`}
                         </span>
                       </>
@@ -118,22 +120,24 @@ export default function AdminRsvpSection({
                     )}
 
                     {rsvp.attending &&
-                      DIETARY_FLAG_VALUES.filter((flag) => rsvp.dietaryCounts[flag] > 0).map((flag) => {
-                        const isVegetarian = flag === "vegetarian";
-                        const DietaryIcon = isVegetarian ? Leaf : WheatOff;
-                        const iconColor = isVegetarian ? "#6f8f4a" : "#b38a63";
+                      DIETARY_FLAG_VALUES.filter((flag) => rsvp.dietaryCounts[flag] > 0).map(
+                        (flag) => {
+                          const isVegetarian = flag === "vegetarian";
+                          const DietaryIcon = isVegetarian ? Leaf : WheatOff;
+                          const iconColor = isVegetarian ? "#6f8f4a" : "#b38a63";
 
-                        return (
-                          <span
-                            key={flag}
-                            className="inline-flex items-center gap-1"
-                            aria-label={`${DIETARY_FLAG_LABELS[flag]} ${rsvp.dietaryCounts[flag]}`}
-                          >
-                            <DietaryIcon size={12} style={{ color: iconColor }} />
-                            <span>{rsvp.dietaryCounts[flag]}</span>
-                          </span>
-                        );
-                      })}
+                          return (
+                            <span
+                              key={flag}
+                              className="inline-flex items-center gap-1"
+                              aria-label={`${DIETARY_FLAG_LABELS[flag]} ${rsvp.dietaryCounts[flag]}`}
+                            >
+                              <DietaryIcon size={12} style={{ color: iconColor }} />
+                              <span>{rsvp.dietaryCounts[flag]}</span>
+                            </span>
+                          );
+                        },
+                      )}
                   </div>
                 </div>
 
@@ -165,11 +169,11 @@ export default function AdminRsvpSection({
 
       {deleteStep && selectedRsvp && (
         <div
-          className="fixed inset-0 z-[80] bg-foreground/30 backdrop-blur-sm px-5 flex items-center justify-center"
+          className="fixed inset-0 z-[80] flex items-center justify-center overflow-y-auto bg-foreground/30 px-4 py-4 backdrop-blur-sm [padding-bottom:max(1rem,env(safe-area-inset-bottom))] [padding-top:max(1rem,env(safe-area-inset-top))] sm:px-5"
           onClick={closeDeleteModal}
         >
           <div
-            className="w-full max-w-md rounded-2xl border border-border bg-card p-5 shadow-xl"
+            className="max-h-[calc(100dvh-2rem)] w-full max-w-md overflow-y-auto rounded-2xl border border-border bg-card p-5 shadow-xl"
             onClick={(event) => event.stopPropagation()}
             role="dialog"
             aria-modal="true"
@@ -191,7 +195,10 @@ export default function AdminRsvpSection({
 
             {deleteStep === 1 ? (
               <>
-                <h3 className="font-serif text-2xl mb-2" style={{ color: "hsl(var(--foreground))" }}>
+                <h3
+                  className="font-serif text-2xl mb-2"
+                  style={{ color: "hsl(var(--foreground))" }}
+                >
                   Eliminare invitato?
                 </h3>
                 <p className="text-sm text-muted-foreground leading-relaxed">
@@ -218,7 +225,10 @@ export default function AdminRsvpSection({
               </>
             ) : (
               <>
-                <h3 className="font-serif text-2xl mb-2" style={{ color: "hsl(var(--foreground))" }}>
+                <h3
+                  className="font-serif text-2xl mb-2"
+                  style={{ color: "hsl(var(--foreground))" }}
+                >
                   Conferma definitiva
                 </h3>
                 <p className="text-sm text-muted-foreground leading-relaxed">

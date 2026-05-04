@@ -6,10 +6,12 @@ import SectionTitle from "@/components/SectionTitle";
 import WeddingCard from "@/components/WeddingCard";
 import WeddingButton from "@/components/WeddingButton";
 import { getContent } from "@/lib/storage";
+import { formatIbanForDisplay } from "@/lib/iban";
 
 export default function Gift() {
   const [copied, setCopied] = useState(false);
   const c = getContent();
+  const displayIban = formatIbanForDisplay(c.giftIBAN);
 
   const copyIBAN = async () => {
     try {
@@ -49,23 +51,26 @@ export default function Gift() {
           <p className="text-xs text-muted-foreground uppercase tracking-wider mb-2">
             Intestatario
           </p>
-          <p className="font-sans text-lg mb-5 whitespace-pre-line" style={{ color: "hsl(var(--foreground))" }}>
+          <p
+            className="font-sans text-lg mb-5 whitespace-pre-line"
+            style={{ color: "hsl(var(--foreground))" }}
+          >
             {c.giftHolder}
           </p>
 
           <p className="text-xs text-muted-foreground uppercase tracking-wider mb-2">IBAN</p>
-          <div className="flex items-center gap-3 bg-background border border-border rounded-xl px-4 py-3">
+          <div className="flex flex-wrap items-center gap-3 bg-background border border-border rounded-xl px-4 py-3">
             <p
-              className="font-sans text-sm flex-1 tracking-wider whitespace-pre-line"
+              className="min-w-0 flex-1 basis-[13rem] whitespace-normal break-words font-sans text-[0.82rem] leading-relaxed tracking-wide [overflow-wrap:anywhere]"
               style={{ color: "hsl(var(--foreground))" }}
               data-testid="text-iban"
             >
-              {c.giftIBAN}
+              {displayIban}
             </p>
             <button
               onClick={copyIBAN}
               data-testid="button-copy-iban"
-              className="transition-colors"
+              className="shrink-0 transition-colors"
               style={{ color: copied ? "hsl(var(--accent))" : "hsl(var(--muted-foreground))" }}
               aria-label="Copia IBAN"
             >
@@ -85,7 +90,10 @@ export default function Gift() {
           <p className="text-xs text-muted-foreground uppercase tracking-wider mt-5 mb-1">
             BIC / SWIFT
           </p>
-          <p className="font-sans text-sm whitespace-pre-line" style={{ color: "hsl(var(--foreground))" }}>
+          <p
+            className="font-sans text-sm whitespace-pre-line"
+            style={{ color: "hsl(var(--foreground))" }}
+          >
             {c.giftBIC}
           </p>
         </WeddingCard>

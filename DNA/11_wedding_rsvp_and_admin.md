@@ -1,4 +1,4 @@
-# 04     RSVP and Admin
+# 04 RSVP and Admin
 
 ## RSVP flow
 
@@ -26,19 +26,19 @@ interface RSVPEntry {
 
 ## localStorage keys
 
-| Key                      | Content                                           |
-| ------------------------ | ------------------------------------------------- |
-| `wedding_rsvps`          | `RSVPEntry[]`     all RSVPs                         |
-| `wedding_my_rsvp`        | `RSVPEntry \| null`     this guest's entry          |
-| `wedding_content`        | `Partial<EditableContent>`     admin-edited content |
-| `wedding_admin_settings` | Legacy key removed automatically at startup        |
+| Key                      | Content                                         |
+| ------------------------ | ----------------------------------------------- |
+| `wedding_rsvps`          | `RSVPEntry[]` all RSVPs                         |
+| `wedding_my_rsvp`        | `RSVPEntry \| null` this guest's entry          |
+| `wedding_content`        | `Partial<EditableContent>` admin-edited content |
+| `wedding_admin_settings` | Legacy key removed automatically at startup     |
 
 ## Admin panel (`/admin`)
 
 Admin is split into:
 
-- `/admin`     RSVP-focused home (stats + RSVP list)
-- `/admin/settings`     content editor only
+- `/admin` RSVP-focused home (stats + RSVP list)
+- `/admin/settings` content editor only
 
 ### Visibility controls
 
@@ -56,7 +56,7 @@ Direct content editor grouped in separate white cards by frontend area:
 - Regalo
 - Invito / Pass
 - Saves on every keystroke to localStorage
-- Pages read from `getContent()`     changes reflect live
+- Pages read from `getContent()` changes reflect live
 - `Nome sposa`/`Nome sposo` were removed from editable fields
 
 ### RSVP list
@@ -119,22 +119,22 @@ Note: event date and couple names are fixed at app level and not editable from A
 - Verifiche complete rieseguite: install/ typecheck/ lint/ build/ test tutti OK.
 - Rimozione completa logica `vegano` dal runtime RSVP (config, schema, form, storage, test).
 - Etichette alimentari aggiornate: `Vegetariani`, `Celiaci`.
-- Home ottimizzata: data fissa `Venerdi 11 Settembre 2026`, nome coppia e citt   centrati con interspazi ridotti; separatore senza icona cuore.
+- Home ottimizzata: data fissa `Venerdi 11 Settembre 2026`, nome coppia e citt centrati con interspazi ridotti; separatore senza icona cuore.
 - Dettagli (`Cerimonia`/`Ricevimento`) compattati ~20% mantenendo stile/layout canonico.
 - Header admin consolidato: `Home` a sinistra, switch USER/ADMIN centrato, hamburger assente in `/admin*`.
-- Stabilit   dev server migliorata: avvio detached affidabile in `scripts/wedding-app-dev-server.sh` per evitare stop intermittenti su `5001`.
+- Stabilit dev server migliorata: avvio detached affidabile in `scripts/wedding-app-dev-server.sh` per evitare stop intermittenti su `5001`.
 - Nessuna modifica di business logic; solo consolidamento tecnico e coerenza runtime/documentazione.
 
 ## Aggiornamento Enterprise Finale (2026-04-07)
 
-- Eseguito hardening completo runtime con qualit   verde (`typecheck`, `lint`, `test`, `build`, `deadcode`).
+- Eseguito hardening completo runtime con qualit verde (`typecheck`, `lint`, `test`, `build`, `deadcode`).
 - Confermata assenza di file funzionali oltre soglia 350 righe.
 - Deploy Cloudflare Pages validato (build monorepo `@wedding-app/wedding-app`, output `artifacts/wedding-app/dist/public`).
 - Variabili Supabase aggiornate ai nuovi valori progetto (`hbmccalscnescpvomrjo`).
 - Intro aggiornata: rimossi i testi "il matrimonio di" e "tocca per entrare"; durata auto a 4.5s.
 - Header home aggiornato: pulsante/label `Home` non mostrato su route `/home`.
 - Switch `USER/ADMIN` reso visibile anche in deploy (non solo DEV) su `/home` e `/admin*`.
-- Home aggiornata senza cambiare business logic: pulsanti CTA ridotti al 70% larghezza; blocco testi principale aumentato del 25%; data/citt   uniformate a 10px.
+- Home aggiornata senza cambiare business logic: pulsanti CTA ridotti al 70% larghezza; blocco testi principale aumentato del 25%; data/citt uniformate a 10px.
 - Tipografia UI uniforme: tracking caratteri standardizzato a `tracking-wider` dove applicabile.
 - Testi da Admin ora rispettano i ritorni a capo in rendering (`whitespace-pre-line`) mantenendo allineamenti correnti.
 - Pagina Programma estesa con sezione contributo + modale IBAN (copia/intestatario) mantenendo coerenza visiva.
@@ -158,16 +158,16 @@ Note: event date and couple names are fixed at app level and not editable from A
 - Tipografia uniformata: solo `Cormorant Garamond` per heading/titoli e `Jost` per il resto.
 - Home: testo di benvenuto impostato a `15px`.
 - Test suite riallineata alle nuove regole runtime/UI (nessuna logica business alterata).
-- Verifiche qualit   complete eseguite con esito verde:
+- Verifiche qualit complete eseguite con esito verde:
   - `typecheck` OK
   - `lint` OK
   - `test` OK (13/13)
   - `build` OK
 - SQL/Supabase: in questo ciclo non sono stati introdotti cambi schema DB; quindi nessun nuovo script SQL necessario.
 
-## Aggiornamento Enterprise Finale (2026-04-08     ciclo finale realtime + RSVP)
+## Aggiornamento Enterprise Finale (2026-04-08 ciclo finale realtime + RSVP)
 
-- Audit completo rieseguito con qualit   verde: `lint`, `typecheck`, `test`, `build` OK.
+- Audit completo rieseguito con qualit verde: `lint`, `typecheck`, `test`, `build` OK.
 - Verificata soglia file funzionali: nessun file oltre 350 righe (`RSVP.tsx` 321, `storage.ts` 310).
 - Abilitata sincronizzazione realtime in Admin (`Gestione Invitati`) via subscription Supabase su `public.rsvps`.
 - Corretto errore TypeScript nel cleanup channel realtime (`supabase` nullable guard).
@@ -180,7 +180,7 @@ Note: event date and couple names are fixed at app level and not editable from A
   - doppia conferma modale prima dell'eliminazione,
   - filtri smart tra riepilogo e cards (`A-Z/Z-A`, `Tutti/Confermati/Eliminati`),
   - pulsante elimina ridotto a sola icona cestino rossa senza bordo/testo.
-- Riepilogo Admin aggiornato a cinque box in una sola riga (`Adulti`, `Minorenni`, `Vegetariani`, `Celiaci`, `Assenti`) senza icone; `Assenti`   in ultima posizione a destra con colore rosso naturale.
+- Riepilogo Admin aggiornato a cinque box in una sola riga (`Adulti`, `Minorenni`, `Vegetariani`, `Celiaci`, `Assenti`) senza icone; `Assenti` in ultima posizione a destra con colore rosso naturale.
 - Intro aggiornata: switch `USER/ADMIN` non visualizzato nella schermata intro.
 - Invito scaricato da RSVP allineato alla intro in versione standard generica:
   - nessun nominativo ospite,
@@ -258,7 +258,6 @@ Note: event date and couple names are fixed at app level and not editable from A
   - KPI con label ridotte e allineate;
   - badge dieta in linea con riga stato tramite icone + valore;
   - icona cestino centrata verticalmente a destra nella card.
-
 
 ## Aggiornamento Enterprise (2026-04-09 - hardening intro/home + clean pass)
 
@@ -397,3 +396,20 @@ Note: event date and couple names are fixed at app level and not editable from A
   - font caricati dall'head per ridurre flash di font fallback;
   - avvio `/` diretto a Home quando l'intro e gia stata completata nella stessa sessione.
 - Nessuna modifica alle logiche Admin RSVP, PIN, Supabase o backup DB in questo passaggio.
+
+## Aggiornamento Finale (2026-05-05 - RSVP/Admin mobile UX)
+
+- RSVP pubblico:
+  - select `Adulti` e `Under18` mostrano solo valori numerici;
+  - naming `Under18` uniformato dove visibile;
+  - messaggio post-conferma semplificato, con totale sempre calcolato da adulti + under18;
+  - annullamento del flusso assenza torna alla Home e non commuta piu al form presenza.
+- Admin:
+  - rimosso tastierino PIN custom dal modale accesso admin;
+  - l'input PIN usa la tastiera nativa del dispositivo tramite `inputMode="numeric"`;
+  - il flusso sessione admin e il PIN `2015` restano invariati.
+- Responsive:
+  - IBAN in Programma/Regalo mostrato in formato leggibile e wrappabile;
+  - valore copiato resta compatto e normalizzato;
+  - modali e riepiloghi admin stabilizzati per viewport mobili stretti.
+- Quality gates del ciclo confermati verdi: `typecheck`, `lint`, test mirati, suite completa e `build`.

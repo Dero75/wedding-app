@@ -21,10 +21,18 @@ corepack pnpm run backup:new
 
 I file di backup in questa cartella sono ignorati da Git e non devono essere committati.
 
+## Aggiornamento Finale (2026-05-05)
+
+- Su richiesta utente, l'ultimo backup locale e stato sovrascritto invece di crearne uno incrementale.
+- Backup target: `backup/Backup_4 Maggio_21.54.tar.gz`.
+- Dimensione dopo overwrite: `12.900.193` byte.
+- Contenuto atteso: stato progetto post-hardening mobile, fix IBAN, aggiornamenti RSVP/Admin PIN e documentazione finale.
+- Policy Git invariata: archivi backup non committati.
+
 ## Aggiornamento Operativo (2026-04-07)
 
 - Policy backup confermata invariata.
-- Eseguito nuovo ciclo operativo con backup incrementale non distruttivo richiesto a fine attivit  .
+- Eseguito nuovo ciclo operativo con backup incrementale non distruttivo richiesto a fine attivit .
 
 ## Aggiornamento Enterprise (2026-04-08)
 
@@ -44,7 +52,7 @@ I file di backup in questa cartella sono ignorati da Git e non devono essere com
 - Tipografia uniformata: solo `Cormorant Garamond` per heading/titoli e `Jost` per il resto.
 - Home: testo di benvenuto impostato a `15px`.
 - Test suite riallineata alle nuove regole runtime/UI (nessuna logica business alterata).
-- Verifiche qualit   complete eseguite con esito verde:
+- Verifiche qualit complete eseguite con esito verde:
   - `typecheck` OK
   - `lint` OK
   - `test` OK (13/13)
@@ -52,9 +60,9 @@ I file di backup in questa cartella sono ignorati da Git e non devono essere com
 - SQL/Supabase: in questo ciclo non sono stati introdotti cambi schema DB; quindi nessun nuovo script SQL necessario.
 - Nuovo backup eseguito correttamente: `Backup_8 Aprile_00.26.tar.gz`.
 
-## Aggiornamento Enterprise Finale (2026-04-08     ciclo finale realtime + RSVP)
+## Aggiornamento Enterprise Finale (2026-04-08 ciclo finale realtime + RSVP)
 
-- Audit completo rieseguito con qualit   verde: `lint`, `typecheck`, `test`, `build` OK.
+- Audit completo rieseguito con qualit verde: `lint`, `typecheck`, `test`, `build` OK.
 - Verificata soglia file funzionali: nessun file oltre 350 righe (`RSVP.tsx` 321, `storage.ts` 310).
 - Abilitata sincronizzazione realtime in Admin (`Gestione Invitati`) via subscription Supabase su `public.rsvps`.
 - Corretto errore TypeScript nel cleanup channel realtime (`supabase` nullable guard).
@@ -67,7 +75,7 @@ I file di backup in questa cartella sono ignorati da Git e non devono essere com
   - doppia conferma modale prima dell'eliminazione,
   - filtri smart tra riepilogo e cards (`A-Z/Z-A`, `Tutti/Confermati/Eliminati`),
   - pulsante elimina ridotto a sola icona cestino rossa senza bordo/testo.
-- Riepilogo Admin aggiornato a cinque box in una sola riga (`Adulti`, `Minorenni`, `Vegetariani`, `Celiaci`, `Assenti`) senza icone; `Assenti`   in ultima posizione a destra con colore rosso naturale.
+- Riepilogo Admin aggiornato a cinque box in una sola riga (`Adulti`, `Minorenni`, `Vegetariani`, `Celiaci`, `Assenti`) senza icone; `Assenti` in ultima posizione a destra con colore rosso naturale.
 - Intro aggiornata: switch `USER/ADMIN` non visualizzato nella schermata intro.
 - Invito scaricato da RSVP allineato alla intro in versione standard generica:
   - nessun nominativo ospite,
