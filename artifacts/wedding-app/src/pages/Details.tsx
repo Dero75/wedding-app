@@ -40,7 +40,7 @@ export default function Details() {
     <Layout>
       <PageContainer>
         <div className="[&_h2]:text-[2.4rem] sm:[&_h2]:text-[2.7rem]">
-          <SectionTitle title="Debora & Davide" />
+          <SectionTitle title="Deborah & Davide" />
         </div>
         <p className="text-center text-sm text-muted-foreground -mt-4 mb-10">
           {FIXED_WEDDING_DATE_LABEL}
