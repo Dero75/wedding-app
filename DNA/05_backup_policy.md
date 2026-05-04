@@ -291,3 +291,10 @@ I file archivio sotto `backup/` sono ignorati da Git tramite `.gitignore`.
 - Archivio: `backup/Backup_4 Maggio_21.13.tar.gz`.
 - Dimensione: `14.281.192` byte.
 - Il file rimane locale e non va versionato.
+
+## Backup Finale (2026-05-04 - chiusura progetto)
+
+- Creato backup locale finale prima del commit/push conclusivo.
+- Archivio: `backup/Backup_4 Maggio_21.47.tar.gz`.
+- Dimensione: `12.894.822` byte.
+- Il file resta locale e non va versionato.

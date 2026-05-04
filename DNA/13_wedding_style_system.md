@@ -294,3 +294,12 @@ Shared components (`WeddingButton`, `WeddingCard`, `Layout`, `SectionTitle`, `To
 - Aggiunta boot shell inline avorio in `index.html` per evitare flash di pagine/fallback prima del mount React sui dispositivi mobile lenti.
 - Google Fonts caricati tramite `preload` + `stylesheet` in `index.html`; rimosso `@import` dal CSS per anticipare il discovery dei font.
 - Nota tecnica: la splash nativa Android delle PWA standalone puo ancora apparire per una frazione di secondo; e gestita dal sistema operativo, non da React. Il progetto la neutralizza cromaticamente ma non la elimina senza rinunciare a `display: standalone`.
+
+## Aggiornamento Finale (2026-05-04 - browser chrome e app icon)
+
+- Tab browser e metadata installazione app allineati al naming breve `D&D`.
+- Icona PWA/browser semplificata:
+  - sfondo pieno intro `#3d2b1f`;
+  - iniziali `D&D` in serif coerente con la intro;
+  - nessun gradiente o glow aggiuntivo.
+- Rigenerate tutte le dimensioni PNG versionate e sorgente SVG.

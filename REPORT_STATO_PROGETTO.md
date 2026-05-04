@@ -615,3 +615,18 @@ Scorciatoie locali/hack:
 - Archivio: `backup/Backup_4 Maggio_21.13.tar.gz`.
 - Dimensione: `14.281.192` byte.
 - Il backup resta locale/ignorato da Git secondo policy di progetto.
+
+## Aggiornamento Finale (2026-05-04 - tab browser e icona app)
+
+- Titolo tab/browser abbreviato a `D&D`.
+- Metadata iOS `apple-mobile-web-app-title` abbreviato a `D&D`.
+- Suite icone app/tab rigenerata con quadrato semplice colore intro `#3d2b1f` e iniziali `D&D` in stile serif coerente.
+- Asset icone rigenerati: `favicon-32.png`, `apple-touch-icon.png`, `icon-192.png`, `icon-512.png`, `icon-1024.png`, `icon.svg`.
+- Nessuna modifica a logiche runtime, layout pagine, Supabase o backup RSVP.
+
+## Backup Finale (2026-05-04 - chiusura progetto)
+
+- Creato backup locale finale con script canonico `scripts/create-backup.sh`.
+- Archivio: `backup/Backup_4 Maggio_21.47.tar.gz`.
+- Dimensione: `12.894.822` byte.
+- Archivio locale ignorato da Git, coerente con policy progetto.
