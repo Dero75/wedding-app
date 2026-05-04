@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import type { Resolver } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Download } from "lucide-react";
 import Layout from "@/components/Layout";
@@ -12,6 +13,10 @@ import RsvpConfirmationView from "@/pages/rsvp/components/RsvpConfirmationView";
 import RsvpForm from "@/pages/rsvp/components/RsvpForm";
 import { rsvpSchema, type RSVPFormData } from "@/pages/rsvp/schema";
 import { toast } from "@/hooks/use-toast";
+
+const rsvpFormResolver = zodResolver(
+  rsvpSchema as unknown as Parameters<typeof zodResolver>[0],
+) as Resolver<RSVPFormData>;
 
 export default function RSVP() {
   const [submitted, setSubmitted] = useState<RSVPEntry | null>(() => getMyRSVP());
@@ -26,7 +31,7 @@ export default function RSVP() {
   const [isDownloadingInvite, setIsDownloadingInvite] = useState(false);
 
   const form = useForm<RSVPFormData>({
-    resolver: zodResolver(rsvpSchema),
+    resolver: rsvpFormResolver,
     defaultValues: {
       firstName: submitted?.firstName ?? "",
       lastName: submitted?.lastName ?? "",
