@@ -4,14 +4,13 @@ import Layout from "@/components/Layout";
 import PageContainer from "@/components/PageContainer";
 import SectionTitle from "@/components/SectionTitle";
 import { getContent } from "@/lib/storage";
-import { formatIbanForDisplay } from "@/lib/iban";
 import { FIXED_WEDDING_DATE_LABEL } from "@/config/event";
 
 export default function Details() {
   const [isGiftModalOpen, setIsGiftModalOpen] = useState(false);
   const [ibanCopied, setIbanCopied] = useState(false);
+  const [holderCopied, setHolderCopied] = useState(false);
   const c = getContent();
-  const displayIban = formatIbanForDisplay(c.giftIBAN);
 
   const receptionMapsUrl = `https://maps.google.com/?q=${encodeURIComponent(c.receptionAddress)}`;
 
@@ -33,6 +32,16 @@ export default function Details() {
       await navigator.clipboard.writeText(c.giftIBAN);
       setIbanCopied(true);
       setTimeout(() => setIbanCopied(false), 2200);
+    } catch {
+      // no-op
+    }
+  };
+
+  const copyGiftHolder = async () => {
+    try {
+      await navigator.clipboard.writeText(c.giftHolder);
+      setHolderCopied(true);
+      setTimeout(() => setHolderCopied(false), 2200);
     } catch {
       // no-op
     }
@@ -246,39 +255,42 @@ export default function Details() {
                   <p className="text-[10px] uppercase tracking-wider text-muted-foreground mb-1">
                     Intestatario conto
                   </p>
-                  <p
-                    className="font-sans text-base whitespace-pre-line"
-                    style={{ color: "hsl(var(--foreground))" }}
-                  >
-                    {c.giftHolder}
-                  </p>
+                  <div className="flex flex-nowrap items-center justify-center gap-2 rounded-xl border border-border bg-background px-3 py-2.5">
+                    <p
+                      className="min-w-0 flex-1 basis-[13rem] truncate whitespace-nowrap font-sans text-[0.74rem] leading-tight tracking-[0.01em]"
+                      style={{ color: "hsl(var(--foreground))" }}
+                    >
+                      {c.giftHolder}
+                    </p>
+                    <button
+                      type="button"
+                      onClick={copyGiftHolder}
+                      aria-label={holderCopied ? "Intestatario copiato" : "Copia intestatario"}
+                      className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-border text-muted-foreground transition-colors hover:border-muted-foreground/40 hover:text-foreground"
+                    >
+                      {holderCopied ? <Check size={15} /> : <Copy size={15} />}
+                    </button>
+                  </div>
                 </div>
 
                 <div>
                   <p className="text-[10px] uppercase tracking-wider text-muted-foreground mb-1">
                     IBAN
                   </p>
-                  <div className="flex flex-wrap items-center justify-center gap-2 rounded-xl border border-border bg-background px-3 py-2.5">
+                  <div className="flex flex-nowrap items-center justify-center gap-2 rounded-xl border border-border bg-background px-3 py-2.5">
                     <p
-                      className="min-w-0 flex-1 basis-[13rem] whitespace-normal break-words font-sans text-[0.82rem] leading-relaxed tracking-wide [overflow-wrap:anywhere]"
+                      className="min-w-0 flex-1 basis-[13rem] truncate whitespace-nowrap font-sans text-[0.74rem] leading-tight tracking-[0.01em]"
                       style={{ color: "hsl(var(--foreground))" }}
                     >
-                      {displayIban}
+                      {c.giftIBAN}
                     </p>
                     <button
                       type="button"
                       onClick={copyIBAN}
-                      className="inline-flex shrink-0 items-center justify-center rounded-lg border border-border px-2.5 py-1.5 text-xs text-muted-foreground transition-colors hover:border-muted-foreground/40 hover:text-foreground"
+                      aria-label={ibanCopied ? "IBAN copiato" : "Copia IBAN"}
+                      className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-border text-muted-foreground transition-colors hover:border-muted-foreground/40 hover:text-foreground"
                     >
-                      {ibanCopied ? (
-                        <>
-                          <Check size={13} className="mr-1" /> Copiato
-                        </>
-                      ) : (
-                        <>
-                          <Copy size={13} className="mr-1" /> Copia
-                        </>
-                      )}
+                      {ibanCopied ? <Check size={15} /> : <Copy size={15} />}
                     </button>
                   </div>
                 </div>
