@@ -16,6 +16,22 @@ const INTRO_HOME_TRANSITION_KEY = "wedding_intro_home_white_fade";
 export const INTRO_COMPLETED_SESSION_KEY = "wedding_intro_completed";
 const START_MUSIC_EVENT = "wedding:start-music";
 
+function IntroName({ children }: { children: string }) {
+  return (
+    <h1
+      className="intro-name font-serif text-5xl sm:text-6xl leading-tight"
+      style={{ color: "hsl(38 50% 97%)" }}
+      aria-label={children}
+    >
+      {Array.from(children).map((letter, index) => (
+        <span key={`${letter}-${index}`} aria-hidden="true">
+          {letter}
+        </span>
+      ))}
+    </h1>
+  );
+}
+
 export default function Intro() {
   const [, setLocation] = useLocation();
   const [visible, setVisible] = useState(false);
@@ -93,21 +109,11 @@ export default function Intro() {
 
         {/* Names */}
         <div className="text-center">
-          <h1
-            className="font-serif text-5xl sm:text-6xl leading-tight"
-            style={{ color: "hsl(38 50% 97%)" }}
-          >
-            {FIXED_BRIDE_NAME}
-          </h1>
+          <IntroName>{FIXED_BRIDE_NAME}</IntroName>
           <p className="font-serif text-2xl my-2" style={{ color: "rgba(201,185,154,0.8)" }}>
             &
           </p>
-          <h1
-            className="font-serif text-5xl sm:text-6xl leading-tight"
-            style={{ color: "hsl(38 50% 97%)" }}
-          >
-            {FIXED_GROOM_NAME}
-          </h1>
+          <IntroName>{FIXED_GROOM_NAME}</IntroName>
         </div>
 
         {/* Location row */}

@@ -371,6 +371,22 @@
   top: 82vh;
 }
 
+.intro-name {
+  display: inline-flex;
+  white-space: nowrap;
+  font-kerning: none;
+  font-variant-ligatures: none;
+  font-feature-settings:
+    "liga" 0,
+    "clig" 0,
+    "dlig" 0,
+    "kern" 0;
+}
+
+.intro-name > span {
+  display: inline-block;
+}
+
 @supports (height: 100dvh) {
   .intro-enter-anchor {
     top: 82dvh;
