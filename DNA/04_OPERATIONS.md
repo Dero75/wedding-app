@@ -89,6 +89,8 @@ Fatto verificabile dal codice:
 
 - il frontend builda in `artifacts/wedding-app/dist/public`;
 - non esiste nel repo un workflow deploy canonico della web app da considerare source of truth operativa.
+- gli asset pubblici runtime sono solo quelli referenziati da codice, manifest, service worker,
+  `_headers` o HTML; non mantenere asset sorgente/pesanti non referenziati in `public/`.
 
 Regola:
 

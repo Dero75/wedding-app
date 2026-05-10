@@ -22,6 +22,13 @@ corepack pnpm run backup:new
 
 I file di backup in questa cartella sono ignorati da Git e non devono essere committati.
 
+## Aggiornamento Finale (2026-05-10)
+
+- Runtime riallineato dopo fix rendering intro Android/Honor con asset statico dedicato.
+- Pulizia asset pubblici completata: rimossi file pesanti/non referenziati dal runtime finale.
+- Script backup aggiornato per escludere env locali e segreti.
+- Quality gate finali eseguiti con esito verde prima della chiusura operativa.
+
 ## Aggiornamento Finale (2026-05-05)
 
 - Su richiesta utente, l'ultimo backup locale e stato sovrascritto invece di crearne uno incrementale.
