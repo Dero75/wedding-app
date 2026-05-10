@@ -51,6 +51,10 @@ if [[ "$extension" == "tar.zst" ]]; then
     --exclude='./node_modules' \
     --exclude='./.local' \
     --exclude='./.agents' \
+    --exclude='./.env' \
+    --exclude='./.env.*' \
+    --exclude='./artifacts/wedding-app/.env' \
+    --exclude='./artifacts/wedding-app/.env.*' \
     --exclude='./coverage' \
     --exclude='./**/dist' \
     -cf - \
@@ -62,6 +66,10 @@ else
     --exclude='./node_modules' \
     --exclude='./.local' \
     --exclude='./.agents' \
+    --exclude='./.env' \
+    --exclude='./.env.*' \
+    --exclude='./artifacts/wedding-app/.env' \
+    --exclude='./artifacts/wedding-app/.env.*' \
     --exclude='./coverage' \
     --exclude='./**/dist' \
     -czf "$output_path" \

@@ -16,6 +16,7 @@ corepack pnpm run backup:new
 - Compressione: `tar.zst` (se `zstd` disponibile), altrimenti `tar.gz`
 - Mai formato zip
 - Nessuna sovrascrittura: in caso di collisione aggiunge suffisso `_01`, `_02`, ...
+- File env locali e segreti (`.env`, `.env.*`) esclusi dal backup.
 
 ## Note Git
 

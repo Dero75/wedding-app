@@ -29,6 +29,10 @@ File chiave:
 Regole reali:
 
 - `Intro` parte su `/` finche la sessione non la marca come completata;
+- data, nomi e citta della intro sono renderizzati tramite asset statico
+  `public/assets/intro-title-deborah-davide-v1.png` per evitare anomalie di rendering
+  webfont su alcuni Android/Honor;
+- `Entra` e indicazione audio restano elementi HTML reali e interattivi;
 - la transizione usa `sessionStorage`;
 - la musica parte solo da evento utente (`wedding:start-music`);
 - la musica non deve suonare su route `/admina*`.

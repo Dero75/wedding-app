@@ -31,6 +31,8 @@
 
 ## Cose che meritano sempre un controllo extra
 
+- intro: il blocco data/nomi/citta usa un asset statico per evitare bug di rendering font
+  su Android/Honor; non tornare a testo webfont live senza test mirato sui device coinvolti;
 - bootstrap dati e fallback locale/DB;
 - route admin e meccanismo di accesso;
 - validazione RSVP e shape dei dati salvati;

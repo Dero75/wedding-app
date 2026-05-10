@@ -16,22 +16,6 @@ const INTRO_HOME_TRANSITION_KEY = "wedding_intro_home_white_fade";
 export const INTRO_COMPLETED_SESSION_KEY = "wedding_intro_completed";
 const START_MUSIC_EVENT = "wedding:start-music";
 
-function IntroName({ children }: { children: string }) {
-  return (
-    <h1
-      className="intro-name font-serif text-5xl sm:text-6xl leading-tight"
-      style={{ color: "hsl(38 50% 97%)" }}
-      aria-label={children}
-    >
-      {Array.from(children).map((letter, index) => (
-        <span key={`${letter}-${index}`} aria-hidden="true">
-          {letter}
-        </span>
-      ))}
-    </h1>
-  );
-}
-
 export default function Intro() {
   const [, setLocation] = useLocation();
   const [visible, setVisible] = useState(false);
@@ -95,38 +79,17 @@ export default function Intro() {
           visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"
         } ${isEntering ? "intro-content-entering" : ""}`}
       >
-        {/* Date row */}
-        <div
-          className="flex w-[min(20rem,calc(100vw-2rem))] items-center gap-2"
-          style={{ color: "rgba(201,185,154,0.6)" }}
-        >
-          <div className="h-px min-w-5 flex-1 bg-current" />
-          <span className="min-w-0 text-center text-[10px] uppercase tracking-wider">
-            {FIXED_WEDDING_DATE_LABEL}
-          </span>
-          <div className="h-px min-w-5 flex-1 bg-current" />
-        </div>
-
-        {/* Names */}
-        <div className="text-center">
-          <IntroName>{FIXED_BRIDE_NAME}</IntroName>
-          <p className="font-serif text-2xl my-2" style={{ color: "rgba(201,185,154,0.8)" }}>
-            &
-          </p>
-          <IntroName>{FIXED_GROOM_NAME}</IntroName>
-        </div>
-
-        {/* Location row */}
-        <div
-          className="flex w-[min(20rem,calc(100vw-2rem))] items-center gap-2"
-          style={{ color: "rgba(201,185,154,0.6)" }}
-        >
-          <div className="h-px min-w-5 flex-1 bg-current" />
-          <span className="min-w-0 text-center text-xs uppercase tracking-wider">
-            {FIXED_WEDDING_CITY}
-          </span>
-          <div className="h-px min-w-5 flex-1 bg-current" />
-        </div>
+        <img
+          src={`${import.meta.env.BASE_URL}assets/intro-title-deborah-davide-v1.png`}
+          width="960"
+          height="744"
+          alt={`${FIXED_WEDDING_DATE_LABEL}. ${FIXED_BRIDE_NAME} & ${FIXED_GROOM_NAME}. ${FIXED_WEDDING_CITY}.`}
+          className="block h-auto w-[min(20rem,calc(100vw-2rem))] select-none"
+          draggable={false}
+          decoding="async"
+          fetchPriority="high"
+          data-testid="intro-title-image"
+        />
       </div>
 
       <div
