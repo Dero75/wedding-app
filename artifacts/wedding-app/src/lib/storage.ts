@@ -18,7 +18,6 @@ const STORAGE_KEYS = {
   myRsvpId: "my_rsvp_id",
 } as const;
 const LEGACY_ADMIN_SETTINGS_KEY = "admin_settings";
-const DEV_RESET_MARKER_KEY = "local_records_reset_v1";
 const IS_TEST = import.meta.env.MODE === "test";
 const USE_DB_SOURCE = !IS_TEST && hasSupabaseConfig && supabase !== null;
 
@@ -337,12 +336,6 @@ export async function deleteRSVPById(id: string): Promise<void> {
 
 export function generateId(): string {
   return `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
-}
-
-export function clearAllLocalWeddingRecordsForSupabaseMigration(): void {
-  clearLocalWeddingRecords();
-  storageRemove(DEV_RESET_MARKER_KEY);
-  clearLegacyAdminSettingsSnapshot();
 }
 
 export type { EditableContent, RSVPEntry } from "@/lib/storageTypes";

@@ -1,10 +1,8 @@
-export type CustomFetchOptions = RequestInit & {
+type CustomFetchOptions = RequestInit & {
   responseType?: "json" | "text" | "blob" | "auto";
 };
 
 export type ErrorType<T = unknown> = ApiError<T>;
-
-export type BodyType<T> = T;
 
 export type AuthTokenGetter = () => Promise<string | null> | string | null;
 
@@ -165,7 +163,7 @@ export class ApiError<T = unknown> extends Error {
   }
 }
 
-export class ResponseParseError extends Error {
+class ResponseParseError extends Error {
   override readonly name = "ResponseParseError";
   readonly status: number;
   readonly statusText: string;
