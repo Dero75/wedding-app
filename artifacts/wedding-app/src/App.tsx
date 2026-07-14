@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from "react";
 import { Switch, Route, Router as WouterRouter, useLocation } from "wouter";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import NotFound from "@/pages/not-found";
@@ -16,8 +15,6 @@ import {
   clearLegacyAdminSettingsSnapshot,
   initializeWeddingDataSource,
 } from "@/lib/storage";
-
-const queryClient = new QueryClient();
 
 function hasCompletedIntroThisSession(): boolean {
   try {
@@ -198,18 +195,16 @@ function DataSourceBootstrapper({ children }: { children: React.ReactNode }) {
 
 function App() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <LegacyStorageSanitizer />
-        <DataSourceBootstrapper>
-          <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, "")}>
-            <BackgroundMusicPlayer />
-            <Router />
-          </WouterRouter>
-        </DataSourceBootstrapper>
-        <Toaster />
-      </TooltipProvider>
-    </QueryClientProvider>
+    <TooltipProvider>
+      <LegacyStorageSanitizer />
+      <DataSourceBootstrapper>
+        <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, "")}>
+          <BackgroundMusicPlayer />
+          <Router />
+        </WouterRouter>
+      </DataSourceBootstrapper>
+      <Toaster />
+    </TooltipProvider>
   );
 }
 
