@@ -48,6 +48,10 @@ Thumbs.db
 .cache/
 .local/
 
+# Agent / App Control (never commit)
+.agent/
+.mcp.json
+
 # Environment files (local secrets/config)
 .env
 .env.*

@@ -10,6 +10,18 @@ interface AdminRsvpSectionProps {
   onUpdateRsvp: (entry: RSVPEntry) => Promise<void>;
 }
 
+const SUBMITTED_DATE_FORMATTER = new Intl.DateTimeFormat("it-IT", {
+  day: "numeric",
+  month: "long",
+});
+
+function formatSubmittedDate(submittedAt: string): string | null {
+  const date = new Date(submittedAt);
+  if (Number.isNaN(date.getTime())) return null;
+  const formatted = SUBMITTED_DATE_FORMATTER.format(date);
+  return formatted.replace(/\p{L}+/u, (word) => word.charAt(0).toUpperCase() + word.slice(1));
+}
+
 export default function AdminRsvpSection({
   rsvps,
   onDeleteRsvp,
@@ -105,6 +117,16 @@ export default function AdminRsvpSection({
                     {`${rsvp.firstName} ${rsvp.lastName}`.trim()}
                   </p>
                   <div className="mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-1 font-sans text-xs text-muted-foreground">
+                    {(() => {
+                      const submittedDate = formatSubmittedDate(rsvp.submittedAt);
+                      if (!submittedDate) return null;
+                      return (
+                        <>
+                          <span>{submittedDate}</span>
+                          <span aria-hidden="true">·</span>
+                        </>
+                      );
+                    })()}
                     {rsvp.attending ? (
                       <>
                         <span style={{ color: "#6f8f4a" }}>Confermato</span>
