@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Bell, RefreshCcw } from "lucide-react";
+import { Bell, ExternalLink, RefreshCcw } from "lucide-react";
 import Layout from "@/components/Layout";
 import PageContainer from "@/components/PageContainer";
 import SectionTitle from "@/components/SectionTitle";
@@ -18,6 +18,10 @@ import AdminStats from "@/pages/admin/components/AdminStats";
 // Un RSVP è "nuovo" se la sua submittedAt è successiva a lastSeenAt.
 // Questo evita la vecchia lista di id (che al primo accesso mostrava tutte come nuove
 // e poteva resettarsi a metà se cliccata prima del caricamento completo dei dati).
+const googleSheetBackupUrl = import.meta.env.VITE_GOOGLE_SHEET_RSVP_BACKUP_URL as
+  | string
+  | undefined;
+
 const NOTIFY_LAST_SEEN_KEY = "wedding_admin_rsvp_last_seen_at";
 
 function loadLastSeenAt(): string | null {
@@ -192,23 +196,37 @@ export default function Admin() {
   return (
     <Layout
       adminTopbarLeftActions={
-        <button
-          type="button"
-          onClick={markNotificationsAsRead}
-          data-testid="button-admin-notifications-topbar"
-          aria-label="Segna notifiche come lette"
-          className="relative inline-flex h-10 w-10 items-center justify-center rounded-full border border-border text-foreground transition-colors hover:text-foreground/80 hover:bg-card"
-        >
-          <Bell size={19} />
-          {newRecordsCount > 0 && (
-            <span
-              data-testid="badge-admin-notifications-count"
-              className="absolute -top-1.5 -right-1.5 min-w-[18px] h-[18px] rounded-full bg-destructive text-destructive-foreground text-[10px] leading-[18px] px-1 text-center"
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={markNotificationsAsRead}
+            data-testid="button-admin-notifications-topbar"
+            aria-label="Segna notifiche come lette"
+            className="relative inline-flex h-10 w-10 items-center justify-center rounded-full border border-border text-foreground transition-colors hover:text-foreground/80 hover:bg-card"
+          >
+            <Bell size={19} />
+            {newRecordsCount > 0 && (
+              <span
+                data-testid="badge-admin-notifications-count"
+                className="absolute -top-1.5 -right-1.5 min-w-[18px] h-[18px] rounded-full bg-destructive text-destructive-foreground text-[10px] leading-[18px] px-1 text-center"
+              >
+                {newRecordsCount > 99 ? "99+" : newRecordsCount}
+              </span>
+            )}
+          </button>
+          {googleSheetBackupUrl?.trim() && (
+            <a
+              href={googleSheetBackupUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              data-testid="button-admin-google-sheet-topbar"
+              aria-label="Apri foglio Google"
+              className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-border bg-transparent text-[#8fa878] transition-colors hover:bg-card"
             >
-              {newRecordsCount > 99 ? "99+" : newRecordsCount}
-            </span>
+              <ExternalLink size={18} />
+            </a>
           )}
-        </button>
+        </div>
       }
       adminTopbarActions={
         <button
