@@ -14,40 +14,51 @@ import { hasSupabaseConfig, supabase } from "@/lib/supabaseClient";
 import AdminRsvpSection from "@/pages/admin/components/AdminRsvpSection";
 import AdminStats from "@/pages/admin/components/AdminStats";
 
-const NOTIFY_SEEN_IDS_KEY = "wedding_admin_rsvp_seen_ids_v2";
+// La campanella segue un solo valore: il momento "ho visto le conferme fino a qui".
+// Un RSVP è "nuovo" se la sua submittedAt è successiva a lastSeenAt.
+// Questo evita la vecchia lista di id (che al primo accesso mostrava tutte come nuove
+// e poteva resettarsi a metà se cliccata prima del caricamento completo dei dati).
+const NOTIFY_LAST_SEEN_KEY = "wedding_admin_rsvp_last_seen_at";
 
-function loadSeenIds(): string[] {
+function loadLastSeenAt(): string | null {
   try {
-    const raw = localStorage.getItem(NOTIFY_SEEN_IDS_KEY);
-    if (!raw) return [];
-    const parsed = JSON.parse(raw);
-    if (!Array.isArray(parsed)) return [];
-    return parsed.filter((value): value is string => typeof value === "string" && value.length > 0);
+    const raw = localStorage.getItem(NOTIFY_LAST_SEEN_KEY);
+    if (!raw) return null;
+    const time = new Date(raw).getTime();
+    return Number.isNaN(time) ? null : raw;
   } catch {
-    return [];
+    return null;
   }
+}
+
+function isNewerThanSeen(submittedAt: string, lastSeenAt: string | null): boolean {
+  if (!lastSeenAt) return false;
+  const submitted = new Date(submittedAt).getTime();
+  const seen = new Date(lastSeenAt).getTime();
+  if (Number.isNaN(submitted) || Number.isNaN(seen)) return false;
+  return submitted > seen;
 }
 
 export default function Admin() {
   const [rsvps, setRsvps] = useState<RSVPEntry[]>(() => getRSVPs());
-  const [nameOrder, setNameOrder] = useState<"az" | "za">("az");
+  const [nameOrder, setNameOrder] = useState<"recent" | "az" | "za">("recent");
   const [statusFilter, setStatusFilter] = useState<"all" | "confirmed" | "declined">("all");
   const [searchQuery, setSearchQuery] = useState("");
   const [isRefreshing, setIsRefreshing] = useState(false);
-  const [seenIds, setSeenIds] = useState<string[]>(() => loadSeenIds());
+  const [lastSeenAt, setLastSeenAt] = useState<string | null>(() => loadLastSeenAt());
 
-  const persistSeenIds = (ids: string[]) => {
-    setSeenIds(ids);
+  const persistLastSeenAt = (value: string) => {
+    setLastSeenAt(value);
     try {
-      localStorage.setItem(NOTIFY_SEEN_IDS_KEY, JSON.stringify(ids));
+      localStorage.setItem(NOTIFY_LAST_SEEN_KEY, value);
     } catch {
       // ignore storage failures
     }
   };
 
   const markNotificationsAsRead = () => {
-    const merged = Array.from(new Set([...seenIds, ...rsvps.map((entry) => entry.id)]));
-    persistSeenIds(merged);
+    // "Visto fino ad adesso": ogni conferma già arrivata diventa letta.
+    persistLastSeenAt(new Date().toISOString());
   };
 
   const adultsCount = useMemo(
@@ -83,6 +94,9 @@ export default function Admin() {
     });
 
     return [...filtered].sort((a, b) => {
+      if (nameOrder === "recent") {
+        return new Date(b.submittedAt).getTime() - new Date(a.submittedAt).getTime();
+      }
       const nameA = `${a.firstName} ${a.lastName}`.trim();
       const nameB = `${b.firstName} ${b.lastName}`.trim();
       const comparison = nameA.localeCompare(nameB, "it-IT", { sensitivity: "base" });
@@ -90,9 +104,8 @@ export default function Admin() {
     });
   }, [rsvps, statusFilter, nameOrder, searchQuery]);
   const newRecordsCount = useMemo(() => {
-    const seenSet = new Set(seenIds);
-    return rsvps.filter((entry) => !seenSet.has(entry.id)).length;
-  }, [rsvps, seenIds]);
+    return rsvps.filter((entry) => isNewerThanSeen(entry.submittedAt, lastSeenAt)).length;
+  }, [rsvps, lastSeenAt]);
 
   const handleDeleteRsvp = async (id: string) => {
     await deleteRSVPById(id);
@@ -110,19 +123,28 @@ export default function Admin() {
     try {
       await refreshRsvpsFromDb();
       setRsvps(getRSVPs());
+      setNameOrder("recent");
     } finally {
       setIsRefreshing(false);
     }
   };
 
+  // Primo accesso su questo dispositivo: segna "visto fino ad adesso" così le
+  // conferme già esistenti non vengono contate come nuove (niente badge fantasma).
   useEffect(() => {
-    const syncSeenIdsAcrossTabs = (event: StorageEvent) => {
-      if (event.key !== NOTIFY_SEEN_IDS_KEY) return;
-      setSeenIds(loadSeenIds());
+    if (loadLastSeenAt() === null) {
+      persistLastSeenAt(new Date().toISOString());
+    }
+  }, []);
+
+  useEffect(() => {
+    const syncSeenAcrossTabs = (event: StorageEvent) => {
+      if (event.key !== NOTIFY_LAST_SEEN_KEY) return;
+      setLastSeenAt(loadLastSeenAt());
     };
 
-    window.addEventListener("storage", syncSeenIdsAcrossTabs);
-    return () => window.removeEventListener("storage", syncSeenIdsAcrossTabs);
+    window.addEventListener("storage", syncSeenAcrossTabs);
+    return () => window.removeEventListener("storage", syncSeenAcrossTabs);
   }, []);
 
 

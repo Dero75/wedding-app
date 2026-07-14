@@ -144,7 +144,9 @@ describe("runtime sections are always active", () => {
     expect(screen.queryByText("Torna alla gestione")).not.toBeInTheDocument();
   });
 
-  it("keeps admin bell notifications visible until they are marked as read", () => {
+  it("does not flag pre-existing RSVPs as new on first admin access", () => {
+    // Prima apertura su questo dispositivo: le conferme già presenti NON devono
+    // comparire come nuove (nessun badge fantasma).
     localStorage.setItem(
       "wedding_rsvps",
       JSON.stringify([
@@ -154,24 +156,31 @@ describe("runtime sections are always active", () => {
     );
     window.history.pushState({}, "", "/admina");
 
-    const firstRender = render(<App />);
+    render(<App />);
 
-    expect(screen.getByTestId("badge-admin-notifications-count")).toHaveTextContent("2");
-    fireEvent.click(screen.getByTestId("button-admin-notifications-topbar"));
     expect(screen.queryByTestId("badge-admin-notifications-count")).not.toBeInTheDocument();
+  });
 
-    firstRender.unmount();
+  it("flags only RSVPs newer than the last-seen mark and clears on click", () => {
+    // Dispositivo che ha già visto tutto fino a una certa data.
+    localStorage.setItem(
+      "wedding_admin_rsvp_last_seen_at",
+      "2026-04-08T09:30:00.000Z",
+    );
     localStorage.setItem(
       "wedding_rsvps",
       JSON.stringify([
-        createStoredRsvp("rsvp-1", "Anna", "2026-04-08T08:00:00.000Z"),
-        createStoredRsvp("rsvp-2", "Luca", "2026-04-08T09:00:00.000Z"),
-        createStoredRsvp("rsvp-3", "Marta", "2026-04-08T10:00:00.000Z"),
+        createStoredRsvp("rsvp-1", "Anna", "2026-04-08T08:00:00.000Z"), // vista
+        createStoredRsvp("rsvp-2", "Luca", "2026-04-08T09:00:00.000Z"), // vista
+        createStoredRsvp("rsvp-3", "Marta", "2026-04-08T10:00:00.000Z"), // nuova
       ]),
     );
+    window.history.pushState({}, "", "/admina");
 
     render(<App />);
 
     expect(screen.getByTestId("badge-admin-notifications-count")).toHaveTextContent("1");
+    fireEvent.click(screen.getByTestId("button-admin-notifications-topbar"));
+    expect(screen.queryByTestId("badge-admin-notifications-count")).not.toBeInTheDocument();
   });
 });
