@@ -80,6 +80,12 @@ Comportamento:
 - il frontend usa Supabase direttamente quando le env sono presenti;
 - l'admin usa realtime subscription sulla tabella `public.rsvps`.
 
+RLS (attive):
+
+- `rsvps`: anon puo select/insert/update/delete (il delete serve al cestino del pannello admin).
+- `wedding_content`: anon puo select/update; insert e delete pubblici sono chiusi.
+- notifiche campanella admin: basate su un timestamp locale "visto fino a" (`wedding_admin_rsvp_last_seen_at`), non ancora condiviso tra dispositivi.
+
 ## Google Sheet backup RSVP
 
 Ruolo:

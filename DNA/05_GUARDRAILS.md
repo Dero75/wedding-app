@@ -12,7 +12,7 @@
 - Non reintrodurre la route `/admin` come se fosse canonica: la route reale e `/admina`.
 - Non bypassare il layer `artifacts/wedding-app/src/lib/storage.ts` dai componenti senza una ragione forte e verificata.
 - Non spostare i dati evento fissi in contenuti editabili senza richiesta esplicita.
-- Non trattare il PIN admin client-side come misura di sicurezza reale.
+- Non trattare il PIN admin client-side come misura di sicurezza reale; ora e letto da `VITE_ADMIN_PIN` (fallback al valore storico) e va impostato anche nelle env di build su Cloudflare Pages.
 - Non assumere che l'API server gestisca RSVP o contenuti: oggi espone solo `healthz`.
 - Non trattare `artifacts/mockup-sandbox` come sorgente autorevole del wedding runtime.
 
@@ -21,6 +21,7 @@
 - Supabase e la source of truth reale solo quando la config frontend e presente; verificare sempre il contesto di esecuzione.
 - Google Sheet e backup mirror degli RSVP, non sorgente primaria del runtime.
 - Per svuotamenti con sync verso Google Sheet, usare `DELETE`, non `TRUNCATE`.
+- RLS attive su `rsvps` (select/insert/update/delete anon) e `wedding_content` (select/update anon; insert/delete pubblici chiusi). Il delete su `rsvps` e volutamente aperto alla chiave anon perche il pannello admin la usa: accesso protetto solo da link + PIN. Un vero login admin che restringa il delete resta un miglioramento aperto.
 
 ## Guardrail documentali
 
