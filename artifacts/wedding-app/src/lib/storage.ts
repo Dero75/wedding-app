@@ -228,7 +228,7 @@ export function getMyRSVP(): RSVPEntry | null {
   return myRsvpCache;
 }
 
-export function saveMyRSVP(entry: RSVPEntry): void {
+export async function saveMyRSVP(entry: RSVPEntry): Promise<{ synced: boolean }> {
   const normalizedEntry: RSVPEntry = {
     ...entry,
     firstName: normalizePersonName(entry.firstName),
@@ -246,20 +246,22 @@ export function saveMyRSVP(entry: RSVPEntry): void {
   if (USE_DB_SOURCE) {
     storageSet(STORAGE_KEYS.myRsvpId, normalizedEntry.id);
     storageRemove(STORAGE_KEYS.myRsvp);
-    void supabase!
+    const { error } = await supabase!
       .from("rsvps")
-      .upsert(toDbRsvpRow(normalizedEntry), { onConflict: "id" })
-      .then(({ error }) => {
-        if (!error) return;
-        storageSet(STORAGE_KEYS.myRsvp, normalizedEntry);
-        storageSet(STORAGE_KEYS.rsvps, rsvpsCache);
-        console.error("[storage] saveMyRSVP Supabase upsert failed", error.message);
-      });
-    return;
+      .upsert(toDbRsvpRow(normalizedEntry), { onConflict: "id" });
+    if (error) {
+      // Il dato non va perso: resta salvato in locale come fallback.
+      storageSet(STORAGE_KEYS.myRsvp, normalizedEntry);
+      storageSet(STORAGE_KEYS.rsvps, rsvpsCache);
+      console.error("[storage] saveMyRSVP Supabase upsert failed", error.message);
+      return { synced: false };
+    }
+    return { synced: true };
   }
 
   storageSet(STORAGE_KEYS.myRsvp, normalizedEntry);
   storageSet(STORAGE_KEYS.rsvps, rsvpsCache);
+  return { synced: true };
 }
 
 export async function updateRSVP(entry: RSVPEntry): Promise<void> {

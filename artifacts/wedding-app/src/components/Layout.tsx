@@ -8,7 +8,7 @@ interface LayoutProps {
   adminTopbarLeftActions?: ReactNode;
 }
 
-const ADMIN_PIN = "2015";
+const ADMIN_PIN = import.meta.env.VITE_ADMIN_PIN ?? "2015";
 const ADMIN_SESSION_KEY = "wedding_admin_pin_unlocked";
 
 function hasAdminSession(): boolean {

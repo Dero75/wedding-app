@@ -54,7 +54,7 @@ export default function RSVP() {
     });
   }, [editing, submitted, form]);
 
-  const confirmAttendanceSubmit = (data: RSVPFormData) => {
+  const confirmAttendanceSubmit = async (data: RSVPFormData) => {
     if (data.guestCount < 1) {
       form.setError("guestCount", {
         type: "manual",
@@ -74,10 +74,18 @@ export default function RSVP() {
       submittedAt: new Date().toISOString(),
     };
 
-    saveMyRSVP(entry);
+    const { synced } = await saveMyRSVP(entry);
     setSubmitted(entry);
     setEditing(false);
     setShowInviteModal(true);
+    if (!synced) {
+      toast({
+        variant: "destructive",
+        title: "Conferma salvata, ma non sincronizzata",
+        description:
+          "La tua risposta è stata registrata su questo dispositivo. Se possibile, riprova più tardi con una connessione stabile.",
+      });
+    }
     try {
       window.scrollTo({ top: 0, behavior: "smooth" });
     } catch {
@@ -107,10 +115,18 @@ export default function RSVP() {
       submittedAt: new Date().toISOString(),
     };
 
-    saveMyRSVP(entry);
+    const { synced } = await saveMyRSVP(entry);
     setSubmitted(entry);
     setEditing(false);
     setShowInviteModal(false);
+    if (!synced) {
+      toast({
+        variant: "destructive",
+        title: "Risposta salvata, ma non sincronizzata",
+        description:
+          "La tua risposta è stata registrata su questo dispositivo. Se possibile, riprova più tardi con una connessione stabile.",
+      });
+    }
     try {
       window.scrollTo({ top: 0, behavior: "smooth" });
     } catch {
